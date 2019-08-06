@@ -1,0 +1,180 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+
+
+//-------------------------------------------------------------------
+/*/{tlpp.doc} bodyPatchUser
+
+@description
+REST altera um usu�rio com par�metros via [raw body]
+
+@type    REST
+@method  patch
+@uri     /query/user
+
+@author  TOTVS-TEC-TLPP
+@since   06/2019
+@version 1.0
+
+@param	 object   , oRest  , Objeto contendo a classe de REST
+@return  character, String em formato JSON com resposta ao Client
+/*/
+//-------------------------------------------------------------------
+@Patch("patch/body/user")
+user function bodyPatchUser()
+    local cID   := ''
+    local cUser := ''
+    local cName := ''
+    local cNick := ''
+    local jBody := ''
+    Local cPass := ''
+
+    jBody := JsonObject():new()
+    jBody:fromJson( oRest:getBodyRequest() )
+
+    if ( jBody <> Nil )
+        cID     := jBody:GetJsonText("id"  )
+        cUser   := jBody:GetJsonText("user")
+        cPass   := jBody:GetJsonText("pass")
+        cName   := jBody:GetJsonText("name")
+        cNick   := jBody:GetJsonText("nick")
+    endif
+return processPatchUser(cID, cUser, cPass, cName, cNick)
+       
+//-------------------------------------------------------------------
+/*/{tlpp.doc} pathPatchUser
+
+@description
+REST altera um usu�rio com par�metros via [pathstring]
+
+@type    REST
+@method  patch
+@uri     /path/user/:user/:name/:nick
+
+@author  TOTVS-TEC-TLPP
+@since   06/2019
+@version 1.0
+
+@param	 object   , oRest  , Objeto contendo dados REST
+
+@return  character, String em formato JSON com resposta ao Client
+/*/
+//-------------------------------------------------------------------
+@Patch("patch/path/user/:user/:pass/:name/:nick")
+user function patchPathUser()
+    local cID   := ''
+    local cUser := ''
+    local cName := ''
+    local cNick := ''
+    local cPass := ''
+    Local jPath := JsonObject():New()
+
+    jPath := oRest:getPathParamsRequest()
+    if (jPath <> Nil)
+        cUser       := jPath[ 'user'   ]
+        cPass       := jPath[ 'pass'   ]
+        cName       := jPath[ 'name'   ]
+        cNick       := jPath[ 'nick'   ]
+    endif
+return processPatchUser(cID, cUser, cPass, cName, cNick)
+
+//-------------------------------------------------------------------
+/*/{tlpp.doc} processPatchUser
+
+@description
+Fun��o central chamada pelos modos diferentes de receber par�metro do REST
+e faz a chamada da fun��o que de fato ir� alterar um usu�rio na BD
+
+@type    function
+
+@author  TOTVS-TEC-TLPP
+@since   06/2019
+@version 1.0
+
+@param	 object   , oRest     , Objeto contendo dados REST
+@param	 character, cID       , ID
+@param	 character, cUser     , Usu�rio que dever� ser exclu�do da BD
+@param   character, cPass     , Senha do usu�rio
+@param	 character, cName     , Nome
+@param	 character, cNick     , Apelido
+
+@return  character, String em formato JSON com resposta ao Client
+/*/
+//-------------------------------------------------------------------
+static function processPatchUser(cID, cUser, cPass, cName, cNick)
+    local creturn   := ''
+    local lOK       := .T.
+    local cMsg      := ''
+
+    // Valida campo chave de busca
+        if ( cID == Nil .or. empty(cID) )
+            cID     := ''
+            lOK     := .F.
+            cMsg    := 'invalid parameter: id'
+        endif
+        if ( !lOK )
+            if ( cUser == Nil .or. empty(cUser) )
+                cUser   := ''
+                lOK     := .F.
+                cMsg    += ' | user'
+            else
+                lOK     := .T.
+                cMsg    := ''
+            endif
+        endif
+        if ( !lOK )
+            if ( cPass == Nil .or. empty(cPass) )
+                cPass   := ''
+                lOK     := .F.
+                cMsg    += ' | pass'
+            else
+                lOK     := .T.
+                cMsg    := ''
+            endif
+        endif
+        if ( !lOK )
+            if ( cName == Nil .or. empty(cName) )
+                cName   := ''
+                lOK     := .F.
+                cMsg    += ' | name'
+            else
+                lOK     := .T.
+                cMsg    := ''
+            endif
+        endif
+
+    // Valida campos eleg�veis para atualiza��o
+        if ( lOK )
+            if ( cName == Nil )
+                cName := ''
+            endif
+            if ( cNick == Nil )
+                cNick := ''
+            endif
+            if ( empty(cName) .and. empty(cNick) )
+                lOK   := .F.
+                cMsg  := 'no data were reported for change'
+            endif
+        endif
+
+    if ( lOK )
+        if ( cID <> Nil .and. !empty(cID) )
+            lOk := TlppRestinsertUser( cUser, cPass, cName, cNick )
+        else
+            lOk := TlppRestinsertUser( cUser, cPass, cName, cNick )
+        endif
+        if ( !lOK )
+            cMsg := 'could not create record'
+        else
+            cMsg := "successfully created record"
+        endif
+    endif
+
+    creturn := '{ "SUCESS": "' + if(lOK,'yes','no') + '", "MESSAGE": "' + cMsg + '" }'
+
+    if ( lOK )
+        oRest:setResponse(200, cReturn)
+    else
+        oRest:setResponse(500, cReturn)
+    endif
+Return

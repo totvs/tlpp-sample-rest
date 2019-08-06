@@ -1,0 +1,126 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+
+/*------------------------------------------------------------------
+altera um usu�rio
+Par�metros via [raw body]
+------------------------------------------------------------------*/
+@Post("post/body/user")
+user function postBodyUser()
+    local cID   := ''
+    local cUser := ''
+    local cName := ''
+    local cNick := ''
+    local jBody := ''
+
+    jBody := JsonObject():new()
+    jBody:fromJson( oRest:GetBodyRequest() )
+
+    if ( jBody <> Nil )
+        cID     := jBody:GetJsonText("id"  )
+        cUser   := jBody:GetJsonText("user")
+        cName   := jBody:GetJsonText("name")
+        cNick   := jBody:GetJsonText("nick")
+    endif
+
+return processPostUser(cID, cUser, cName, cNick)
+
+/*------------------------------------------------------------------
+altera um usu�rio
+Par�metros via [query]
+------------------------------------------------------------------*/
+@Post("post/query/user")
+user function postQueryUser()
+    local cID       := ''
+    local cUser     := ''
+    local cName     := ''
+    local cNick     := ''
+    local jQuery    := jSonObject():New()
+
+    jQuery := oRest:getQueryRequest()
+
+    if ( jQuery <> Nil )
+        cUser   := jQuery[ 'user'   ]
+        cName   := jQuery[ 'name'   ]
+        cNick   := jQuery[ 'nick'   ]
+    endif
+return processPostUser(cID, cUser, cName, cNick)
+
+/*-----------------------------------------------------------------
+altera um usu�rio
+Par�metros via [pathstring]
+------------------------------------------------------------------*/
+@Post("post/path/user/:user/:name/:nick")
+user function postPathUser()
+    local cID   := ''
+    local cUser := ''
+    local cName := ''
+    local cNick := ''
+    local jPath := jSonObject():New()
+
+    jPath := oRest:getPathParamsRequest()
+    if ( jPath <> Nil )
+        cUser   := jPath[ 'user'   ]
+        cName   := jPath[ 'name'   ]
+        cNick   := jPath[ 'nick'   ]
+    endif
+return processPostUser(cID, cUser, cName, cNick)
+
+// ------------------------------------------------------------------ //
+// ------------------------------------------------------------------ //
+static function processPostUser(cID, cUser, cName, cNick)
+
+    local creturn   := ''
+    local lOK       := .T.
+    local cMsg      := ''
+    local nStatus   := 200
+
+    // Valida campo chave de busca
+        if ( cID == Nil .or. empty(cID) )
+            cID     := ''
+            lOK     := .F.
+            nStatus := 500
+            cMsg    := 'invalid parameter: id'
+        endif
+        if ( !lOK )
+            if ( cUser == Nil .or. empty(cUser) )
+                cUser   := ''
+                lOK     := .F.
+                cMsg    += ' | user'
+            else
+                lOK     := .T.
+                nStatus := 200
+                cMsg    := ''
+            endif
+        endif
+
+    // Valida campos eleg�veis para atualiza��o
+        if ( lOK )
+            if ( cName == Nil )
+                cName := ''
+            endif
+            if ( cNick == Nil )
+                cNick := ''
+            endif
+            if ( empty(cName) .and. empty(cNick) )
+                lOK   := .F.
+                nStatus := 500
+                cMsg  := 'no data were reported for change'
+            endif
+        endif
+
+    if ( lOK )
+        if ( cID <> Nil .and. !empty(cID) )
+            lOK := TlppRestalteraUserByID( cID, cName, cNick )
+        else
+            lOK := TlppRestalteraUserByUser( cUser, cName, cNick )
+        endif
+        if ( !lOK )
+            nStatus := 500
+            cMsg := 'update not executed !' 
+        endif
+    endif
+
+    creturn := '{ "SUCESS": "' + if(lOK,'yes','no') + '", "MESSAGE": "' + cMsg + '" }'
+        
+return oRest:setResponse(nStatus,cReturn )

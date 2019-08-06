@@ -1,0 +1,73 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+
+/*------------------------------------------------------------------
+Retorna dados de um usu�rio existente
+Par�metros via [querystring]
+------------------------------------------------------------------*/
+@Get("get/query/user")
+user function getQueryUser()
+    local cUser     := ''
+    local jQuery    := jsonObject():New()
+
+    jQuery := oRest:getQueryRequest()
+
+    if ( jQuery <> Nil )
+        cUser   := jQuery[ 'user' ]
+    endif
+
+return processGetUser(cUser)
+
+/*
+------------------------------------------------------------------
+Retorna dados de um usu�rio existente
+
+Par�metros via [pathstring]
+------------------------------------------------------------------
+*/
+@Get("get/path/user/:user")
+user function getPathUser()
+    local cUser := ''
+    local jPath := jsonObject():New()
+
+    jPath := oRest:getPathParamsRequest()
+
+    if (jPath <> Nil )
+        cUser   := jPath[ 'user' ]
+    endif
+
+return processGetUser(cUser)
+
+// ------------------------------------------------------------------ //
+// ------------------------------------------------------------------ //
+static function processGetUser(cUser)
+
+    local creturn   := ''
+    local lOK       := .T.
+    local cMsg      := ''
+    local aUser     := {}
+    local nStatus   := 200
+
+    // Valida campo chave de busca
+        if ( cUser == Nil .or. empty(cUser) )
+            cUser   := ''
+            lOK     := .F.
+            cMsg    := 'invalid parameter: user'
+            nStatus := 500
+        endif
+
+    if ( lOK )
+        aUser := TlppRestgetUser( cUser )
+
+        if ( len(aUser) == 4 )
+            lOK  := .T.
+            creturn := '{ "SUCESS": "yes", "ID": "' + aUser[1] + '", "NAME": "' + aUser[2] + '", "NICK": "' + aUser[3] + '", "USER": "' + aUser[4] + '" }'
+        else
+            lOK     := .F.
+            nStatus := 500
+            cMsg    := 'could not found'
+            creturn := '{ "SUCESS": "' + if(lOK,'yes','no') + '", "MESSAGE": "' + cMsg + '" }'
+        endif
+    endif
+
+return oRest:SetResponse(nStatus, creturn )

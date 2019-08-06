@@ -1,0 +1,89 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+
+/*------------------------------------------------------------------
+deleta um usuï¿½rio
+Parï¿½metros via [raw body]
+------------------------------------------------------------------*/
+
+@Delete("delete/body/user")
+user function deleteBodyUser()
+    local cID   := ''
+    local cUser := ''
+    local cName := ''
+    local cNick := ''
+    local jBody := ''
+
+    jBody := JsonObject():new()
+    jBody:fromJson( oRest:GetBodyRequest() )
+
+    if ( jBody <> Nil )
+        cID     := jBody:GetJsonText("id"  )
+        cUser   := jBody:GetJsonText("user")
+        cName   := jBody:GetJsonText("name")
+        cNick   := jBody:GetJsonText("nick")
+    endif
+
+return processDeleteUser(cUser)
+
+/*----------------------------------------------------------------
+deleta um usuário
+Parãmetros via [querystring]
+----------------------------------------------------------------*/
+@Delete("delete/query/user")
+user function deleteQueryUser()
+    local cUser     := ''
+    local jQuery    := jsonObject():New() 
+    
+    jQuery := oRest:GetQueryRequest()
+    if ( jQuery <> Nil )
+        cUser  := jQuery['user']
+    endif
+
+return processDeleteUser(cUser)
+
+/*
+------------------------------------------------------------------
+deleta um usuário
+Parâmetros via [pathstring]
+------------------------------------------------------------------
+*/
+@Delete("delete/path/user/:user")
+user function deletePathUser()
+    local cUser := ''
+    local jPath := jsonObject():New()
+
+    jPath := oRest:GetPathParamsRequest()
+
+    if ( jPath <> Nil )
+        cUser   := jPath[ 'user' ]
+    endif
+
+return processDeleteUser(cUser)
+
+// ------------------------------------------------------------------ //
+// ------------------------------------------------------------------ //
+static function processDeleteUser(cUser)
+
+    local creturn   := ''
+    local lOK       := .T.
+    local cMsg      := ''
+    local nStatus   := 200
+
+    // Valida campo chave de busca
+        if ( cUser == Nil .or. empty(cUser) )
+            cUser   := ''
+            lOK     := .F.
+            nStatus := 500
+            cMsg    := 'invalid parameter: user'
+        endif
+
+    if ( lOK )
+        if ( !(lOK := TlppRestdeleteUser( cUser )) )
+            cMsg := 'could not deleted'
+        endif
+    endif
+
+    creturn := '{ "SUCESS": "' + if(lOK,'yes','no') + '", "MESSAGE": "' + cMsg + '" }'
+
+return oRest:SetResponse(nStatus,creturn)

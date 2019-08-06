@@ -1,0 +1,460 @@
+#include "tlpp-core.th"
+
+#define _dbDrive		'SQLITE_SYS'
+#define	_AliasUSR		"USERS"
+
+static __nAlias  := 1
+
+
+//-------------------------------------------------------------------
+/*/{tlpp.doc} TlppRestgenerateTables
+
+@description
+Main function para gerar base e popular tabela de usu�rios para exerc�cio
+utilizado no Workshop
+
+@type    function
+
+@author  TOTVS-TEC-TLPP
+@since   06/2019
+@version 1.0
+
+@return  Nil
+/*/
+//-------------------------------------------------------------------
+main function TlppRestgenerateTables()
+
+	local aDbTbl 		:= {}
+	local cAliasTbl		:= ''
+	local cAlias		:= ''
+
+	conout( '', '' )
+	conout( '---------' )
+	conout( 'TLPP REST' )
+	conout( '---------' )
+	conout( '' )
+	conout( date(), time() )
+	conout( '' )
+	conout( '... starting tables for workshop' )
+	conout( '' )
+
+	aDbTbl 		:=	{ 									;
+						{ 'ID'			, 'C', 20	,0}	,;
+						{ 'NAME'		, 'C', 150	,0}	,;
+						{ 'NICKNAME'	, 'C', 50	,0} ,;
+						{ 'USER'		, 'C', 150	,0}	,;
+						{ 'PASSWORD'	, 'C', 150	,0}	;
+					}
+	cAliasTbl := _AliasUSR
+	dbCreate( cAliasTbl, aDbTbl, _dbDrive )
+
+	// Cria indice de busca
+		cAlias := NextAlias()
+		dbUseArea( .F., _dbDrive, _AliasUSR, (cAlias), .F., .F. )
+			(cAlias)->( dbCreateIndex(_AliasUSR+'01', 'ID'  , { || 'ID'   }, .T. ) )
+			(cAlias)->( dbCreateIndex(_AliasUSR+'02', 'USER', { || 'USER' }, .T. ) )
+		(cAlias)->( dbCloseArea() )
+	aDbTbl 		:= {}
+	cAliasTbl	:= ''
+	conout( '... table [' + _AliasUSR +'] created' )
+	conout( '' )
+
+	initUsers()
+	conout( '... table [' + _AliasUSR +'] initialized' )
+	conout( '' )
+
+	conout( '... end process for workshop' )
+return
+
+
+//-------------------------------------------------------------------
+/*/{tlpp.doc} initUsers
+
+@description
+popula tabela de usu�rios
+
+@type    function
+
+@author  TOTVS-TEC-TLPP
+@since   06/2019
+@version 1.0
+
+@return  Nil
+/*/
+//-------------------------------------------------------------------
+static function initUsers()
+
+	local cAlias	:= NextAlias()
+	local nOrder	:= 0
+	local cID		:= ''
+	local aUsers	:= {}
+	local nA		:= 0
+
+	// lista de usuarios iniciais
+		aadd( aUsers, {'Joao dos Santos','joaozinho','joao' ,'senha@123'} )
+		aadd( aUsers, {'Maria Silva'    ,'marie'	,'maria','senha@123'} )
+		aadd( aUsers, {'Jose Goncalves' ,'ze'		,'jose' ,'senha@123'} )
+		aadd( aUsers, {'Julia Esteves'  ,''			,'julia','senha@123'} )
+
+	// Grava na tabela
+		dbUseArea( .T., _dbDrive, _AliasUSR, cAlias, .T., .F. )
+			dbSelectArea( cAlias )
+			dbSetIndex( _AliasUSR+'01' )
+			nOrder := OrdNumber( _AliasUSR+'01' )
+			dbSetOrder(nOrder)
+
+			for nA := 1 to len( aUsers )
+				
+				cID := DtoS( date() ) + strtran( time(), ':', "" ) + strzero(nA,3)
+					if ( !dbSeek(cID) )
+
+						dbAppend( .T. )
+							( cAlias )->ID			:= cID
+							( cAlias )->NAME		:= aUsers[nA][1]
+							( cAlias )->NICKNAME	:= aUsers[nA][2]
+							( cAlias )->USER		:= aUsers[nA][3]
+							( cAlias )->PASSWORD	:= WebEncript( aUsers[nA][4], .T. )
+						dbCommit()
+						dbRUnLock( Recno() )
+
+					endif
+
+			next nA
+		( cAlias )->( dbCloseArea() )
+return
+
+
+//-------------------------------------------------------------------
+/*/{tlpp.doc} TlppRestalteraUserByID
+
+@description
+Altera um usu�rio com base no ID
+
+@type    function
+
+@author  TOTVS-TEC-TLPP
+@since   06/2019
+@version 1.0
+
+@param	 character, ID
+@param	 character, Nome
+@param	 character, Apelido
+
+@return  boolean, TRUE para a��o com sucesso
+/*/
+//-------------------------------------------------------------------
+function TlppRestalteraUserByID( cID, cName, cNick )
+	lOK := TlppRestalteraUser( .T., cID, cName, cNick )
+return lOK
+
+//-------------------------------------------------------------------
+/*/{tlpp.doc} TlppRestalteraUserByUser
+
+@description
+Altera um usu�rio com base no Usu�rio
+
+@type    function
+
+@author  TOTVS-TEC-TLPP
+@since   06/2019
+@version 1.0
+
+@param	 character, Usu�rio
+@param	 character, Nome
+@param	 character, Apelido
+
+@return  boolean, TRUE para a��o com sucesso
+/*/
+//-------------------------------------------------------------------
+function TlppRestalteraUserByUser( cUser, cName, cNick )
+	lOK := TlppRestalteraUser( .F., cUser, cName, cNick )
+return lOK
+
+//-------------------------------------------------------------------
+/*/{tlpp.doc} TlppRestalteraUser
+
+@description
+Altera um usu�rio
+
+@type    function
+
+@author  TOTVS-TEC-TLPP
+@since   06/2019
+@version 1.0
+
+@param	 boolean  , TRUE indica que Key � valor do ID, FALSE se refere ao usu�rio
+@param	 character, Key
+@param	 character, Nome
+@param	 character, Apelido
+
+@return  boolean, TRUE para a��o com sucesso
+/*/
+//-------------------------------------------------------------------
+static function TlppRestalteraUser( lID, cKey, cName, cNick )
+	local lOK		:= .F.
+	local cQuery	:= ''
+	local lParam	:= .F.
+
+	if ( lID )
+		cKey := padr( cKey, 20 )
+	else
+		cKey := padr( cKey, 150 )
+	endif
+
+	cQuery += 'update ' + _AliasUSR
+	cQuery += ' set'
+	if ( !empty(cName) )
+		cQuery += " NAME = '" + padr( cName, 50 ) + "' "
+		lParam := .T.
+	endif
+	if ( !empty(cNick) )
+		if ( lParam )
+			cQuery += " ,"
+		endif
+		cQuery += " NICKNAME = '" + padr( cNick, 50 ) + "' "
+	endif
+	cQuery += ' where '
+	if ( lID )
+		cQuery += " ID = '" + cKey + "'"
+	else
+		cQuery += " USER = '" + cKey + "'"
+	endif
+	cQuery += " ;"
+
+	lOK := dbSqlExec( "", cQuery, _dbDrive )
+return lOK
+
+
+//-------------------------------------------------------------------
+/*/{tlpp.doc} TlppRestinsertUser
+
+@description
+Insere um usu�rio na BD
+
+@type    function
+
+@author  TOTVS-TEC-TLPP
+@since   06/2019
+@version 1.0
+
+@param	 character, Usuário
+@param	 character, Senha
+@param	 character, Nome
+@param	 character, Apelido
+
+@return  boolean, TRUE para ação com sucesso
+/*/
+//-------------------------------------------------------------------
+function TlppRestinsertUser( cUser, cPass, cName, cNick )	
+	local lOK 		:= .F.
+	local cAlias	:= ''
+	local cQuery	:= ''
+	local lFound	:= .F.
+	local cID		:= ''
+	local nOrder	:= 0
+
+	cAlias := NextAlias()
+	cQuery := "select * from " + _AliasUSR
+	cQuery += " where USER = '" + padr(cUser,150) + "';"
+	conout(cAlias)
+	conout(cQuery)
+	dbSqlExec( cAlias, cQuery, _dbDrive )
+	dbSelectArea( cAlias )
+		lFound := (cAlias)->( !eof() )
+	(cAlias)->( dbCloseArea() )
+
+	if ( !lFound )
+
+		cAlias := NextAlias()
+		dbUseArea( .T., _dbDrive, _AliasUSR, cAlias, .T., .F. )
+		dbSelectArea( cAlias )
+		dbSetIndex( _AliasUSR+'01' )
+		nOrder := OrdNumber( _AliasUSR+'01' )
+		dbSetOrder(nOrder)
+
+		cID := DtoS( date() ) + strtran( time(), ':', "" ) + CVALTOCHAR( ThreadID() )
+			if ( !dbSeek(cID) )
+
+				dbAppend( .T. )
+					( cAlias )->ID			:= cID
+					( cAlias )->NAME		:= cName
+					( cAlias )->NICKNAME	:= cNick
+					( cAlias )->USER		:= cUser
+					( cAlias )->PASSWORD	:= WebEncript( cPass, .T. )
+				dbCommit()
+				dbRUnLock( Recno() )
+
+				lOK := .T.
+			else
+				lOK := .F.
+				conout('invalid ID')
+			endif
+	else
+		lOK := .F.
+		conout('user already exists')
+	endif
+
+return  lOK
+
+
+//-------------------------------------------------------------------
+/*/{tlpp.doc} TlppRestgetUser
+
+@description
+Retorna dados de um usu�rio
+
+@type    function
+
+@author  TOTVS-TEC-TLPP
+@since   06/2019
+@version 1.0
+
+@param	 character, Usu�rio
+
+@return  array, Dados do usu�rio
+/*/
+//-------------------------------------------------------------------
+function TlppRestgetUser( cUser )
+
+	local aUser		:= {}
+	local cAlias	:= ''
+	local cQuery	:= ''
+
+	cAlias := NextAlias()
+	cQuery := "select * from " + _AliasUSR
+	cQuery += " where USER = '" + padr(cUser,150) + "';"
+	dbSqlExec( cAlias, cQuery, _dbDrive )
+	dbSelectArea( cAlias )
+
+		if ( (cAlias)->( !eof() ) )
+			aadd( aUser, alltrim( (cAlias)->ID )		)
+			aadd( aUser, alltrim( (cAlias)->NAME )		)
+			aadd( aUser, alltrim( (cAlias)->NICKNAME )	)
+			aadd( aUser, alltrim( (cAlias)->USER )		)
+		endif
+
+	(cAlias)->( dbCloseArea() )
+
+return aUser
+
+
+//-------------------------------------------------------------------
+/*/{tlpp.doc} TlppRestdeleteUser
+
+@description
+Deleta usu�rio da base de dados
+
+@type    function
+
+@author  TOTVS-TEC-TLPP
+@since   06/2019
+@version 1.0
+
+@param	 character, Usu�rio
+
+@return  boolean, TRUE para a��o com sucesso
+/*/
+//-------------------------------------------------------------------
+function TlppRestdeleteUser( cUser )
+
+	local lOK 		:= .F.
+	local cAlias	:= ''
+	local cQuery	:= ''
+	local lFound	:= .F.
+	local cID		:= ''
+
+	cAlias := NextAlias()
+	cQuery := "select * from " + _AliasUSR
+	cQuery += " where USER = '" + padr(cUser,150) + "';"
+
+	dbSqlExec( cAlias, cQuery, _dbDrive )
+	dbSelectArea( cAlias )
+		lFound 	:= (cAlias)->( !eof() )
+		cID		:= (cAlias)->ID
+	(cAlias)->( dbCloseArea() )
+
+	if ( lFound )
+
+		cQuery += 'delete from ' + _AliasUSR
+		cQuery += " where ID = '" + cID + "';"
+
+		lOK := dbSqlExec( "", cQuery, _dbDrive )
+
+	else
+		lOK := .F.
+		conout('user not found')
+	endif
+
+return lOK
+
+
+//-------------------------------------------------------------------
+/*/{tlpp.doc} TlppRestUserLogin
+
+@description
+Verifica usu�rio e senha na tabela USERS para verificar se tem acesso
+
+@type    function
+
+@author  TOTVS-TEC-TLPP
+@since   06/2019
+@version 1.0
+
+@param	 character, Usu�rio
+@param	 character, Senha
+
+@return  boolean, TRUE para dados de usu�rio e senha corretos
+/*/
+//-------------------------------------------------------------------
+function TlppRestUserLogin( cUser, cPass )
+
+	local lLogon := .F.
+	local cAlias	:= ''
+	local cQuery	:= ''
+	local lFound	:= .F.
+
+	cAlias := NextAlias()
+	cQuery := "select * from " + _AliasUSR
+	cQuery += " where USER = '" + padr(cUser,150) + "';"
+
+	dbSqlExec( cAlias, cQuery, _dbDrive )
+	dbSelectArea( cAlias )
+		if ( lFound := (cAlias)->( !eof() ) )
+			cPassBD	:= (cAlias)->PASSWORD
+		endif
+	(cAlias)->( dbCloseArea() )
+
+	if ( lFound )
+		if ( !(lLogon := (cPass == WebEncript( alltrim(cPassBD), .F. ))) )
+			conout('invalid password')
+		endif
+	else
+		lLogon := .F.
+		conout('invalid user')
+	endif
+
+return lLogon
+
+
+//-------------------------------------------------------------------
+/*/{tlpp.doc} NextAlias
+
+@description
+Retorna pr�ximo nome de Alias para ser usado no acesso ao BD
+
+@type    function
+
+@author  TOTVS-TEC-TLPP
+@since   06/2019
+@version 1.0
+
+@return  charactere, Nome do aliasss
+/*/
+//-------------------------------------------------------------------
+static function NextAlias()
+	local cRet := "SCGN" + strzero(__nAlias,6,0)
+	__nAlias++
+	if ( __nAlias > 999999 )
+		__nAlias := 1
+	endif
+return cRet

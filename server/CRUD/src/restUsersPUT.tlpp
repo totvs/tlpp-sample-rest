@@ -1,0 +1,118 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+
+/*------------------------------------------------------------------
+cria um usuário novo
+Parâmetros via [raw body]
+------------------------------------------------------------------*/
+@Put("put/body/user")
+user function putBodyUser()
+    local cUser := ''
+    local cName := ''
+    local cNick := ''
+    local cPass := ''
+    local jBody := ''
+
+    jBody := JsonObject():new()
+    jBody:fromJson( oRest:GetBodyRequest() )
+
+    if ( jBody <> Nil )
+        cUser   := jBody:GetJsonText("user")
+        cName   := jBody:GetJsonText("name")
+        cNick   := jBody:GetJsonText("nick")
+        cPass   := jBody:GetjSontext("password")
+    endif
+
+return  processPutUser(cUser, cPass, cName, cNick)
+
+/*----------------------------------------------------------------
+Cria um usuário novo
+Parâmetros via [querystring]
+-----------------------------------------------------------------*/
+@Put("put/query/user")
+user function putQueryUser()
+    local cUser     := ''
+    local cPass     := ''
+    local cName     := ''
+    local cNick     := ''
+    local jQuery    := jSonObject():New()
+
+    jQuery := oRest:GetQueryRequest()
+
+    if ( jQuery <> Nil )
+        cUser   := jQuery[ 'user'       ]
+        cPass   := jQuery[ 'password'   ]
+        cName   := jQuery[ 'name'       ]
+        cNick   := jQuery[ 'nick'       ]
+    endif
+return processPutUser(cUser, cPass, cName, cNick)
+
+/*----------------------------------------------------------------
+Cria um usuário novo
+Parâmetros via [pathstring]
+----------------------------------------------------------------*/
+@Put("put/path/user/:user/:password/:name/:nick")
+user function putPathUser()
+    local cUser := ''
+    local cPass := ''
+    local cName := ''
+    local cNick := ''
+    local jPath := jSonObject():New()
+ 
+    jPath := oRest:getPathParamsRequest()
+    if ( jPath <> Nil )
+        cUser   := jPath[ 'user'      ]
+        cPass   := jPath[ 'password'  ]
+        cName   := jPath[ 'name'      ]
+        cNick   := jPath[ 'nick'      ]
+    endif
+return processPutUser(cUser, cPass, cName, cNick)
+
+/* ------------------------------------------------------------------
+-------------------------------------------------------------------*/
+static function processPutUser(cUser, cPass, cName, cNick)
+
+    local creturn   := ''
+    local lOK       := .T.
+    local cMsg      := ''
+    local nStatus   := 200
+
+    // Valida campo chave de busca
+        if ( cUser == Nil .or. empty(cUser) )
+            cUser   := ''
+            lOK     := .F.
+            nStatus := 500
+            cMsg    := 'invalid parameter: user'
+        endif
+        if ( !lOK )
+            if ( cPass == Nil .or. empty(cPass) )
+                cPass   := ''
+                lOK     := .F.
+                cMsg    += ' | password'
+            else
+                lOK     := .T.
+                nStatus := 200
+                cMsg    := ''
+            endif
+        endif
+
+    // Valida campos elegíveis para atualizaï¿½ï¿½o
+        if ( lOK )
+            if ( cName == Nil )
+                cName := ''
+            endif
+            if ( cNick == Nil )
+                cNick := ''
+            endif
+        endif
+
+    if ( lOK )
+        if ( !(lOK := TlppRestinsertUser( cUser, cPass, cName, cNick )) )
+            nStatus := 500
+            cMsg := 'could not created new user'
+        endif
+    endif
+
+    creturn := '{ "SUCESS": "' + if(lOK,'yes','no') + '", "MESSAGE": "' + cMsg + '" }'
+
+return  oRest:setResponse(nStatus,cReturn)

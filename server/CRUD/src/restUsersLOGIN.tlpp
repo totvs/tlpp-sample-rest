@@ -1,0 +1,26 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+
+/*------------------------------------------------------------------
+REST respons�vel pela valida��o de login e senha da tabela USERS
+------------------------------------------------------------------*/
+@Get("/user/login")
+user function getUniverso2019UserLogin(oRequest, oResponse)
+
+    local cUser     := ''
+    local cPass     := ''
+    local jBody     := ''
+    local lLogon    := .F.
+
+    if ( oRequest:Body <> Nil )
+        jBody := JsonObject():new()
+        jBody:fromJson( oRequest:Body )
+        
+        cUser   := jBody:GetJsonText("user")
+        cPass   := jBody:GetJsonText("password")
+    endif
+
+    lLogon := TlppRestUserLogin( cUser, cPass )
+
+    oResponse:Status = if ( lLogon, 200, 500 )
+return oResponse:send( '{"LOGON":"'+if(lLogon,'YES','NO')+'"}' )
