@@ -2,14 +2,14 @@
 
 Exemplos para prover um CRUD através do Webservice REST TL++
 
-##Resumo
+**Resumo**
 
 Para entender o funcionamento de todas as opções, iremos utilizar um exemplo muito simples de cadastro de Usuários de um Sistema.
 
 Com isso, para facilitar o entendimento, criamos um roteiro a seguir e assim, passo a passo, executaremos todas as opções desenvolvidas nesse projeto de exemplo.
 
 - - - 
-####Roteiro de teste
+***Roteiro de teste***
 
 **1 - Criar base de dados**
 
