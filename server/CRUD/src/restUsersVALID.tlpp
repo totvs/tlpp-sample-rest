@@ -1,0 +1,34 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+
+/*------------------------------------------------------------------
+REST responsável pela validação de usuário e senha da tabela USERS
+------------------------------------------------------------------*/
+@Get("sample/crud/user/valid")
+user function crudUserValid()
+
+    local cUser     := ''
+    local cPass     := ''
+    local jBody     := ''
+    local lLogon    := .F.
+    local cBody     := ''
+    local cReturn   := ''
+
+    cBody := oRest:getBodyRequest()
+    if ( cBody <> Nil )
+        jBody := JsonObject():new()
+        jBody:fromJson( cBody )
+        
+        cUser   := jBody:GetJsonText("user")
+        cPass   := jBody:GetJsonText("password")
+    endif
+
+    lLogon := sampleCRUDtlppRestUserValid( cUser, cPass )
+
+    cReturn := '{ "VALID": "' + if(lLogon,'yes','no') + '" }'
+    if ( lLogon )
+        oRest:setResponse(200, cReturn)
+    else
+        oRest:setResponse(500, cReturn)
+    endif
+return

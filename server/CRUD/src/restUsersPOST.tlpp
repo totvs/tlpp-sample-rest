@@ -5,7 +5,7 @@
 altera um usu�rio
 Par�metros via [raw body]
 ------------------------------------------------------------------*/
-@Post("post/body/user")
+@Post("sample/crud/post/body/user")
 user function postBodyUser()
     local cID   := ''
     local cUser := ''
@@ -29,7 +29,7 @@ return processPostUser(cID, cUser, cName, cNick)
 altera um usu�rio
 Par�metros via [query]
 ------------------------------------------------------------------*/
-@Post("post/query/user")
+@Post("sample/crud/post/query/user")
 user function postQueryUser()
     local cID       := ''
     local cUser     := ''
@@ -50,7 +50,7 @@ return processPostUser(cID, cUser, cName, cNick)
 altera um usu�rio
 Par�metros via [pathstring]
 ------------------------------------------------------------------*/
-@Post("post/path/user/:user/:name/:nick")
+@Post("sample/crud/post/path/user/:user/:name/:nick")
 user function postPathUser()
     local cID   := ''
     local cUser := ''
@@ -111,9 +111,9 @@ static function processPostUser(cID, cUser, cName, cNick)
 
     if ( lOK )
         if ( cID <> Nil .and. !empty(cID) )
-            lOK := TlppRestalteraUserByID( cID, cName, cNick )
+            lOK := sampleCRUDtlppRestalteraUserByID( cID, cName, cNick )
         else
-            lOK := TlppRestalteraUserByUser( cUser, cName, cNick )
+            lOK := sampleCRUDtlppRestalteraUserByUser( cUser, cName, cNick )
         endif
         if ( !lOK )
             nStatus := 500

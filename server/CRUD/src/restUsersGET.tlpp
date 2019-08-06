@@ -5,7 +5,7 @@
 Retorna dados de um usu�rio existente
 Par�metros via [querystring]
 ------------------------------------------------------------------*/
-@Get("get/query/user")
+@Get("sample/crud/get/query/user")
 user function getQueryUser()
     local cUser     := ''
     local jQuery    := jsonObject():New()
@@ -25,7 +25,7 @@ Retorna dados de um usu�rio existente
 Par�metros via [pathstring]
 ------------------------------------------------------------------
 */
-@Get("get/path/user/:user")
+@Get("sample/crud/get/path/user/:user")
 user function getPathUser()
     local cUser := ''
     local jPath := jsonObject():New()
@@ -57,7 +57,7 @@ static function processGetUser(cUser)
         endif
 
     if ( lOK )
-        aUser := TlppRestgetUser( cUser )
+        aUser := sampleCRUDtlppRestgetUser( cUser )
 
         if ( len(aUser) == 4 )
             lOK  := .T.

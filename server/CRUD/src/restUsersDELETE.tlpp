@@ -6,7 +6,7 @@ deleta um usuï¿½rio
 Parï¿½metros via [raw body]
 ------------------------------------------------------------------*/
 
-@Delete("delete/body/user")
+@Delete("sample/crud/delete/body/user")
 user function deleteBodyUser()
     local cID   := ''
     local cUser := ''
@@ -18,10 +18,7 @@ user function deleteBodyUser()
     jBody:fromJson( oRest:GetBodyRequest() )
 
     if ( jBody <> Nil )
-        cID     := jBody:GetJsonText("id"  )
         cUser   := jBody:GetJsonText("user")
-        cName   := jBody:GetJsonText("name")
-        cNick   := jBody:GetJsonText("nick")
     endif
 
 return processDeleteUser(cUser)
@@ -30,7 +27,7 @@ return processDeleteUser(cUser)
 deleta um usuário
 Parãmetros via [querystring]
 ----------------------------------------------------------------*/
-@Delete("delete/query/user")
+@Delete("sample/crud/delete/query/user")
 user function deleteQueryUser()
     local cUser     := ''
     local jQuery    := jsonObject():New() 
@@ -48,7 +45,7 @@ deleta um usuário
 Parâmetros via [pathstring]
 ------------------------------------------------------------------
 */
-@Delete("delete/path/user/:user")
+@Delete("sample/crud/delete/path/user/:user")
 user function deletePathUser()
     local cUser := ''
     local jPath := jsonObject():New()
@@ -79,7 +76,7 @@ static function processDeleteUser(cUser)
         endif
 
     if ( lOK )
-        if ( !(lOK := TlppRestdeleteUser( cUser )) )
+        if ( !(lOK := sampleCRUDtlppRestdeleteUser( cUser )) )
             cMsg := 'could not deleted'
         endif
     endif

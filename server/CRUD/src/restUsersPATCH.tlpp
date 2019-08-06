@@ -20,7 +20,7 @@ REST altera um usu�rio com par�metros via [raw body]
 @return  character, String em formato JSON com resposta ao Client
 /*/
 //-------------------------------------------------------------------
-@Patch("patch/body/user")
+@Patch("sample/crud/patch/body/user")
 user function bodyPatchUser()
     local cID   := ''
     local cUser := ''
@@ -40,7 +40,7 @@ user function bodyPatchUser()
         cNick   := jBody:GetJsonText("nick")
     endif
 return processPatchUser(cID, cUser, cPass, cName, cNick)
-       
+
 //-------------------------------------------------------------------
 /*/{tlpp.doc} pathPatchUser
 
@@ -60,7 +60,7 @@ REST altera um usu�rio com par�metros via [pathstring]
 @return  character, String em formato JSON com resposta ao Client
 /*/
 //-------------------------------------------------------------------
-@Patch("patch/path/user/:user/:pass/:name/:nick")
+@Patch("sample/crud/patch/path/user/:user/:pass/:name/:nick")
 user function patchPathUser()
     local cID   := ''
     local cUser := ''
@@ -159,9 +159,9 @@ static function processPatchUser(cID, cUser, cPass, cName, cNick)
 
     if ( lOK )
         if ( cID <> Nil .and. !empty(cID) )
-            lOk := TlppRestinsertUser( cUser, cPass, cName, cNick )
+            lOk := sampleCRUDtlppRestinsertUser( cUser, cPass, cName, cNick )
         else
-            lOk := TlppRestinsertUser( cUser, cPass, cName, cNick )
+            lOk := sampleCRUDtlppRestinsertUser( cUser, cPass, cName, cNick )
         endif
         if ( !lOK )
             cMsg := 'could not create record'

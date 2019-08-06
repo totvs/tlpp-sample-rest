@@ -5,7 +5,7 @@
 cria um usuário novo
 Parâmetros via [raw body]
 ------------------------------------------------------------------*/
-@Put("put/body/user")
+@Put("sample/crud/put/body/user")
 user function putBodyUser()
     local cUser := ''
     local cName := ''
@@ -29,7 +29,7 @@ return  processPutUser(cUser, cPass, cName, cNick)
 Cria um usuário novo
 Parâmetros via [querystring]
 -----------------------------------------------------------------*/
-@Put("put/query/user")
+@Put("sample/crud/put/query/user")
 user function putQueryUser()
     local cUser     := ''
     local cPass     := ''
@@ -51,7 +51,7 @@ return processPutUser(cUser, cPass, cName, cNick)
 Cria um usuário novo
 Parâmetros via [pathstring]
 ----------------------------------------------------------------*/
-@Put("put/path/user/:user/:password/:name/:nick")
+@Put("sample/crud/put/path/user/:user/:password/:name/:nick")
 user function putPathUser()
     local cUser := ''
     local cPass := ''
@@ -107,7 +107,7 @@ static function processPutUser(cUser, cPass, cName, cNick)
         endif
 
     if ( lOK )
-        if ( !(lOK := TlppRestinsertUser( cUser, cPass, cName, cNick )) )
+        if ( !(lOK := sampleCRUDtlppRestinsertUser( cUser, cPass, cName, cNick )) )
             nStatus := 500
             cMsg := 'could not created new user'
         endif

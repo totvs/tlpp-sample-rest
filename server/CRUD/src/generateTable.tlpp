@@ -7,7 +7,7 @@ static __nAlias  := 1
 
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} TlppRestgenerateTables
+/*/{tlpp.doc} sampleCRUDtlppRestgenerateTables
 
 @description
 Main function para gerar base e popular tabela de usu�rios para exerc�cio
@@ -22,7 +22,7 @@ utilizado no Workshop
 @return  Nil
 /*/
 //-------------------------------------------------------------------
-main function TlppRestgenerateTables()
+main function sampleCRUDtlppRestgenerateTables()
 
 	local aDbTbl 		:= {}
 	local cAliasTbl		:= ''
@@ -125,7 +125,7 @@ return
 
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} TlppRestalteraUserByID
+/*/{tlpp.doc} sampleCRUDtlppRestalteraUserByID
 
 @description
 Altera um usu�rio com base no ID
@@ -143,12 +143,12 @@ Altera um usu�rio com base no ID
 @return  boolean, TRUE para a��o com sucesso
 /*/
 //-------------------------------------------------------------------
-function TlppRestalteraUserByID( cID, cName, cNick )
-	lOK := TlppRestalteraUser( .T., cID, cName, cNick )
+function sampleCRUDtlppRestalteraUserByID( cID, cName, cNick )
+	lOK := sampleCRUDtlppRestalteraUser( .T., cID, cName, cNick )
 return lOK
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} TlppRestalteraUserByUser
+/*/{tlpp.doc} sampleCRUDtlppRestalteraUserByUser
 
 @description
 Altera um usu�rio com base no Usu�rio
@@ -166,12 +166,12 @@ Altera um usu�rio com base no Usu�rio
 @return  boolean, TRUE para a��o com sucesso
 /*/
 //-------------------------------------------------------------------
-function TlppRestalteraUserByUser( cUser, cName, cNick )
-	lOK := TlppRestalteraUser( .F., cUser, cName, cNick )
+function sampleCRUDtlppRestalteraUserByUser( cUser, cName, cNick )
+	lOK := sampleCRUDtlppRestalteraUser( .F., cUser, cName, cNick )
 return lOK
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} TlppRestalteraUser
+/*/{tlpp.doc} sampleCRUDtlppRestalteraUser
 
 @description
 Altera um usu�rio
@@ -190,7 +190,7 @@ Altera um usu�rio
 @return  boolean, TRUE para a��o com sucesso
 /*/
 //-------------------------------------------------------------------
-static function TlppRestalteraUser( lID, cKey, cName, cNick )
+static function sampleCRUDtlppRestalteraUser( lID, cKey, cName, cNick )
 	local lOK		:= .F.
 	local cQuery	:= ''
 	local lParam	:= .F.
@@ -226,7 +226,7 @@ return lOK
 
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} TlppRestinsertUser
+/*/{tlpp.doc} sampleCRUDtlppRestinsertUser
 
 @description
 Insere um usu�rio na BD
@@ -245,7 +245,7 @@ Insere um usu�rio na BD
 @return  boolean, TRUE para ação com sucesso
 /*/
 //-------------------------------------------------------------------
-function TlppRestinsertUser( cUser, cPass, cName, cNick )	
+function sampleCRUDtlppRestinsertUser( cUser, cPass, cName, cNick )	
 	local lOK 		:= .F.
 	local cAlias	:= ''
 	local cQuery	:= ''
@@ -298,7 +298,7 @@ return  lOK
 
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} TlppRestgetUser
+/*/{tlpp.doc} sampleCRUDtlppRestgetUser
 
 @description
 Retorna dados de um usu�rio
@@ -314,7 +314,7 @@ Retorna dados de um usu�rio
 @return  array, Dados do usu�rio
 /*/
 //-------------------------------------------------------------------
-function TlppRestgetUser( cUser )
+function sampleCRUDtlppRestgetUser( cUser )
 
 	local aUser		:= {}
 	local cAlias	:= ''
@@ -339,7 +339,7 @@ return aUser
 
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} TlppRestdeleteUser
+/*/{tlpp.doc} sampleCRUDtlppRestdeleteUser
 
 @description
 Deleta usu�rio da base de dados
@@ -355,7 +355,7 @@ Deleta usu�rio da base de dados
 @return  boolean, TRUE para a��o com sucesso
 /*/
 //-------------------------------------------------------------------
-function TlppRestdeleteUser( cUser )
+function sampleCRUDtlppRestdeleteUser( cUser )
 
 	local lOK 		:= .F.
 	local cAlias	:= ''
@@ -389,10 +389,10 @@ return lOK
 
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} TlppRestUserLogin
+/*/{tlpp.doc} sampleCRUDtlppRestUserLogin
 
 @description
-Verifica usu�rio e senha na tabela USERS para verificar se tem acesso
+Verifica usu�rio e senha na tabela USERS para verificar se tem acesso
 
 @type    function
 
@@ -406,7 +406,7 @@ Verifica usu�rio e senha na tabela USERS para verificar se tem acesso
 @return  boolean, TRUE para dados de usu�rio e senha corretos
 /*/
 //-------------------------------------------------------------------
-function TlppRestUserLogin( cUser, cPass )
+function sampleCRUDtlppRestUserValid( cUser, cPass )
 
 	local lLogon := .F.
 	local cAlias	:= ''
@@ -440,7 +440,7 @@ return lLogon
 /*/{tlpp.doc} NextAlias
 
 @description
-Retorna pr�ximo nome de Alias para ser usado no acesso ao BD
+Retorna proximo nome de Alias para ser usado no acesso ao BD
 
 @type    function
 
