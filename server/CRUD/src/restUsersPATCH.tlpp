@@ -6,7 +6,7 @@
 /*/{tlpp.doc} bodyPatchUser
 
 @description
-REST altera um usuï¿½rio com parï¿½metros via [raw body]
+REST altera um usuário com paramêtros via [raw body]
 
 @type    REST
 @method  patch
@@ -27,7 +27,6 @@ user function bodyPatchUser()
     local cName := ''
     local cNick := ''
     local jBody := ''
-    Local cPass := ''
 
     jBody := JsonObject():new()
     jBody:fromJson( oRest:getBodyRequest() )
@@ -35,17 +34,16 @@ user function bodyPatchUser()
     if ( jBody <> Nil )
         cID     := jBody:GetJsonText("id"  )
         cUser   := jBody:GetJsonText("user")
-        cPass   := jBody:GetJsonText("pass")
         cName   := jBody:GetJsonText("name")
         cNick   := jBody:GetJsonText("nick")
     endif
-return processPatchUser(cID, cUser, cPass, cName, cNick)
+return processPatchUser(cID, cUser, cName, cNick)
 
 //-------------------------------------------------------------------
 /*/{tlpp.doc} pathPatchUser
 
 @description
-REST altera um usuï¿½rio com parï¿½metros via [pathstring]
+REST altera um usuário com parâmetros via [pathstring]
 
 @type    REST
 @method  patch
@@ -60,30 +58,28 @@ REST altera um usuï¿½rio com parï¿½metros via [pathstring]
 @return  character, String em formato JSON com resposta ao Client
 /*/
 //-------------------------------------------------------------------
-@Patch("sample/crud/patch/path/user/:user/:pass/:name/:nick")
+@Patch("sample/crud/patch/path/user/:user/:name/:nick")
 user function patchPathUser()
     local cID   := ''
     local cUser := ''
     local cName := ''
     local cNick := ''
-    local cPass := ''
     Local jPath := JsonObject():New()
 
     jPath := oRest:getPathParamsRequest()
     if (jPath <> Nil)
         cUser       := jPath[ 'user'   ]
-        cPass       := jPath[ 'pass'   ]
         cName       := jPath[ 'name'   ]
         cNick       := jPath[ 'nick'   ]
     endif
-return processPatchUser(cID, cUser, cPass, cName, cNick)
+return processPatchUser(cID, cUser, cName, cNick)
 
 //-------------------------------------------------------------------
 /*/{tlpp.doc} processPatchUser
 
 @description
-Funï¿½ï¿½o central chamada pelos modos diferentes de receber parï¿½metro do REST
-e faz a chamada da funï¿½ï¿½o que de fato irï¿½ alterar um usuï¿½rio na BD
+Função central chamada pelos modos diferentes de receber parâmetro do REST
+e faz a chamada da função que de fato irá alterar um usuário na BD
 
 @type    function
 
@@ -93,57 +89,34 @@ e faz a chamada da funï¿½ï¿½o que de fato irï¿½ alterar um usuï¿½rio na BD
 
 @param	 object   , oRest     , Objeto contendo dados REST
 @param	 character, cID       , ID
-@param	 character, cUser     , Usuï¿½rio que deverï¿½ ser excluï¿½do da BD
-@param   character, cPass     , Senha do usuï¿½rio
+@param	 character, cUser     , Usuário do sistema
+@param   character, cPass     , Senha do usuario
 @param	 character, cName     , Nome
 @param	 character, cNick     , Apelido
 
 @return  character, String em formato JSON com resposta ao Client
 /*/
 //-------------------------------------------------------------------
-static function processPatchUser(cID, cUser, cPass, cName, cNick)
+static function processPatchUser(cID, cUser, cName, cNick)
     local creturn   := ''
     local lOK       := .T.
     local cMsg      := ''
 
-    // Valida campo chave de busca
-        if ( cID == Nil .or. empty(cID) )
-            cID     := ''
+    // Valida campos chaves de busca
+        if  (                                            ;
+                ( cID   == Nil .or. empty(cID  ) ) .and. ;
+                ( cUser == Nil .or. empty(cUser) )       ;
+            )
+        
             lOK     := .F.
-            cMsg    := 'invalid parameter: id'
-        endif
-        if ( !lOK )
-            if ( cUser == Nil .or. empty(cUser) )
-                cUser   := ''
-                lOK     := .F.
-                cMsg    += ' | user'
-            else
-                lOK     := .T.
-                cMsg    := ''
-            endif
-        endif
-        if ( !lOK )
-            if ( cPass == Nil .or. empty(cPass) )
-                cPass   := ''
-                lOK     := .F.
-                cMsg    += ' | pass'
-            else
-                lOK     := .T.
-                cMsg    := ''
-            endif
-        endif
-        if ( !lOK )
-            if ( cName == Nil .or. empty(cName) )
-                cName   := ''
-                lOK     := .F.
-                cMsg    += ' | name'
-            else
-                lOK     := .T.
-                cMsg    := ''
-            endif
+            cMsg    := 'invalid parameter: id and user'
+        
+        else
+            lOK     := .T.
+            cMsg    := ''
         endif
 
-    // Valida campos elegï¿½veis para atualizaï¿½ï¿½o
+    // Valida campos elegíveis para atualização
         if ( lOK )
             if ( cName == Nil )
                 cName := ''
@@ -159,14 +132,14 @@ static function processPatchUser(cID, cUser, cPass, cName, cNick)
 
     if ( lOK )
         if ( cID <> Nil .and. !empty(cID) )
-            lOk := sampleCRUDtlppRestinsertUser( cUser, cPass, cName, cNick )
+            lOK := sampleCRUDtlppRestalteraUserByID( cID, cName, cNick )
         else
-            lOk := sampleCRUDtlppRestinsertUser( cUser, cPass, cName, cNick )
+            lOK := sampleCRUDtlppRestalteraUserByUser( cUser, cName, cNick )
         endif
         if ( !lOK )
-            cMsg := 'could not create record'
+            cMsg := 'update not executed'
         else
-            cMsg := "successfully created record"
+            cMsg := "successfully update record"
         endif
     endif
 

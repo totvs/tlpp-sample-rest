@@ -53,7 +53,17 @@ Escolha uma das opções abaixo:
 
     c - http://127.0.0.1:9080/sample/crud/post/path/user/ana/Ana%20Julia/aninha
 
-**5 - Exclui usuário (DELETE)**
+**5 - Altera usuário (PATCH)**
+
+Escolha uma das opções abaixo:
+
+	a - http://127.0.0.1:9080/sample/crud/patch/body/user
+        com
+        {"user":"jose","nick":"zezinho","name":"Josival"}
+
+	b - http://127.0.0.1:9080/sample/crud/patch/path/user/jose/Josival/zezinho
+
+**6 - Exclui usuário (DELETE)**
 
 Escolha uma das opções abaixo:
 
@@ -65,7 +75,7 @@ Escolha uma das opções abaixo:
 
     c - http://127.0.0.1:9080/sample/crud/delete/path/user/ana
 
-**6 - Bônus - validação de usuário e senha**
+**7 - Bônus - validação de usuário e senha**
 
 	http://127.0.0.1:9080/sample/crud/user/valid
 	{"user":"jose","password":"senha@123"}
