@@ -10,8 +10,8 @@ static __nAlias  := 1
 /*/{tlpp.doc} sampleCRUDtlppRestgenerateTables
 
 @description
-Main function para gerar base e popular tabela de usuï¿½rios para exercï¿½cio
-utilizado no Workshop
+Main function para gerar base e popular tabela de usuários para exemplos
+utilizados nesse exemplo de uso do REST
 
 @type    function
 
@@ -71,7 +71,7 @@ return
 /*/{tlpp.doc} initUsers
 
 @description
-popula tabela de usuï¿½rios
+popula tabela de usuários
 
 @type    function
 
@@ -128,7 +128,7 @@ return
 /*/{tlpp.doc} sampleCRUDtlppRestalteraUserByID
 
 @description
-Altera um usuï¿½rio com base no ID
+Altera um usuário com base no ID
 
 @type    function
 
@@ -140,7 +140,7 @@ Altera um usuï¿½rio com base no ID
 @param	 character, Nome
 @param	 character, Apelido
 
-@return  boolean, TRUE para aï¿½ï¿½o com sucesso
+@return  boolean, TRUE para ação com sucesso
 /*/
 //-------------------------------------------------------------------
 function sampleCRUDtlppRestalteraUserByID( cID, cName, cNick )
@@ -151,7 +151,7 @@ return lOK
 /*/{tlpp.doc} sampleCRUDtlppRestalteraUserByUser
 
 @description
-Altera um usuï¿½rio com base no Usuï¿½rio
+Altera um usuário com base no usuário
 
 @type    function
 
@@ -159,11 +159,11 @@ Altera um usuï¿½rio com base no Usuï¿½rio
 @since   06/2019
 @version 1.0
 
-@param	 character, Usuï¿½rio
+@param	 character, usuário
 @param	 character, Nome
 @param	 character, Apelido
 
-@return  boolean, TRUE para aï¿½ï¿½o com sucesso
+@return  boolean, TRUE para ação com sucesso
 /*/
 //-------------------------------------------------------------------
 function sampleCRUDtlppRestalteraUserByUser( cUser, cName, cNick )
@@ -174,7 +174,7 @@ return lOK
 /*/{tlpp.doc} sampleCRUDtlppRestalteraUser
 
 @description
-Altera um usuï¿½rio
+Altera um usuário
 
 @type    function
 
@@ -182,12 +182,12 @@ Altera um usuï¿½rio
 @since   06/2019
 @version 1.0
 
-@param	 boolean  , TRUE indica que Key ï¿½ valor do ID, FALSE se refere ao usuï¿½rio
+@param	 boolean  , TRUE indica que Key é valor do ID, FALSE se refere ao usuário
 @param	 character, Key
 @param	 character, Nome
 @param	 character, Apelido
 
-@return  boolean, TRUE para aï¿½ï¿½o com sucesso
+@return  boolean, TRUE para ação com sucesso
 /*/
 //-------------------------------------------------------------------
 static function sampleCRUDtlppRestalteraUser( lID, cKey, cName, cNick )
@@ -229,7 +229,7 @@ return lOK
 /*/{tlpp.doc} sampleCRUDtlppRestinsertUser
 
 @description
-Insere um usuï¿½rio na BD
+Insere um usuário na BD
 
 @type    function
 
@@ -237,12 +237,12 @@ Insere um usuï¿½rio na BD
 @since   06/2019
 @version 1.0
 
-@param	 character, UsuÃ¡rio
+@param	 character, Usuário
 @param	 character, Senha
 @param	 character, Nome
 @param	 character, Apelido
 
-@return  boolean, TRUE para aÃ§Ã£o com sucesso
+@return  boolean, TRUE para ação com sucesso
 /*/
 //-------------------------------------------------------------------
 function sampleCRUDtlppRestinsertUser( cUser, cPass, cName, cNick )	
@@ -256,8 +256,6 @@ function sampleCRUDtlppRestinsertUser( cUser, cPass, cName, cNick )
 	cAlias := NextAlias()
 	cQuery := "select * from " + _AliasUSR
 	cQuery += " where USER = '" + padr(cUser,150) + "';"
-	conout(cAlias)
-	conout(cQuery)
 	dbSqlExec( cAlias, cQuery, _dbDrive )
 	dbSelectArea( cAlias )
 		lFound := (cAlias)->( !eof() )
@@ -301,7 +299,7 @@ return  lOK
 /*/{tlpp.doc} sampleCRUDtlppRestgetUser
 
 @description
-Retorna dados de um usuï¿½rio
+Retorna dados de um usuário
 
 @type    function
 
@@ -309,9 +307,9 @@ Retorna dados de um usuï¿½rio
 @since   06/2019
 @version 1.0
 
-@param	 character, Usuï¿½rio
+@param	 character, usuário
 
-@return  array, Dados do usuï¿½rio
+@return  array, Dados do usuário
 /*/
 //-------------------------------------------------------------------
 function sampleCRUDtlppRestgetUser( cUser )
@@ -342,7 +340,7 @@ return aUser
 /*/{tlpp.doc} sampleCRUDtlppRestdeleteUser
 
 @description
-Deleta usuï¿½rio da base de dados
+Deleta usuário da base de dados
 
 @type    function
 
@@ -350,9 +348,9 @@ Deleta usuï¿½rio da base de dados
 @since   06/2019
 @version 1.0
 
-@param	 character, Usuï¿½rio
+@param	 character, usuário
 
-@return  boolean, TRUE para aï¿½ï¿½o com sucesso
+@return  boolean, TRUE para ação com sucesso
 /*/
 //-------------------------------------------------------------------
 function sampleCRUDtlppRestdeleteUser( cUser )
@@ -400,10 +398,10 @@ Verifica usuário e senha na tabela USERS para verificar se tem acesso
 @since   06/2019
 @version 1.0
 
-@param	 character, Usuï¿½rio
+@param	 character, usuário
 @param	 character, Senha
 
-@return  boolean, TRUE para dados de usuï¿½rio e senha corretos
+@return  boolean, TRUE para dados de usuário e senha corretos
 /*/
 //-------------------------------------------------------------------
 function sampleCRUDtlppRestUserValid( cUser, cPass )
@@ -440,7 +438,7 @@ return lLogon
 /*/{tlpp.doc} NextAlias
 
 @description
-Retorna proximo nome de Alias para ser usado no acesso ao BD
+Retorna próximo nome de Alias para ser usado no acesso ao BD
 
 @type    function
 
@@ -448,7 +446,7 @@ Retorna proximo nome de Alias para ser usado no acesso ao BD
 @since   06/2019
 @version 1.0
 
-@return  charactere, Nome do aliasss
+@return  charactere, Nome do alias
 /*/
 //-------------------------------------------------------------------
 static function NextAlias()

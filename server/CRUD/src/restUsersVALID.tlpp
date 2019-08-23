@@ -18,7 +18,7 @@ user function crudUserValid()
     if ( cBody <> Nil )
         jBody := JsonObject():new()
         jBody:fromJson( cBody )
-        
+
         cUser   := jBody:GetJsonText("user")
         cPass   := jBody:GetJsonText("password")
     endif
@@ -27,8 +27,8 @@ user function crudUserValid()
 
     cReturn := '{ "VALID": "' + if(lLogon,'yes','no') + '" }'
     if ( lLogon )
-        oRest:setResponse(200, cReturn)
+        oRest:setResponse( cReturn)
     else
-        oRest:setResponse(500, cReturn)
+        oRest:setFault( cReturn )
     endif
 return

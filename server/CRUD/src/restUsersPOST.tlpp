@@ -2,8 +2,8 @@
 #include "tlpp-rest.th"
 
 /*------------------------------------------------------------------
-altera um usuï¿½rio
-Parï¿½metros via [raw body]
+altera um usuário
+Parâmetros via [raw body]
 ------------------------------------------------------------------*/
 @Post("sample/crud/post/body/user")
 user function postBodyUser()
@@ -26,8 +26,8 @@ user function postBodyUser()
 return processPostUser(cID, cUser, cName, cNick)
 
 /*------------------------------------------------------------------
-altera um usuï¿½rio
-Parï¿½metros via [query]
+altera um usuário
+Parâmetros via [query]
 ------------------------------------------------------------------*/
 @Post("sample/crud/post/query/user")
 user function postQueryUser()
@@ -47,8 +47,8 @@ user function postQueryUser()
 return processPostUser(cID, cUser, cName, cNick)
 
 /*-----------------------------------------------------------------
-altera um usuï¿½rio
-Parï¿½metros via [pathstring]
+altera um usuário
+Parâmetros via [pathstring]
 ------------------------------------------------------------------*/
 @Post("sample/crud/post/path/user/:user/:name/:nick")
 user function postPathUser()
@@ -73,13 +73,11 @@ static function processPostUser(cID, cUser, cName, cNick)
     local creturn   := ''
     local lOK       := .T.
     local cMsg      := ''
-    local nStatus   := 200
 
     // Valida campo chave de busca
         if ( cID == Nil .or. empty(cID) )
             cID     := ''
             lOK     := .F.
-            nStatus := 500
             cMsg    := 'invalid parameter: id'
         endif
         if ( !lOK )
@@ -89,12 +87,11 @@ static function processPostUser(cID, cUser, cName, cNick)
                 cMsg    += ' | user'
             else
                 lOK     := .T.
-                nStatus := 200
                 cMsg    := ''
             endif
         endif
 
-    // Valida campos elegï¿½veis para atualizaï¿½ï¿½o
+    // Valida campos elegíveis para atualização
         if ( lOK )
             if ( cName == Nil )
                 cName := ''
@@ -104,7 +101,6 @@ static function processPostUser(cID, cUser, cName, cNick)
             endif
             if ( empty(cName) .and. empty(cNick) )
                 lOK   := .F.
-                nStatus := 500
                 cMsg  := 'no data were reported for change'
             endif
         endif
@@ -116,11 +112,12 @@ static function processPostUser(cID, cUser, cName, cNick)
             lOK := sampleCRUDtlppRestalteraUserByUser( cUser, cName, cNick )
         endif
         if ( !lOK )
-            nStatus := 500
-            cMsg := 'update not executed !' 
+            cMsg := 'update not executed !'
+        else
+            cMsg := 'successfully updated !' 
         endif
     endif
 
     creturn := '{ "SUCESS": "' + if(lOK,'yes','no') + '", "MESSAGE": "' + cMsg + '" }'
-        
-return oRest:setResponse(nStatus,cReturn )
+
+return oRest:setResponse( cReturn )

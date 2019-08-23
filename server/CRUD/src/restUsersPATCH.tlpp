@@ -16,7 +16,6 @@ REST altera um usuário com paramêtros via [raw body]
 @since   06/2019
 @version 1.0
 
-@param	 object   , oRest  , Objeto contendo a classe de REST
 @return  character, String em formato JSON com resposta ao Client
 /*/
 //-------------------------------------------------------------------
@@ -53,8 +52,6 @@ REST altera um usuário com parâmetros via [pathstring]
 @since   06/2019
 @version 1.0
 
-@param	 object   , oRest  , Objeto contendo dados REST
-
 @return  character, String em formato JSON com resposta ao Client
 /*/
 //-------------------------------------------------------------------
@@ -87,10 +84,8 @@ e faz a chamada da função que de fato irá alterar um usuário na BD
 @since   06/2019
 @version 1.0
 
-@param	 object   , oRest     , Objeto contendo dados REST
 @param	 character, cID       , ID
 @param	 character, cUser     , Usuário do sistema
-@param   character, cPass     , Senha do usuario
 @param	 character, cName     , Nome
 @param	 character, cNick     , Apelido
 
@@ -145,9 +140,5 @@ static function processPatchUser(cID, cUser, cName, cNick)
 
     creturn := '{ "SUCESS": "' + if(lOK,'yes','no') + '", "MESSAGE": "' + cMsg + '" }'
 
-    if ( lOK )
-        oRest:setResponse(200, cReturn)
-    else
-        oRest:setResponse(500, cReturn)
-    endif
+    oRest:setResponse( cReturn )
 Return
