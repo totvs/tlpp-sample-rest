@@ -1,0 +1,148 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+
+
+@Get("/sampleMigrateRestTlpp")
+user function GETsampleMigrateRestTlpp()
+
+    local cId   := ''
+    local cData := ''
+    local jPath
+
+    jPath := oRest:getQueryRequest()
+    if ( jPath <> Nil )
+        cId := jPath[ 'id' ]
+        if ( valtype(cId) == 'U' )
+            cId := ''
+        endif
+    endif
+
+    cData := '{ "METHOD" : "GET" ,"id" : "' + cId + '" }'
+
+return oRest:setResponse( cData )
+
+
+
+@Post("/sampleMigrateRestTlpp/:id")
+user function PostsampleMigrateRestTlpp()
+
+    local cId   := ''
+    local cData := ''
+    local jPath
+    local jBody
+
+    jPath := oRest:getPathParamsRequest()
+    if ( jPath <> Nil )
+        cId := jPath[ 'id' ]
+        if ( valtype(cId) == 'U' )
+            cId := ''
+        endif
+    endif
+
+    cData := '{ "METHOD" : "POST" , "id" : "' + cId + '" '
+
+    jBody := JsonObject():new()
+    jBody:fromJson( oRest:GetBodyRequest() )
+    if ( jBody <> Nil )
+        if ( !empty(jBody:GetJsonText("cpo1")) )
+            cData += ', "cpo1" : "' + jBody:GetJsonText("cpo1") + '" '
+        endif
+        if ( !empty(jBody:GetJsonText("cpo2")) )
+            cData += ', "cpo2" : "' + jBody:GetJsonText("cpo2") + '" '
+        endif
+    endif
+
+    cData += '}'
+
+return oRest:setResponse( cData )
+
+
+
+@Put("/sampleMigrateRestTlpp/:id")
+user function PutsampleMigrateRestTlpp()
+
+    local cId   := ''
+    local cData := ''
+    local jPath
+    local jBody
+
+    jPath := oRest:getPathParamsRequest()
+    if ( jPath <> Nil )
+        cId := jPath[ 'id' ]
+        if ( valtype(cId) == 'U' )
+            cId := ''
+        endif
+    endif
+
+    cData := '{ "METHOD" : "POST" , "id" : "' + cId + '" '
+
+    jBody := JsonObject():new()
+    jBody:fromJson( oRest:GetBodyRequest() )
+    if ( jBody <> Nil )
+        if ( !empty(jBody:GetJsonText("cpo1")) )
+            cData += ', "cpo1" : "' + jBody:GetJsonText("cpo1") + '" '
+        endif
+        if ( !empty(jBody:GetJsonText("cpo2")) )
+            cData += ', "cpo2" : "' + jBody:GetJsonText("cpo2") + '" '
+        endif
+    endif
+
+    cData += '}'
+
+return oRest:setResponse( cData )
+
+
+
+@Patch("/sampleMigrateRestTlpp/:id")
+user function PatchsampleMigrateRestTlpp()
+
+    local cId   := ''
+    local cData := ''
+    local jPath
+    local jBody
+
+    jPath := oRest:getPathParamsRequest()
+    if ( jPath <> Nil )
+        cId := jPath[ 'id' ]
+        if ( valtype(cId) == 'U' )
+            cId := ''
+        endif
+    endif
+
+    cData := '{ "METHOD" : "PATCH" , "id" : "' + cId + '" '
+
+    jBody := JsonObject():new()
+    jBody:fromJson( oRest:GetBodyRequest() )
+    if ( jBody <> Nil )
+        if ( !empty(jBody:GetJsonText("cpo1")) )
+            cData += ', "cpo1" : "' + jBody:GetJsonText("cpo1") + '" '
+        endif
+        if ( !empty(jBody:GetJsonText("cpo2")) )
+            cData += ', "cpo2" : "' + jBody:GetJsonText("cpo2") + '" '
+        endif
+    endif
+
+    cData += '}'
+
+return oRest:setResponse( cData )
+
+
+
+@Delete("/sampleMigrateRestTlpp/:id")
+user function DeletesampleMigrateRestTlpp()
+
+    local cId   := ''
+    local cData := ''
+    local jPath
+
+    jPath := oRest:getPathParamsRequest()
+    if ( jPath <> Nil )
+        cId := jPath[ 'id' ]
+        if ( valtype(cId) == 'U' )
+            cId := ''
+        endif
+    endif
+
+    cData := '{ "METHOD" : "DELETE" , "id" : "' + cId + '" ' + '}'
+
+return oRest:setResponse( cData )
