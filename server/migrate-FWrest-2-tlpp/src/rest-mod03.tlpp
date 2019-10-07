@@ -1,0 +1,156 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+
+class sampleMigrateRestTlppClass from LongclassName 
+
+    private data cId
+    private data cData
+    private data jPath
+    private data jBody
+
+    public method New()
+
+    @Get("/sampleMigrateRestTlppClass")
+    public method GETsampleMigrateRestTlppClass()
+
+    @Post("/sampleMigrateRestTlppClass/:id")
+    public method PostsampleMigrateRestTlppClass()
+
+    @Put("/sampleMigrateRestTlppClass/:id")
+    public method PutsampleMigrateRestTlppClass()
+
+    @Patch("/sampleMigrateRestTlppClass/:id")
+    public method PatchsampleMigrateRestTlppClass()
+
+    @Delete("/sampleMigrateRestTlppClass/:id")
+    public method DeletesampleMigrateRestTlppClass()
+
+endclass
+
+
+
+method new() class sampleMigrateRestTlppClass
+    ::cId   := ''
+    ::cData := ''
+    ::jPath := Nil
+    ::jBody := Nil
+return Self
+
+
+
+method GETsampleMigrateRestTlppClass() class sampleMigrateRestTlppClass
+
+    ::jPath := oRest:getQueryRequest()
+    if ( ::jPath <> Nil )
+        ::cId := ::jPath[ 'id' ]
+        if ( valtype(::cId) == 'U' )
+            ::cId := ''
+        endif
+    endif
+
+    ::cData := '{ "method" : "GET" ,"id" : "' + ::cId + '" }'
+
+return oRest:setResponse( ::cData )
+
+
+
+method PostsampleMigrateRestTlppClass() class sampleMigrateRestTlppClass
+
+    ::jPath := oRest:getPathParamsRequest()
+    if ( ::jPath <> Nil )
+        ::cId := ::jPath[ 'id' ]
+        if ( valtype(::cId) == 'U' )
+            ::cId := ''
+        endif
+    endif
+
+    ::cData := '{ "method" : "POST" , "id" : "' + ::cId + '" '
+
+    ::jBody := JsonObject():new()
+    ::jBody:fromJson( oRest:GetBodyRequest() )
+    if ( ::jBody <> Nil )
+        if ( !empty(::jBody:GetJsonText("cpo1")) )
+            ::cData += ', "cpo1" : "' + ::jBody:GetJsonText("cpo1") + '" '
+        endif
+        if ( !empty(::jBody:GetJsonText("cpo2")) )
+            ::cData += ', "cpo2" : "' + ::jBody:GetJsonText("cpo2") + '" '
+        endif
+    endif
+
+    ::cData += '}'
+
+return oRest:setResponse( ::cData )
+
+
+
+method PutsampleMigrateRestTlppClass() class sampleMigrateRestTlppClass
+
+    ::jPath := oRest:getPathParamsRequest()
+    if ( ::jPath <> Nil )
+        ::cId := ::jPath[ 'id' ]
+        if ( valtype(::cId) == 'U' )
+            ::cId := ''
+        endif
+    endif
+
+    ::cData := '{ "method" : "PUT" , "id" : "' + ::cId + '" '
+
+    ::jBody := JsonObject():new()
+    ::jBody:fromJson( oRest:GetBodyRequest() )
+    if ( ::jBody <> Nil )
+        if ( !empty(::jBody:GetJsonText("cpo1")) )
+            ::cData += ', "cpo1" : "' + ::jBody:GetJsonText("cpo1") + '" '
+        endif
+        if ( !empty(::jBody:GetJsonText("cpo2")) )
+            ::cData += ', "cpo2" : "' + ::jBody:GetJsonText("cpo2") + '" '
+        endif
+    endif
+
+    ::cData += '}'
+
+return oRest:setResponse( ::cData )
+
+
+
+method PatchsampleMigrateRestTlppClass() class sampleMigrateRestTlppClass
+
+    ::jPath := oRest:getPathParamsRequest()
+    if ( ::jPath <> Nil )
+        ::cId := ::jPath[ 'id' ]
+        if ( valtype(::cId) == 'U' )
+            ::cId := ''
+        endif
+    endif
+
+    ::cData := '{ "method" : "PATCH" , "id" : "' + ::cId + '" '
+
+    ::jBody := JsonObject():new()
+    ::jBody:fromJson( oRest:GetBodyRequest() )
+    if ( ::jBody <> Nil )
+        if ( !empty(::jBody:GetJsonText("cpo1")) )
+            ::cData += ', "cpo1" : "' + ::jBody:GetJsonText("cpo1") + '" '
+        endif
+        if ( !empty(::jBody:GetJsonText("cpo2")) )
+            ::cData += ', "cpo2" : "' + ::jBody:GetJsonText("cpo2") + '" '
+        endif
+    endif
+
+    ::cData += '}'
+
+return oRest:setResponse( ::cData )
+
+
+
+method DeletesampleMigrateRestTlppClass() class sampleMigrateRestTlppClass
+
+    ::jPath := oRest:getPathParamsRequest()
+    if ( ::jPath <> Nil )
+        ::cId := ::jPath[ 'id' ]
+        if ( valtype(::cId) == 'U' )
+            ::cId := ''
+        endif
+    endif
+
+    ::cData := '{ "method" : "DELETE" , "id" : "' + ::cId + '" ' + '}'
+
+return oRest:setResponse( ::cData )
