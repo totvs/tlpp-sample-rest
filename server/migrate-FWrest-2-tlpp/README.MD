@@ -1,34 +1,32 @@
-# Como migrar um REST em FWREST para uso com Annotation
+# Como migrar um REST em FWREST para uso com Annotation (tlppCore)
 
-Nesse projeto [ **migrate-FWrest-2-tlpp** ] iremos exemplificar atravÈs de cÛdigos fontes em ADVPL e TL++ as duas formas de criar serviÁos REST.
+Nesse projeto [ **migrate-FWrest-2-tlpp** ] iremos exemplificar atrav√©s de c√≥digos fontes em ADVPL e TL++ as duas formas de criar servi√ßos REST.
 
-A primeiro forma ser· como se cria um serviÁo REST utilizando o framework Protheus em ADVPL e a segunda como se cria o mesmo serviÁo REST, porÈm agora utilizando o recurso de Annotation em TL++.
+A primeiro forma ser√° como se cria um servi√ßo REST utilizando o framework Protheus em ADVPL e a segunda como se cria o mesmo servi√ßo REST, por√©m agora utilizando o recurso de Annotation em TL++.
 
-Sendo assim, teremos 3 (trÍs) cÛdigos fontes, sendo:
+Sendo assim, teremos 3 (tr√™s) c√≥digos fontes, sendo:
 
 Pasta  | Nome arquivo | Linguagem | Tecnologia | Estrutura
 :-- | :--| :-- | :-- | :--
-src\ | _rest-mod01.prw_  | ADVPL | framework Protheus | classe prÛpria para REST
+src\ | _rest-mod01.prw_  | ADVPL | framework Protheus | classe para REST 
 src\ | _rest-mod02.tlpp_ | TL++ | annotation | user Function
-src\ | _rest-mod03.tlpp_ | TL++ | annotation | classe genÈrica
-
+src\ | _rest-mod03.tlpp_ | TL++ | annotation | classe gen√©rica
 
 ---
-## CaracterÌsticas
+## Caracter√≠sticas
 
-##### DependÍncias tÈcnicas
+##### Depend√™ncias t√©cnicas
 
 * **FWREST**
 
-    1. Bin·rio Lobo-Guar·
+    1. Bin√°rio Lobo-Guar√°
     2. Protheus
     3. Framework Protheus
     4. License Protheus
     5. Conhecimento de Classe
 
 * **Annotation**
-
-    1. Bin·rio Lobo-Guar·
+1. Bin√°rio Lobo-Guar√°
     2. Core TL++
     3. Conhecimento de annotation
 
@@ -36,13 +34,12 @@ src\ | _rest-mod03.tlpp_ | TL++ | annotation | classe genÈrica
 ##### Verbos HTTP suportados
 
 * **FWREST**
-
-    - [x] GET
+- [x] GET
     - [x] POST
     - [x] PUT
     - [ ] PATCH
     - [x] DELETE
-
+    
 * **Annotation**
 
     - [x] GET
@@ -51,31 +48,30 @@ src\ | _rest-mod03.tlpp_ | TL++ | annotation | classe genÈrica
     - [x] PATCH
     - [x] DELETE
 
-
 ---
-## Resumo das mudanÁas
+## Resumo das mudan√ßas
 
-#### CabeÁalho arquivo fonte
+#### Cabe√ßalho arquivo fonte
 
 * **FWREST**
 
-    ```vb
+    ```c++
     #include 'totvs.ch'
     #include "restful.ch"
     ```
 
 * **Annotation**
 
-    ```vb
+    ```c++
     #include "tlpp-core.th"
     #include "tlpp-rest.th"
     ```
 
-#### DefiniÁ„o do Verbo HTTP
+#### Defini√ß√£o do Verbo HTTP
 
 * **FWREST**
 
-    Para utilizar o WSMETHOD È necess·rio criar antes WSRESTFUL, tal como È uma declaraÁ„o de classes, porÈm com sintaxe especÌfica para o REST.
+    Para utilizar o WSMETHOD √© necess√°rio criar antes WSRESTFUL, tal como √© uma declara√ß√£o de classes, por√©m com sintaxe espec√≠fica para o REST.
 
     ```vb
     WSMETHOD GET
@@ -83,7 +79,7 @@ src\ | _rest-mod03.tlpp_ | TL++ | annotation | classe genÈrica
 
 * **Annotation**
 
-    Nesse caso n„o h· dependÍncia de nenhuma classe e È possÌvel utilizar em funÁıes de usu·rios, funÁıes e mÈtodos de classes, ficando ‡ gosto do desenvolvedor.
+    Nesse caso n√£o h√° depend√™ncia de nenhuma classe e √© poss√≠vel utilizar em fun√ß√µes de usu√°rios, fun√ß√µes e m√©todos de classes, ficando √† gosto do desenvolvedor.
 
     ```vb
     @Get()
@@ -93,21 +89,21 @@ src\ | _rest-mod03.tlpp_ | TL++ | annotation | classe genÈrica
 
 * **FWREST**
 
-    A composiÁ„o para a definiÁ„o de endpoints nessa vers„o È composta em dois elementos no fonte.
+    A composi√ß√£o para a defini√ß√£o de endpoints nessa vers√£o √© composta em dois elementos no fonte.
 
-    O primeiro È propriamente o nome da classe te Restful, sendo:
+    O primeiro √© propriamente o nome da classe de Restful, sendo:
 
     ```vb
     WSRESTFUL sampleMigrateRestProtheus
     ```
 
-    A outra parte È complementada atravÈs da definiÁ„o da classe, sendo:
+    A outra parte √© complementada atrav√©s da defini√ß√£o da classe, sendo:
 
     ```vb
     WSMETHOD POST  ....... WSSYNTAX "/sampleMigrateRestProtheus/{id}"
     ```
 
-    Podendo ter alteraÁıes pelo comando PATH, ex:
+    Podendo ter altera√ß√µes pelo comando PATH, ex:
 
     ```vb
     WSMETHOD POST ........ PATH  "/v2/sampleMigrateRestProtheus/{id}"
@@ -115,76 +111,76 @@ src\ | _rest-mod03.tlpp_ | TL++ | annotation | classe genÈrica
 
 * **Annotation**
 
-    Por esse modo, vocÍ pode criar o endpoint sem qualquer relaÁ„o ao nome da classe ou funÁ„o que ser· executada.
+    Por esse modo, voc√™ pode criar o endpoint sem qualquer rela√ß√£o ao nome da classe ou fun√ß√£o que ser√° executada.
 
-    A definiÁ„o do endpoint È atravÈs da propriedade "endpoint" da annotation, porÈm, como ela È a primeira propriedade, pode-se simplesmente colocar seu valor sem nomear a propridade.
+    A defini√ß√£o do endpoint √© atrav√©s da propriedade "endpoint" da annotation, por√©m, como ela √© a primeira propriedade, pode-se simplesmente colocar seu valor sem nomear a propriedade.
 
-    O exemplo abaixo È a forma simples de definir um endpoint:
+    O exemplo abaixo √© a forma simples de definir um endpoint:
 
-    ```vb
+    ```c++
     @Get("/sampleMigrateRestTlpp")
     ```
 
-    Pode-se tambÈm, definir os path params como segue abaixo:
+    Pode-se tamb√©m, definir os path params como segue abaixo:
 
-    ```vb
+    ```c++
     @Get("/sampleMigrateRestTlpp/:id")
     ```
 
-    TambÈm È possÌvel definir uma descriÁ„o para o endpoint, ex:
+    Tamb√©m √© poss√≠vel definir uma descri√ß√£o para o endpoint, ex:
 
-    ```vb
-    @Get(endpoint="/sampleMigrateRestTlpp",description="descriÁ„o do mÈtodo Get")
+    ```c++
+    @Get(endpoint="/sampleMigrateRestTlpp",description="descri√ß√£o do m√©todo Get")
     ```
 
 
-#### Par‚metros [ Path Param ]
+#### Par√¢metros [ Path Param ]
 
-Essa È forma de passar valores atravÈs de URI como complementos dos paths, ex:
+Essa √© forma de passar valores atrav√©s de URI como complementos dos paths, ex:
 http://localhost:8080/nomerest/cliente/:2345
 
-No exemplo acima, 2345 È o path param para o ID do cliente.
+No exemplo acima, 2345 √© o path param para o ID do cliente.
 
 * **FWREST**
 
-    Esse modo È possÌvel resgatar os valores de path param atravÈs da propriedade (array) ::aURLParms, conforme exemplo abaixo:
+    Esse modo √© poss√≠vel resgatar os valores de path param atrav√©s da propriedade (array) ::aURLParms, conforme exemplo abaixo:
 
-    ```vb
+    ```c++
     if len(::aURLParms) > 0
         cId := ::aURLParms[1]
     endif
     ```
 
-    PorÈm, n„o È possÌvel buscar nominalmente o valor, e somente atravÈs da ordem que ele È declarado na URI. <br /><br />
+    por√©m, n√£o √© poss√≠vel buscar nominalmente o valor, e somente atrav√©s da ordem que ele √© declarado na URI. <br /><br />
 
 * **Annotation**
 
-    O objeto oRest possui um mÈtodo especÌfico para retornar somente os par‚metros recebidos via Path Param, sendo:
+    O objeto oRest possui um m√©todo espec√≠fico para retornar somente os par√¢metros recebidos via Path Param, sendo:
 
-    ```vb
+    ```c++
     jPath := oRest:getPathParamsRequest()
     ```
 
-    O retorno do mÈtodo È uma estrutura em Json com todos os par‚metros recebidos via path param, sendo assim, È possÌvel resgatar o valor do par‚metro acessando seu valor diretamente no Json atravÈs do seu nome.
+    O retorno do m√©todo √© uma estrutura em Json com todos os par√¢metros recebidos via path param, sendo assim, √© poss√≠vel resgatar o valor do par√¢metro acessando seu valor diretamente no Json atrav√©s do seu nome.
 
     Veja abaixo:
 
-    ```vb
+    ```c++
     cId := jPath[ 'id' ]
     ```
 
-#### Par‚metros [ Query String ]
+#### Par√¢metros [ Query String ]
 
-Essa È o modo de passar valores atravÈs de URL apÛs todos os paths e de forma nomeada, ex:
+Essa √© o modo de passar valores atrav√©s de URL ap√≥s todos os paths e de forma nomeada, ex:
 http://localhost:8080/nomerest/cliente?id=2345
 
-No exemplo acima, o par‚metro leva o nome de "id" e tem o valor de 2345.
+No exemplo acima, o par√¢metro leva o nome de "id" e tem o valor de 2345.
 
 * **FWREST**
 
-    Para que possa receber par‚metros via query string, È preciso declar·-lo como um par‚metro que o mÈtodo ir· receber, como descrito abaixo:
+    Para que possa receber par√¢metros via query string, √© preciso declar√°-lo como um par√¢metro que o m√©todo ir√° receber, como descrito abaixo:
 
-    ```vb
+    ```c++
     WSRESTFUL sampleMigrateRestProtheus ......
         WSDATA id       AS CHARACTER OPTIONAL
     .......
@@ -192,9 +188,9 @@ No exemplo acima, o par‚metro leva o nome de "id" e tem o valor de 2345.
     WSMETHOD GET WSRECEIVE id .....
     ```
 
-    ApÛs isso, pode-se utiliz·-lo como abaixo:
-    ```vb
-    // Para que n„o seja NIL
+    Ap√≥s isso, pode-se utiliz√°-lo como abaixo:
+    ```c++
+    // Para que n√£o seja NIL
     DEFAULT ::id := '' 
     
     // Acessa-se diretamente
@@ -203,32 +199,32 @@ No exemplo acima, o par‚metro leva o nome de "id" e tem o valor de 2345.
 
 * **Annotation**
 
-    O objeto oRest possui um mÈtodo especÌfico para retornar somente os par‚metros recebidos via query string, sendo:
+    O objeto oRest possui um m√©todo espec√≠fico para retornar somente os par√¢metros recebidos via query string, sendo:
 
-    ```vb
+    ```c++
     jPath := oRest:getQueryRequest()
     ```
 
-    O retorno do mÈtodo È uma estrutura em Json com todos os par‚metros recebidos via query string, sendo assim, È possÌvel resgatar o valor do par‚metro acessando seu valor diretamente no Json atravÈs do seu nome.
+    O retorno do m√©todo √© uma estrutura em Json com todos os par√¢metros recebidos via query string, sendo assim, √© poss√≠vel resgatar o valor do par√¢metro acessando seu valor diretamente no Json atrav√©s do seu nome.
 
     Veja abaixo:
 
-    ```vb
+    ```c++
     cId := jPath[ 'id' ]
     ```
 
 
-#### Par‚metros [ Body HTTP ]
+#### Par√¢metros [ Body HTTP ]
 
 * **FWREST**
 
-    ```vb
+    ```c++
     cBody := ::GetContent()
     ```
 
 * **Annotation**
 
-    ```vb
+    ```c++
     cBody := oRest:GetBodyRequest()
     ```
 
@@ -236,13 +232,13 @@ No exemplo acima, o par‚metro leva o nome de "id" e tem o valor de 2345.
 
 * **FWREST**
 
-    ```vb
+    ```c++
     ::SetResponse( cResponse )
     ```
 
 * **Annotation**
 
-    ```vb
+    ```c++
     oRest:setResponse( cResponse )
     ```
 
@@ -250,19 +246,19 @@ No exemplo acima, o par‚metro leva o nome de "id" e tem o valor de 2345.
 
 * **FWREST**
 
-    ```vb
+    ```c++
     SetRestFault( nCodeHttp, cMessage )
     ```
 
 * **Annotation**
 
-    ```vb
+    ```c++
     oRest:setFault( cResponse )
     ```
 
-    Nesse caso o cÛdigo HTTP do retorno ser· 500, caso tenha a necessidade de trocar o cÛdigo HTTP, utilize antes o mÈtodo conforme abaixo:
+    Nesse caso o c√≥digo HTTP do retorno ser√° 500, caso tenha a necessidade de trocar o c√≥digo HTTP, utilize antes o m√©todo conforme abaixo:
 
-    ```vb
+    ```c++
     oRest:setStatusCode( nCodeHttp )
     oRest:setFault( cResponse )
     ```
@@ -270,39 +266,38 @@ No exemplo acima, o par‚metro leva o nome de "id" e tem o valor de 2345.
 ---
 ## Exemplos
 
-> … importante ressaltar que para simplificar este manual iremos unificar os verbos HTTP "PUT", "POST" e "PATCH", pois possuem funcionalidades similares no uso em APIs em REST. PorÈm nos arquivos acima descritos todos os exemplos estar„o presentes.
+> √â importante ressaltar que para simplificar este manual iremos unificar os verbos HTTP "PUT", "POST" e "PATCH", pois possuem funcionalidades similares no uso em APIs em REST. Por√©m nos arquivos acima descritos todos os exemplos estar√£o presentes.
 
 #### Exemplo GET
 
 * **FWREST**
 
-    ```vb
+    ```c++
     WSRESTFUL sampleMigrateRestProtheus DESCRIPTION "Exemplo de REST framework Protheus"
 
         WSDATA id       AS CHARACTER OPTIONAL
 
-        WSMETHOD GET    DESCRIPTION "MÈtodo Get"    WSSYNTAX "/sampleMigrateRestProtheus"
+        WSMETHOD GET    DESCRIPTION "m√©todo Get"    WSSYNTAX "/sampleMigrateRestProtheus"
 
     END WSRESTFUL
-
-
+    
     WSMETHOD GET WSRECEIVE id WSSERVICE sampleMigrateRestProtheus
-
+    
         local cData := ''
-
+    
         ::SetContentType("application/json")
-
+    
         DEFAULT ::id := ''
-
+    
         cData := '{ "METHOD" : "GET" ,"id" : "' + ::id + '" }'
-
+    
         ::SetResponse( cData )
     Return .T.
     ```
 
 * **Annotation**
 
-    ```vb
+    ```c++
     @Get("/sampleMigrateRestTlpp")
     user function GETsampleMigrateRestTlpp()
 
@@ -320,16 +315,17 @@ No exemplo acima, o par‚metro leva o nome de "id" e tem o valor de 2345.
 
         cData := '{ "METHOD" : "GET" ,"id" : "' + cId + '" }'
 
-    return oRest:setResponse( cData )
+        oRest:setResponse( cData )
+    return
     ```
 
 #### Exemplo POST
 
 * **FWREST**
 
-    ```vb
+    ```c++
     WSRESTFUL sampleMigrateRestProtheus DESCRIPTION "Exemplo de REST framework Protheus"
-        WSMETHOD POST   DESCRIPTION "MÈtodo Post"   WSSYNTAX "/sampleMigrateRestProtheus/{id}"
+        WSMETHOD POST   DESCRIPTION "m√©todo Post"   WSSYNTAX "/sampleMigrateRestProtheus/{id}"
     END WSRESTFUL
 
     WSMETHOD POST WSSERVICE sampleMigrateRestProtheus
@@ -364,7 +360,7 @@ No exemplo acima, o par‚metro leva o nome de "id" e tem o valor de 2345.
 
 * **Annotation**
 
-    ```vb
+    ```c++
     @Post("/sampleMigrateRestTlpp/:id")
     user function PostsampleMigrateRestTlpp()
 
@@ -396,16 +392,17 @@ No exemplo acima, o par‚metro leva o nome de "id" e tem o valor de 2345.
 
         cData += '}'
 
-    return oRest:setResponse( cData )
+        oRest:setResponse( cData )
+    return
     ```
 
 #### Exemplo DELETE
 
 * **FWREST**
 
-    ```vb
+    ```c++
     WSRESTFUL sampleMigrateRestProtheus DESCRIPTION "Exemplo de REST framework Protheus"
-        WSMETHOD DELETE DESCRIPTION "MÈtodo Delete" WSSYNTAX "/sampleMigrateRestProtheus/{id}"
+        WSMETHOD DELETE DESCRIPTION "m√©todo Delete" WSSYNTAX "/sampleMigrateRestProtheus/{id}"
     END WSRESTFUL
 
     WSMETHOD DELETE WSSERVICE sampleMigrateRestProtheus
@@ -427,7 +424,7 @@ No exemplo acima, o par‚metro leva o nome de "id" e tem o valor de 2345.
 
 * **Annotation**
 
-    ```vb
+    ```c++
     @Delete("/sampleMigrateRestTlpp/:id")
     user function DeletesampleMigrateRestTlpp()
 
@@ -445,5 +442,6 @@ No exemplo acima, o par‚metro leva o nome de "id" e tem o valor de 2345.
 
         cData := '{ "METHOD" : "DELETE" , "id" : "' + cId + '" ' + '}'
 
-    return oRest:setResponse( cData )
+        oRest:setResponse( cData )
+    return
     ```
