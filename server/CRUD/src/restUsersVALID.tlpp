@@ -2,33 +2,36 @@
 #include "tlpp-rest.th"
 
 /*------------------------------------------------------------------
-REST respons·vel pela validaÁ„o de usu·rio e senha da tabela USERS
+REST respons√°vel pela valida√ß√£o de usu√°rio e senha da tabela USERS
+
+esse exemplo, usamos somente com o verbo GET e passando os 
+par√¢metros via [raw body]
 ------------------------------------------------------------------*/
-@Get("sample/crud/user/valid")
-user function crudUserValid()
+@Get("sample/rest/crud/valid")
+function crudUserValid()
 
-    local cUser     := ''
-    local cPass     := ''
-    local jBody     := ''
-    local lLogon    := .F.
-    local cBody     := ''
-    local cReturn   := ''
+  local cUser   := ''
+  local cPass   := ''
+  local jBody   := ''
+  local lEqual  := .F.
+  local cBody   := ''
+  local cReturn := ''
 
-    cBody := oRest:getBodyRequest()
-    if ( cBody <> Nil )
-        jBody := JsonObject():new()
-        jBody:fromJson( cBody )
+  cBody := oRest:getBodyRequest()
+  if ( cBody <> Nil )
+    jBody := JsonObject():new()
+    jBody:fromJson( cBody )
 
-        cUser   := jBody:GetJsonText("user")
-        cPass   := jBody:GetJsonText("password")
-    endif
+    cUser := jBody:GetJsonText("user")
+    cPass := jBody:GetJsonText("password")
+  endif
 
-    lLogon := sampleCRUDtlppRestUserValid( cUser, cPass )
+  lEqual := sampleCRUDtlppRestUserValid( cUser, cPass )
 
-    cReturn := '{ "VALID": "' + if(lLogon,'yes','no') + '" }'
-    if ( lLogon )
-        oRest:setResponse( cReturn)
-    else
-        oRest:setFault( cReturn )
-    endif
+  cReturn := '{ "VALID": "' + if(lEqual,'yes','no') + '" }'
+  if ( lEqual )
+    oRest:setResponse( cReturn)
+  else
+    oRest:setFault( cReturn )
+  endif
 return

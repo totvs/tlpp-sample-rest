@@ -5,27 +5,27 @@
 
 static __nAlias  := 1
 
+/*
+NOTA:
+Por ser um cÃ³digo-fonte de exemplo, nÃ£o iremos utilizar nenhum recurso de encriptaÃ§Ã£o
+pois o intuito desse exemplo Ã© ensinar os Verbos e funcionalidades bÃ¡sicas de maior
+uso do REST do tlppCore
+*/
+
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} sampleCRUDtlppRestgenerateTables
-
-@description
-Main function para gerar base e popular tabela de usuários para exemplos
-utilizados nesse exemplo de uso do REST
-
-@type    function
-
-@author  TOTVS-TEC-TLPP
-@since   06/2019
-@version 1.0
-
-@return  Nil
-/*/
+/**
+@function sampleCRUDtlppRestgenerateTables
+@desc     Main function para gerar base e popular tabela de usuÃ¡rios para exemplos
+          utilizados nesse exemplo de uso do REST
+@author   TOTVS-TECH-TLPPCORE
+@since    06/2019
+*/
 //-------------------------------------------------------------------
 main function sampleCRUDtlppRestgenerateTables()
 
 	local aDbTbl 		:= {}
-	local cAliasTbl		:= ''
+	local cAliasTbl	:= ''
 	local cAlias		:= ''
 
 	conout( '', '' )
@@ -38,13 +38,13 @@ main function sampleCRUDtlppRestgenerateTables()
 	conout( '... starting tables for workshop' )
 	conout( '' )
 
-	aDbTbl 		:=	{ 									;
-						{ 'ID'			, 'C', 20	,0}	,;
-						{ 'NAME'		, 'C', 150	,0}	,;
-						{ 'NICKNAME'	, 'C', 50	,0} ,;
-						{ 'USER'		, 'C', 150	,0}	,;
-						{ 'PASSWORD'	, 'C', 150	,0}	;
-					}
+	aDbTbl  :=	{ 									        ;
+                { 'ID'			, 'C', 20	,0}	,;
+                { 'NAME'		, 'C', 150,0}	,;
+                { 'NICKNAME', 'C', 50	,0} ,;
+                { 'USER'		, 'C', 150,0}	,;
+                { 'PASSWORD', 'C', 150,0}	;
+              }
 	cAliasTbl := _AliasUSR
 	dbCreate( cAliasTbl, aDbTbl, _dbDrive )
 
@@ -68,33 +68,26 @@ return
 
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} initUsers
-
-@description
-popula tabela de usuários
-
-@type    function
-
-@author  TOTVS-TEC-TLPP
-@since   06/2019
-@version 1.0
-
-@return  Nil
-/*/
+/**
+@function initUsers
+@desc     popula tabela de usuÃ¡rios
+@author   TOTVS-TECH-TLPPCORE
+@since    06/2019
+*/
 //-------------------------------------------------------------------
 static function initUsers()
 
 	local cAlias	:= NextAlias()
 	local nOrder	:= 0
-	local cID		:= ''
+	local cID		  := ''
 	local aUsers	:= {}
-	local nA		:= 0
+	local nA		  := 0
 
 	// lista de usuarios iniciais
 		aadd( aUsers, {'Joao dos Santos','joaozinho','joao' ,'senha@123'} )
-		aadd( aUsers, {'Maria Silva'    ,'marie'	,'maria','senha@123'} )
-		aadd( aUsers, {'Jose Goncalves' ,'ze'		,'jose' ,'senha@123'} )
-		aadd( aUsers, {'Julia Esteves'  ,''			,'julia','senha@123'} )
+		aadd( aUsers, {'Maria Silva'    ,'marie'	  ,'maria','senha@123'} )
+		aadd( aUsers, {'Jose Goncalves' ,'ze'		    ,'jose' ,'senha@123'} )
+		aadd( aUsers, {'Julia Esteves'  ,''			    ,'julia','senha@123'} )
 
 	// Grava na tabela
 		dbUseArea( .T., _dbDrive, _AliasUSR, cAlias, .T., .F. )
@@ -104,94 +97,77 @@ static function initUsers()
 			dbSetOrder(nOrder)
 
 			for nA := 1 to len( aUsers )
-				
+
 				cID := DtoS( date() ) + strtran( time(), ':', "" ) + strzero(nA,3)
 					if ( !dbSeek(cID) )
 
 						dbAppend( .T. )
-							( cAlias )->ID			:= cID
-							( cAlias )->NAME		:= aUsers[nA][1]
+							( cAlias )->ID			  := cID
+							( cAlias )->NAME		  := aUsers[nA][1]
 							( cAlias )->NICKNAME	:= aUsers[nA][2]
-							( cAlias )->USER		:= aUsers[nA][3]
-							( cAlias )->PASSWORD	:= WebEncript( aUsers[nA][4], .T. )
+							( cAlias )->USER		  := aUsers[nA][3]
+							( cAlias )->PASSWORD	:= aUsers[nA][4]
 						dbCommit()
 						dbRUnLock( Recno() )
 
 					endif
 
-			next nA
+			next
 		( cAlias )->( dbCloseArea() )
 return
 
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} sampleCRUDtlppRestalteraUserByID
-
-@description
-Altera um usuário com base no ID
-
-@type    function
-
-@author  TOTVS-TEC-TLPP
-@since   06/2019
-@version 1.0
-
-@param	 character, ID
-@param	 character, Nome
-@param	 character, Apelido
-
-@return  boolean, TRUE para ação com sucesso
-/*/
+/**
+@function sampleCRUDtlppRestalteraUserByID
+@desc     Altera um usuÃ¡rio com base no ID
+@author   TOTVS-TECH-TLPPCORE
+@since    06/2019
+@param    cID CR ID
+@param    cPass CR Senha
+@param    cName CR Nome
+@param    cNick CR Apelido
+@return   L lOK TRUE para aÃ§Ã£o com sucesso
+*/
 //-------------------------------------------------------------------
-function sampleCRUDtlppRestalteraUserByID( cID, cName, cNick )
-	lOK := sampleCRUDtlppRestalteraUser( .T., cID, cName, cNick )
+function sampleCRUDtlppRestalteraUserByID( cID, cPass, cName, cNick )
+	lOK := sampleCRUDtlppRestalteraUser( .T., cID, cPass, cName, cNick )
 return lOK
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} sampleCRUDtlppRestalteraUserByUser
-
-@description
-Altera um usuário com base no usuário
-
-@type    function
-
-@author  TOTVS-TEC-TLPP
-@since   06/2019
-@version 1.0
-
-@param	 character, usuário
-@param	 character, Nome
-@param	 character, Apelido
-
-@return  boolean, TRUE para ação com sucesso
-/*/
+/**
+@function sampleCRUDtlppRestalteraUserByUser
+@desc     Altera um usuÃ¡rio com base no usuÃ¡rio
+@author   TOTVS-TECH-TLPPCORE
+@since    06/2019
+@param    cUser CR UsuÃ¡rio
+@param    cPass CR Senha
+@param    cName CR Nome
+@param    cNick CR Apelido
+@return   L lOK TRUE para aÃ§Ã£o com sucesso
+*/
 //-------------------------------------------------------------------
-function sampleCRUDtlppRestalteraUserByUser( cUser, cName, cNick )
-	lOK := sampleCRUDtlppRestalteraUser( .F., cUser, cName, cNick )
+function sampleCRUDtlppRestalteraUserByUser( cUser, cPass, cName, cNick )
+	lOK := sampleCRUDtlppRestalteraUser( .F., cUser, cPass, cName, cNick )
 return lOK
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} sampleCRUDtlppRestalteraUser
-
-@description
-Altera um usuário
-
-@type    function
-
-@author  TOTVS-TEC-TLPP
-@since   06/2019
-@version 1.0
-
-@param	 boolean  , TRUE indica que Key é valor do ID, FALSE se refere ao usuário
-@param	 character, Key
-@param	 character, Nome
-@param	 character, Apelido
-
-@return  boolean, TRUE para ação com sucesso
-/*/
+/**
+@function sampleCRUDtlppRestalteraUser
+@desc     Altera um usuÃ¡rio
+@author   TOTVS-TECH-TLPPCORE
+@since    06/2019
+@param    lID LR TRUE indica que Key Ã© valor do ID, FALSE se refere ao usuÃ¡rio
+@param    cKey CR Key
+@param    cPass CR Senha
+@param    cName CR Nome
+@param    cNick CR Apelido
+@return   L lOK TRUE para aÃ§Ã£o com sucesso
+*/
 //-------------------------------------------------------------------
-static function sampleCRUDtlppRestalteraUser( lID, cKey, cName, cNick )
-	local lOK		:= .F.
+static function sampleCRUDtlppRestalteraUser( lID, cKey, cPass, cName, cNick )
+
+  local lOK		  := .F.
 	local cQuery	:= ''
 	local lParam	:= .F.
 
@@ -203,7 +179,14 @@ static function sampleCRUDtlppRestalteraUser( lID, cKey, cName, cNick )
 
 	cQuery += 'update ' + _AliasUSR
 	cQuery += ' set'
+	if ( !empty(cPass) )
+		cQuery += " PASSWORD = '" + cPass + "' "
+		lParam := .T.
+	endif
 	if ( !empty(cName) )
+		if ( lParam )
+			cQuery += " ,"
+		endif
 		cQuery += " NAME = '" + padr( cName, 50 ) + "' "
 		lParam := .T.
 	endif
@@ -212,6 +195,7 @@ static function sampleCRUDtlppRestalteraUser( lID, cKey, cName, cNick )
 			cQuery += " ,"
 		endif
 		cQuery += " NICKNAME = '" + padr( cNick, 50 ) + "' "
+		lParam := .T.
 	endif
 	cQuery += ' where '
 	if ( lID )
@@ -226,31 +210,25 @@ return lOK
 
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} sampleCRUDtlppRestinsertUser
-
-@description
-Insere um usuário na BD
-
-@type    function
-
-@author  TOTVS-TEC-TLPP
-@since   06/2019
-@version 1.0
-
-@param	 character, Usuário
-@param	 character, Senha
-@param	 character, Nome
-@param	 character, Apelido
-
-@return  boolean, TRUE para ação com sucesso
-/*/
+/**
+@function sampleCRUDtlppRestinsertUser
+@desc     Insere um usuÃ¡rio na BD
+@author   TOTVS-TECH-TLPPCORE
+@since    06/2019
+@param    cUser CR UsuÃ¡rio
+@param    cPass CR Senha
+@param    cName CR Nome
+@param    cNick CR Apelido
+@return   L lOK TRUE para aÃ§Ã£o com sucesso
+*/
 //-------------------------------------------------------------------
 function sampleCRUDtlppRestinsertUser( cUser, cPass, cName, cNick )	
-	local lOK 		:= .F.
+
+  local lOK 		:= .F.
 	local cAlias	:= ''
 	local cQuery	:= ''
 	local lFound	:= .F.
-	local cID		:= ''
+	local cID		  := ''
 	local nOrder	:= 0
 
 	cAlias := NextAlias()
@@ -274,11 +252,11 @@ function sampleCRUDtlppRestinsertUser( cUser, cPass, cName, cNick )
 			if ( !dbSeek(cID) )
 
 				dbAppend( .T. )
-					( cAlias )->ID			:= cID
-					( cAlias )->NAME		:= cName
+					( cAlias )->ID			  := cID
+					( cAlias )->NAME		  := cName
 					( cAlias )->NICKNAME	:= cNick
-					( cAlias )->USER		:= cUser
-					( cAlias )->PASSWORD	:= WebEncript( cPass, .T. )
+					( cAlias )->USER		  := cUser
+					( cAlias )->PASSWORD	:= cPass
 				dbCommit()
 				dbRUnLock( Recno() )
 
@@ -296,21 +274,14 @@ return  lOK
 
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} sampleCRUDtlppRestgetUser
-
-@description
-Retorna dados de um usuário
-
-@type    function
-
-@author  TOTVS-TEC-TLPP
-@since   06/2019
-@version 1.0
-
-@param	 character, usuário
-
-@return  array, Dados do usuário
-/*/
+/**
+@function sampleCRUDtlppRestgetUser
+@desc     Retorna dados de um usuÃ¡rio
+@author   TOTVS-TECH-TLPPCORE
+@since    06/2019
+@param    cUser CR UsuÃ¡rio
+@return   A aUser Dados do usuÃ¡rio
+*/
 //-------------------------------------------------------------------
 function sampleCRUDtlppRestgetUser( cUser )
 
@@ -325,10 +296,10 @@ function sampleCRUDtlppRestgetUser( cUser )
 	dbSelectArea( cAlias )
 
 		if ( (cAlias)->( !eof() ) )
-			aadd( aUser, alltrim( (cAlias)->ID )		)
-			aadd( aUser, alltrim( (cAlias)->NAME )		)
+			aadd( aUser, alltrim( (cAlias)->ID )		    )
+			aadd( aUser, alltrim( (cAlias)->NAME )		  )
 			aadd( aUser, alltrim( (cAlias)->NICKNAME )	)
-			aadd( aUser, alltrim( (cAlias)->USER )		)
+			aadd( aUser, alltrim( (cAlias)->USER )		  )
 		endif
 
 	(cAlias)->( dbCloseArea() )
@@ -337,21 +308,14 @@ return aUser
 
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} sampleCRUDtlppRestdeleteUser
-
-@description
-Deleta usuário da base de dados
-
-@type    function
-
-@author  TOTVS-TEC-TLPP
-@since   06/2019
-@version 1.0
-
-@param	 character, usuário
-
-@return  boolean, TRUE para ação com sucesso
-/*/
+/**
+@function sampleCRUDtlppRestdeleteUser
+@desc     Deleta usuÃ¡rio da base de dados
+@author   TOTVS-TECH-TLPPCORE
+@since    06/2019
+@param    cUser CR UsuÃ¡rio
+@return   L lOK TRUE para aÃ§Ã£o com sucesso
+*/
 //-------------------------------------------------------------------
 function sampleCRUDtlppRestdeleteUser( cUser )
 
@@ -359,7 +323,7 @@ function sampleCRUDtlppRestdeleteUser( cUser )
 	local cAlias	:= ''
 	local cQuery	:= ''
 	local lFound	:= .F.
-	local cID		:= ''
+	local cID		  := ''
 
 	cAlias := NextAlias()
 	cQuery := "select * from " + _AliasUSR
@@ -387,22 +351,15 @@ return lOK
 
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} sampleCRUDtlppRestUserLogin
-
-@description
-Verifica usuário e senha na tabela USERS para verificar se tem acesso
-
-@type    function
-
-@author  TOTVS-TEC-TLPP
-@since   06/2019
-@version 1.0
-
-@param	 character, usuário
-@param	 character, Senha
-
-@return  boolean, TRUE para dados de usuário e senha corretos
-/*/
+/**
+@function sampleCRUDtlppRestUserValid
+@desc     Verifica usuÃ¡rio e senha na tabela USERS para verificar se tem acesso
+@author   TOTVS-TECH-TLPPCORE
+@since    06/2019
+@param    cUser CR UsuÃ¡rio
+@param    cPass CR Senha
+@return   L lOK TRUE para dados de usuÃ¡rio e senha corretos
+*/
 //-------------------------------------------------------------------
 function sampleCRUDtlppRestUserValid( cUser, cPass )
 
@@ -418,12 +375,13 @@ function sampleCRUDtlppRestUserValid( cUser, cPass )
 	dbSqlExec( cAlias, cQuery, _dbDrive )
 	dbSelectArea( cAlias )
 		if ( lFound := (cAlias)->( !eof() ) )
-			cPassBD	:= (cAlias)->PASSWORD
+			cPassBD	:= alltrim( (cAlias)->PASSWORD )
 		endif
 	(cAlias)->( dbCloseArea() )
 
 	if ( lFound )
-		if ( !(lLogon := (cPass == WebEncript( alltrim(cPassBD), .F. ))) )
+		cPass := alltrim( cPass )
+		if ( !(lLogon := (cPass == cPassBD)) )
 			conout('invalid password')
 		endif
 	else
@@ -435,19 +393,13 @@ return lLogon
 
 
 //-------------------------------------------------------------------
-/*/{tlpp.doc} NextAlias
-
-@description
-Retorna próximo nome de Alias para ser usado no acesso ao BD
-
-@type    function
-
-@author  TOTVS-TEC-TLPP
-@since   06/2019
-@version 1.0
-
-@return  charactere, Nome do alias
-/*/
+/**
+@function NextAlias
+@desc     Retorna prÃ³ximo nome de Alias para ser usado no acesso ao BD
+@author   TOTVS-TECH-TLPPCORE
+@since    06/2019
+@return   C cRet Alias a ser usado
+*/
 //-------------------------------------------------------------------
 static function NextAlias()
 	local cRet := "SCGN" + strzero(__nAlias,6,0)

@@ -2,143 +2,138 @@
 #include "tlpp-rest.th"
 
 
-//-------------------------------------------------------------------
-/*/{tlpp.doc} bodyPatchUser
+/*------------------------------------------------------------------
+Altera dados parciais de um usu√°rio
+Par√¢metros via [raw body]
+------------------------------------------------------------------*/
+@Patch("sample/rest/crud/body")
+function bodyPatchUser()
 
-@description
-REST altera um usu·rio com paramÍtros via [raw body]
+  local cID   := ''
+  local cUser := ''
+  local cName := ''
+  local cNick := ''
+  local jBody := ''
 
-@type    REST
-@method  patch
-@uri     /query/user
+  jBody := JsonObject():new()
+  jBody:fromJson( oRest:getBodyRequest() )
 
-@author  TOTVS-TEC-TLPP
-@since   06/2019
-@version 1.0
-
-@return  character, String em formato JSON com resposta ao Client
-/*/
-//-------------------------------------------------------------------
-@Patch("sample/crud/patch/body/user")
-user function bodyPatchUser()
-    local cID   := ''
-    local cUser := ''
-    local cName := ''
-    local cNick := ''
-    local jBody := ''
-
-    jBody := JsonObject():new()
-    jBody:fromJson( oRest:getBodyRequest() )
-
-    if ( jBody <> Nil )
-        cID     := jBody:GetJsonText("id"  )
-        cUser   := jBody:GetJsonText("user")
-        cName   := jBody:GetJsonText("name")
-        cNick   := jBody:GetJsonText("nick")
+  if ( jBody <> Nil )
+    cID   := jBody:GetJsonText("id"  )
+    if ( cID == 'null' )
+      cID := Nil
     endif
-return processPatchUser(cID, cUser, cName, cNick)
-
-//-------------------------------------------------------------------
-/*/{tlpp.doc} pathPatchUser
-
-@description
-REST altera um usu·rio com par‚metros via [pathstring]
-
-@type    REST
-@method  patch
-@uri     /path/user/:user/:name/:nick
-
-@author  TOTVS-TEC-TLPP
-@since   06/2019
-@version 1.0
-
-@return  character, String em formato JSON com resposta ao Client
-/*/
-//-------------------------------------------------------------------
-@Patch("sample/crud/patch/path/user/:user/:name/:nick")
-user function patchPathUser()
-    local cID   := ''
-    local cUser := ''
-    local cName := ''
-    local cNick := ''
-    Local jPath := JsonObject():New()
-
-    jPath := oRest:getPathParamsRequest()
-    if (jPath <> Nil)
-        cUser       := jPath[ 'user'   ]
-        cName       := jPath[ 'name'   ]
-        cNick       := jPath[ 'nick'   ]
+    cUser := jBody:GetJsonText("user")
+    if ( cUser == 'null' )
+      cUser := Nil
     endif
-return processPatchUser(cID, cUser, cName, cNick)
+    cName := jBody:GetJsonText("name")
+    cNick := jBody:GetJsonText("nick")
+  endif
 
-//-------------------------------------------------------------------
-/*/{tlpp.doc} processPatchUser
+  processPatchUser( cID, cUser, cName, cNick )
+return
 
-@description
-FunÁ„o central chamada pelos modos diferentes de receber par‚metro do REST
-e faz a chamada da funÁ„o que de fato ir· alterar um usu·rio na BD
+/*------------------------------------------------------------------
+Altera dados parciais de um usu√°rio
+Par√¢metros via [query]
+------------------------------------------------------------------*/
+@Patch("sample/rest/crud/query")
+function patchQueryUser()
 
-@type    function
+  local cID     := ''
+  local cUser   := ''
+  local cName   := ''
+  local cNick   := ''
+  local jQuery  := jSonObject():New()
 
-@author  TOTVS-TEC-TLPP
-@since   06/2019
-@version 1.0
+  jQuery := oRest:getQueryRequest()
 
-@param	 character, cID       , ID
-@param	 character, cUser     , Usu·rio do sistema
-@param	 character, cName     , Nome
-@param	 character, cNick     , Apelido
+  if ( jQuery <> Nil )
+    cID   := jQuery[ 'id'   ]
+    cUser := jQuery[ 'user' ]
+    cName := jQuery[ 'name' ]
+    cNick := jQuery[ 'nick' ]
+  endif
 
-@return  character, String em formato JSON com resposta ao Client
-/*/
-//-------------------------------------------------------------------
-static function processPatchUser(cID, cUser, cName, cNick)
-    local creturn   := ''
-    local lOK       := .T.
-    local cMsg      := ''
+  processPatchUser( cID, cUser, cName, cNick )
+return
 
-    // Valida campos chaves de busca
-        if  (                                            ;
-                ( cID   == Nil .or. empty(cID  ) ) .and. ;
-                ( cUser == Nil .or. empty(cUser) )       ;
-            )
-        
-            lOK     := .F.
-            cMsg    := 'invalid parameter: id and user'
-        
-        else
-            lOK     := .T.
-            cMsg    := ''
-        endif
+/*------------------------------------------------------------------
+Altera dados parciais de um usu√°rio
+Par√¢metros via [pathstring]
+------------------------------------------------------------------*/
+@Patch("sample/rest/crud/path/:user/:name/:nick")
+function patchPathUser()
 
-    // Valida campos elegÌveis para atualizaÁ„o
-        if ( lOK )
-            if ( cName == Nil )
-                cName := ''
-            endif
-            if ( cNick == Nil )
-                cNick := ''
-            endif
-            if ( empty(cName) .and. empty(cNick) )
-                lOK   := .F.
-                cMsg  := 'no data were reported for change'
-            endif
-        endif
+  local cID   := ''
+  local cUser := ''
+  local cName := ''
+  local cNick := ''
+  Local jPath := JsonObject():New()
 
+  jPath := oRest:getPathParamsRequest()
+  if ( jPath <> Nil )
+    cID   := jPath[ 'id'   ]
+    cUser := jPath[ 'user' ]
+    cName := jPath[ 'name' ]
+    cNick := jPath[ 'nick' ]
+  endif
+
+  processPatchUser( cID, cUser, cName, cNick )
+return
+
+
+// ------------------------------------------------------------------ //
+// ------------------------------------------------------------------ //
+static function processPatchUser( cID, cUser, cName, cNick )
+
+  local cReturn   := ''
+  local lOK       := .T.
+  local cMsg      := ''
+
+  // Valida campos chaves de busca
+    if  (                                          ;
+          ( cID   == Nil .or. empty(cID  ) ) .and. ;
+          ( cUser == Nil .or. empty(cUser) )       ;
+        )
+    
+      lOK     := .F.
+      cMsg    := 'invalid parameter: id and user'
+    
+    else
+      lOK     := .T.
+      cMsg    := ''
+    endif
+
+  // Valida campos eleg√≠veis para atualiza√ß√£o
     if ( lOK )
-        if ( cID <> Nil .and. !empty(cID) )
-            lOK := sampleCRUDtlppRestalteraUserByID( cID, cName, cNick )
-        else
-            lOK := sampleCRUDtlppRestalteraUserByUser( cUser, cName, cNick )
-        endif
-        if ( !lOK )
-            cMsg := 'update not executed'
-        else
-            cMsg := "successfully update record"
-        endif
+      if ( cName == Nil )
+        cName := ''
+      endif
+      if ( cNick == Nil )
+        cNick := ''
+      endif
+      if ( empty(cName) .and. empty(cNick) )
+        lOK   := .F.
+        cMsg  := 'no data were reported for change'
+      endif
     endif
 
-    creturn := '{ "SUCESS": "' + if(lOK,'yes','no') + '", "MESSAGE": "' + cMsg + '" }'
+  if ( lOK )
+    if ( cID <> Nil .and. !empty(cID) )
+      lOK := sampleCRUDtlppRestalteraUserByID( cID, '', cName, cNick )
+    else
+      lOK := sampleCRUDtlppRestalteraUserByUser( cUser, '', cName, cNick )
+    endif
+    if ( !lOK )
+      cMsg := 'update not executed'
+    else
+      cMsg := "successfully update record"
+    endif
+  endif
 
-    oRest:setResponse( cReturn )
-Return
+  cReturn := '{ "SUCESS": "' + if(lOK,'yes','no') + '", "MESSAGE": "' + cMsg + '" }'
+
+  oRest:setResponse( cReturn )
+return

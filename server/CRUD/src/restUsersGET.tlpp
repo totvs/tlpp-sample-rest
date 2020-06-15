@@ -2,65 +2,101 @@
 #include "tlpp-rest.th"
 
 /*------------------------------------------------------------------
-Retorna dados de um usu�rio existente
-Par�metros via [querystring]
+Retorna dados de um usuário existente
+Parâmetros via [raw body]
 ------------------------------------------------------------------*/
-@Get("sample/crud/get/query/user")
-user function getQueryUser()
-    local cUser     := ''
-    local jQuery    := jsonObject():New()
+@get("sample/rest/crud/body")
+function getBodyUser()
 
-    jQuery := oRest:getQueryRequest()
+  local cUser := ''
+  local jBody := ''
 
-    if ( jQuery <> Nil )
-        cUser   := jQuery[ 'user' ]
-    endif
-return processGetUser(cUser)
+  jBody := JsonObject():new()
+  jBody:fromJson( oRest:GetBodyRequest() )
+
+  if ( jBody <> Nil )
+    cUser := jBody:GetJsonText("user")
+  endif
+
+  processGetUser( cUser )
+return
+
 
 /*------------------------------------------------------------------
-Retorna dados de um usu�rio existente
-Par�metros via [pathstring]
+Retorna dados de um usuário existente
+Parâmetros via [querystring]
 ------------------------------------------------------------------*/
-@Get("sample/crud/get/path/user/:user")
-user function getPathUser()
-    local cUser := ''
-    local jPath := jsonObject():New()
+@Get("sample/rest/crud/query")
+function getQueryUser()
+  local cUser   := ''
+  local jQuery  := jsonObject():New()
 
-    jPath := oRest:getPathParamsRequest()
+  jQuery := oRest:getQueryRequest()
 
-    if (jPath <> Nil )
-        cUser   := jPath[ 'user' ]
-    endif
-return processGetUser(cUser)
+  if ( jQuery <> Nil )
+    cUser := jQuery[ 'user' ]
+  endif
+
+  processGetUser( cUser )
+return 
+
+
+/*------------------------------------------------------------------
+Retorna dados de um usuário existente
+Parâmetros via [pathstring]
+------------------------------------------------------------------*/
+@Get("sample/rest/crud/path/:user")
+function getPathUser()
+  local cUser := ''
+  local jPath := jsonObject():New()
+
+  jPath := oRest:getPathParamsRequest()
+
+  if (jPath <> Nil )
+    cUser := jPath[ 'user' ]
+  endif
+
+  processGetUser( cUser )
+return 
+
+
 
 // ------------------------------------------------------------------ //
 // ------------------------------------------------------------------ //
-static function processGetUser(cUser)
+static function processGetUser( cUser )
 
-    local creturn   := ''
-    local lOK       := .T.
-    local cMsg      := ''
-    local aUser     := {}
+  local cReturn := ''
+  local lOK     := .T.
+  local cMsg    := ''
+  local aUser   := {}
+  local cID     := ''
+  local cName   := ''
+  local cNick   := ''
 
-    // Valida campo chave de busca
-        if ( cUser == Nil .or. empty(cUser) )
-            cUser   := ''
-            lOK     := .F.
-            cMsg    := 'invalid parameter: user'
-        endif
-
-    if ( lOK )
-        aUser := sampleCRUDtlppRestgetUser( cUser )
-
-        if ( len(aUser) == 4 )
-            lOK  := .T.
-            creturn := '{ "SUCESS": "yes", "MESSAGE": "", "ID": "' + aUser[1] + '", "NAME": "' + aUser[2] + '", "NICK": "' + aUser[3] + '", "USER": "' + aUser[4] + '" }'
-        else
-            lOK     := .F.
-            cMsg    := 'could not found'
-            creturn := '{ "SUCESS": "' + if(lOK,'yes','no') + '", "MESSAGE": "' + cMsg + '", "ID": "", "NAME": "", "NICK": "", "USER": ""  }'
-        endif
+  // Valida campo chave de busca
+    if ( cUser == Nil .or. empty(cUser) )
+        cUser := ''
+        lOK   := .F.
+        cMsg  := 'invalid parameter: user'
     endif
 
-    oRest:setResponse( cReturn )
+  if ( lOK )
+    aUser := sampleCRUDtlppRestgetUser( cUser )
+
+    if ( len(aUser) == 4 )
+      lOK   := .T.
+      cMsg  := 'user found'
+      cID   := aUser[1]
+      cName := aUser[2]
+      cNick := aUser[3]
+      cUser := aUser[4]
+    else
+      lOK     := .F.
+      cMsg    := 'user could not found'
+    endif
+  endif
+
+  cReturn := '{ "SUCESS": "' + if(lOK,'yes','no') + '", "MESSAGE": "' + cMsg + '", "ID": "' + cID + '", "NAME": "' + cName + '", "NICK": "' + cNick + '", "USER": "' + cUser + '" }'
+
+  oRest:setResponse( cReturn )
 return

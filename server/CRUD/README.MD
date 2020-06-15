@@ -1,81 +1,137 @@
 # tlpp-sample-rest
 
-Exemplos para prover um CRUD atravÈs do Webservice REST TL++
+Exemplos para criar um CRUD atrav√©s do Webservice REST TL++
 
 **Resumo**
 
-Para entender o funcionamento de todas as opÁıes, iremos utilizar um exemplo muito simples de cadastro de Usu·rios de um Sistema.
+Para entender o funcionamento de todas as op√ß√µes, iremos utilizar um exemplo muito simples de cadastro de Usu√°rios de um Sistema.
 
-Com isso, para facilitar o entendimento, criamos um roteiro a seguir e assim, passo a passo, executaremos todas as opÁıes desenvolvidas nesse projeto de exemplo.
+Com isso, para facilitar o entendimento, criamos um roteiro a seguir e assim, passo a passo, executaremos todas as op√ß√µes desenvolvidas nesse projeto de exemplo.
 
-- - - 
-***Roteiro de teste***
+- - -
+
+
+## Roteiro de teste
+
+
 
 **1 - Criar base de dados**
 
-Para todos os exemplos, precisaremos de uma Base de Dados e para facilitar a infraestrutura utilizada, faremos uso do SQLite para que n„o seja necess·rio baixar e configurar o TOTVS Dbaccess e instalar nenhum BD.
+Para todos os exemplos, precisaremos de uma Base de Dados e para facilitar a infraestrutura utilizada, faremos uso do SQLite para que n√£o seja necess√°rio baixar e configurar o TOTVS Dbaccess e instalar nenhum BD.
 
 Portanto, teremos que seguir os passos abaixo:
 
-    a - Verificar na pasta ROOT que n„o tenha nenhuma base SQLite existente, se houver, delete.
-	b - Subir appserver
-	c - Executar a rotina -> sampleCRUDtlppRestgenerateTables
+```txt
 
-**2 - Cria usu·rio (PUT)**
+a - Verificar na pasta ROOT que n√£o tenha nenhuma base SQLite existente, se houver, delete.
 
-Escolha uma das opÁıes abaixo:
+b - Subir appserver
 
-	a - http://127.0.0.1:9080/sample/crud/put/body/user
-		com
-		{"user":"ana","password":"senha@123","nick":"batatinha","name":"Ana Camargo"}
+c - Executar a rotina -> sampleCRUDtlppRestgenerateTables
 
-    b - http://127.0.0.1:9080/sample/crud/put/query/user?user=ana&password=senha@123&name=Ana%20Camargo&nick=batatinha
+```
 
-    c - http://127.0.0.1:9080/sample/crud/put/path/user/ana/senha@123/Ana%20Camargo/batatinha
+
+
+**2 - Cria usu√°rio (POST)**
+
+Escolha uma das op√ß√µes abaixo:
+
+```html
+
+a - http://127.0.0.1:9080/sample/rest/crud/body
+	com
+	{"user":"ana","password":"senha@123","nick":"batatinha","name":"Ana Camargo"}
+
+b - http://127.0.0.1:9080/sample/rest/crud/query?user=ana&password=senha@123&name=Ana%20Camargo&nick=batatinha
+
+c - http://127.0.0.1:9080/sample/rest/crud/path/ana/senha@123/Ana%20Camargo/batatinha
+
+```
+
+
 
 **3 - Consulta (GET)**
 
-Escolha uma das opÁıes abaixo:
+Escolha uma das op√ß√µes abaixo:
 
-	a - http://127.0.0.1:9080/sample/crud/get/query/user?user=ana
+```html
 
-	b - http://127.0.0.1:9080/sample/crud/get/path/user/ana
+a - http://127.0.0.1:9080/sample/rest/crud/body
+	com
+	{"user":"ana"}
+	
+b - http://127.0.0.1:9080/sample/rest/crud/query?user=ana
 
-**4 - Altera usu·rio (POST)**
+c - http://127.0.0.1:9080/sample/rest/crud/path/ana
 
-Escolha uma das opÁıes abaixo:
+```
 
-	a - http://127.0.0.1:9080/sample/crud/post/body/user
-        com
-        {"user":"ana","nick":"aninha","name":"Ana Camargo"}
 
-	b - http://127.0.0.1:9080/sample/crud/post/query/user?user=ana&nick=aninha&name=Ana%20Ferreira
 
-    c - http://127.0.0.1:9080/sample/crud/post/path/user/ana/Ana%20Julia/aninha
+**4 - Altera usu√°rio (PUT) [dados completos] **
 
-**5 - Altera usu·rio (PATCH)**
+Escolha uma das op√ß√µes abaixo:
 
-Escolha uma das opÁıes abaixo:
+```html
 
-	a - http://127.0.0.1:9080/sample/crud/patch/body/user
-        com
-        {"user":"jose","nick":"zezinho","name":"Josival"}
+a - http://127.0.0.1:9080/sample/rest/crud/body
+    com
+    {"user":"ana","password":"senha@1234","name":"Ana Camargo","nick":"aninha"}
 
-	b - http://127.0.0.1:9080/sample/crud/patch/path/user/jose/Josival/zezinho
+b - http://127.0.0.1:9080/sample/rest/crud/query?user=ana&password=senha@1234&name=Ana%20Ferreira&nick=aninha
 
-**6 - Exclui usu·rio (DELETE)**
+c - http://127.0.0.1:9080/sample/rest/crud/path/ana/senha@1234/Ana%20Julia/aninha
 
-Escolha uma das opÁıes abaixo:
+```
 
-	a - http://127.0.0.1:9080/sample/crud/delete/body/user
-		com
-		{"user": "ana"}
 
-    b - http://127.0.0.1:9080/sample/crud/delete/query/user?user=ana
 
-    c - http://127.0.0.1:9080/sample/crud/delete/path/user/ana
+**5 - Altera usu√°rio (PATCH) [dados parciais]**
 
-**7 - BÙnus - validaÁ„o de usu·rio e senha**
+Escolha uma das op√ß√µes abaixo:
 
-	http://127.0.0.1:9080/sample/crud/user/valid
-	{"user":"jose","password":"senha@123"}
+```html
+
+a - http://127.0.0.1:9080/sample/rest/crud/body
+    com
+    {"user":"jose","name":"Josival","nick":"zezinho"}
+
+b - http://127.0.0.1:9080/sample/rest/crud/query?user=jose&name=Josival&nick=zezinho
+
+c - http://127.0.0.1:9080/sample/rest/crud/path/jose/Josival/zezinho
+
+```
+
+> *Aten√ß√£o:* Esse modo, n√£o √© poss√≠vel alterar o valor da senha.
+
+
+
+**6 - Exclui usu√°rio (DELETE)**
+
+Escolha uma das op√ß√µes abaixo:
+
+```html
+
+a - http://127.0.0.1:9080/sample/rest/crud/body
+	com
+	{"user": "ana"}
+
+b - http://127.0.0.1:9080/sample/rest/crud/query?user=ana
+
+c - http://127.0.0.1:9080/sample/rest/crud/path/ana
+
+```
+
+
+
+**7 - Valida√ß√£o de usu√°rio e senha**
+
+```html
+
+[GET]
+
+http://127.0.0.1:9080/sample/rest/crud/valid
+{"user":"jose","password":"senha@123"}
+
+```

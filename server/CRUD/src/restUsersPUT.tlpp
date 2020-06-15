@@ -2,115 +2,154 @@
 #include "tlpp-rest.th"
 
 /*------------------------------------------------------------------
-cria um usuário novo
-Parâmetros via [raw body]
+Altera dados completos de um usuÃ¡rio
+ParÃ¢metros via [raw body]
 ------------------------------------------------------------------*/
-@Put("sample/crud/put/body/user")
-user function putBodyUser()
-    local cUser := ''
-    local cName := ''
-    local cNick := ''
-    local cPass := ''
-    local jBody := ''
+@Put("sample/rest/crud/body")
+function putBodyUser()
 
-    jBody := JsonObject():new()
-    jBody:fromJson( oRest:GetBodyRequest() )
+  local cID   := ''
+  local cUser := ''
+  local cPass := ''
+  local cName := ''
+  local cNick := ''
+  local jBody := ''
 
-    if ( jBody <> Nil )
-        cUser   := jBody:GetJsonText("user")
-        cName   := jBody:GetJsonText("name")
-        cNick   := jBody:GetJsonText("nick")
-        cPass   := jBody:GetjSontext("password")
+  jBody := JsonObject():new()
+  jBody:fromJson( oRest:GetBodyRequest() )
+
+  if ( jBody <> Nil )
+    cID   := jBody:GetJsonText("id"      )
+    if ( cID == 'null' )
+      cID := Nil
     endif
-return processPutUser(cUser, cPass, cName, cNick)
-
-/*----------------------------------------------------------------
-Cria um usuário novo
-Parâmetros via [querystring]
------------------------------------------------------------------*/
-@Put("sample/crud/put/query/user")
-user function putQueryUser()
-    local cUser     := ''
-    local cPass     := ''
-    local cName     := ''
-    local cNick     := ''
-    local jQuery    := jSonObject():New()
-
-    jQuery := oRest:GetQueryRequest()
-
-    if ( jQuery <> Nil )
-        cUser   := jQuery[ 'user'       ]
-        cPass   := jQuery[ 'password'   ]
-        cName   := jQuery[ 'name'       ]
-        cNick   := jQuery[ 'nick'       ]
+    cUser := jBody:GetJsonText("user"    )
+    if ( cUser == 'null' )
+      cUser := Nil
     endif
-return processPutUser(cUser, cPass, cName, cNick)
+    cPass := jBody:GetJsonText("password")
+    cName := jBody:GetJsonText("name"    )
+    cNick := jBody:GetJsonText("nick"    )
+  endif
 
-/*----------------------------------------------------------------
-Cria um usuário novo
-Parâmetros via [pathstring]
-----------------------------------------------------------------*/
-@Put("sample/crud/put/path/user/:user/:password/:name/:nick")
-user function putPathUser()
-    local cUser := ''
-    local cPass := ''
-    local cName := ''
-    local cNick := ''
-    local jPath := jSonObject():New()
- 
-    jPath := oRest:getPathParamsRequest()
-    if ( jPath <> Nil )
-        cUser   := jPath[ 'user'      ]
-        cPass   := jPath[ 'password'  ]
-        cName   := jPath[ 'name'      ]
-        cNick   := jPath[ 'nick'      ]
+  processPutUser( cID, cUser, cPass, cName, cNick )
+return 
+
+/*------------------------------------------------------------------
+Altera dados completos de um usuÃ¡rio
+ParÃ¢metros via [query]
+------------------------------------------------------------------*/
+@Put("sample/rest/crud/query")
+function putQueryUser()
+
+  local cID     := ''
+  local cUser   := ''
+  local cPass   := ''
+  local cName   := ''
+  local cNick   := ''
+  local jQuery  := jSonObject():New()
+
+  jQuery := oRest:getQueryRequest()
+
+  if ( jQuery <> Nil )
+    cID   := jQuery[ 'id'       ]
+    cUser := jQuery[ 'user'     ]
+    cPass := jQuery[ 'password' ]
+    cName := jQuery[ 'name'     ]
+    cNick := jQuery[ 'nick'     ]
+  endif
+
+  processPutUser( cID, cUser, cPass, cName, cNick )
+return
+
+/*-----------------------------------------------------------------
+Altera dados completos de um usuÃ¡rio
+ParÃ¢metros via [pathstring]
+------------------------------------------------------------------*/
+@Put("sample/rest/crud/path/:user/:password/:name/:nick")
+function putPathUser()
+
+  local cID   := ''
+  local cUser := ''
+  local cPass := ''
+  local cName := ''
+  local cNick := ''
+  local jPath := jSonObject():New()
+
+  jPath := oRest:getPathParamsRequest()
+  if ( jPath <> Nil )
+    cID   := jPath[ 'id'        ]
+    cUser := jPath[ 'user'      ]
+    cPass := jPath[ 'password'  ]
+    cName := jPath[ 'name'      ]
+    cNick := jPath[ 'nick'      ]
+  endif
+
+  processPutUser( cID, cUser, cPass, cName, cNick )
+return 
+
+// ------------------------------------------------------------------ //
+// ------------------------------------------------------------------ //
+static function processPutUser( cID, cUser, cPass, cName, cNick )
+
+  local cReturn := ''
+  local lOK     := .T.
+  local cMsg    := ''
+
+  // Valida campo chave de busca
+    if ( cID == Nil .or. empty(cID) )
+      cID   := ''
+      lOK   := .F.
+      cMsg  := 'id'
     endif
-return processPutUser(cUser, cPass, cName, cNick)
-
-/* ------------------------------------------------------------------
--------------------------------------------------------------------*/
-static function processPutUser(cUser, cPass, cName, cNick)
-
-    local creturn   := ''
-    local lOK       := .T.
-    local cMsg      := ''
-
-    // Valida campo chave de busca
-        if ( cUser == Nil .or. empty(cUser) )
-            cUser   := ''
-            lOK     := .F.
-            cMsg    := 'invalid parameter: user'
+    if ( !lOK )
+      if ( cUser == Nil .or. empty(cUser) )
+        cUser := ''
+        lOK   := .F.
+        if ( !empty(cMsg) )
+          cMsg += ' | '
         endif
-        if ( !lOK )
-            if ( cPass == Nil .or. empty(cPass) )
-                cPass   := ''
-                lOK     := .F.
-                cMsg    += ' | password'
-            else
-                lOK     := .T.
-                cMsg    := ''
-            endif
-        endif
+        cMsg  += 'user'
+      else
+        lOK   := .T.
+        cMsg  := ''
+      endif
+    endif
+    if ( !empty(cMsg) )
+      cMsg := 'invalid parameter: ' + cMsg
+    endif
 
-    // Valida campos elegíveis para atualização
-        if ( lOK )
-            if ( cName == Nil )
-                cName := ''
-            endif
-            if ( cNick == Nil )
-                cNick := ''
-            endif
-        endif
-
+  // Valida campos elegÃ­veis para atualizaÃ§Ã£o
     if ( lOK )
-        if ( !(lOK := sampleCRUDtlppRestinsertUser( cUser, cPass, cName, cNick )) )
-            cMsg := 'could not created new user'
-        else
-            cMsg := 'created new user'
-        endif
+      if ( cPass == Nil )
+        cPass := ''
+      endif
+      if ( cName == Nil )
+        cName := ''
+      endif
+      if ( cNick == Nil )
+        cNick := ''
+      endif
+      if ( empty(cPass) .and. empty(cName) .and. empty(cNick) )
+        lOK   := .F.
+        cMsg  := 'no data were reported for change'
+      endif
     endif
 
-    creturn := '{ "SUCESS": "' + if(lOK,'yes','no') + '", "MESSAGE": "' + cMsg + '" }'
+  if ( lOK )
+    if ( cID <> Nil .and. !empty(cID) )
+      lOK := sampleCRUDtlppRestalteraUserByID( cID, cPass, cName, cNick )
+    else
+      lOK := sampleCRUDtlppRestalteraUserByUser( cUser, cPass, cName, cNick )
+    endif
+    if ( !lOK )
+      cMsg := 'update not executed !'
+    else
+      cMsg := 'successfully updated !' 
+    endif
+  endif
 
-    oRest:setResponse( cReturn )
+  cReturn := '{ "SUCESS": "' + if(lOK,'yes','no') + '", "MESSAGE": "' + cMsg + '" }'
+
+  oRest:setResponse( cReturn )
 return
