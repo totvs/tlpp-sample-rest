@@ -1,0 +1,19 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get('/documentation/getThreadPoolMinFreeThreads')
+User Function fGetThreadPoolMinFreeThreads()
+ 
+Local cResponse := ""
+Local nRet      := oRest:getThreadPoolMinFreeThreads()
+ 
+If (ValType(nRet) == 'N')
+    cResponse := '{"getThreadPoolMinFreeThreads": "' + cValToChar(nRet) + ' e o numero minimo de threads configurado para ficarem disponiveis no thread pool ' + oRest:getThreadPoolName() + '"}'
+Else
+    cResponse := '{"getThreadPoolMinFreeThreads": "Metodo getThreadPoolMinFreeThreads nao foi executado"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

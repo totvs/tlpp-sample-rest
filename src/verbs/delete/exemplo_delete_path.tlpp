@@ -1,0 +1,18 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+/* --------------------------------------------- */
+@Delete("examples/function/delete/path/user/:user")
+User Function examplesFunctionDeletePath()
+Local cJson := ""
+Local jPath
+ 
+jPath := JsonObject():New()
+jPath := oRest:getPathParamsRequest()
+ 
+If (jPath <> Nil)
+    cJson := '[ { "description": "examplesFunctionDeletePath successfully executed, parameter received: ' + jPath['user'] +'"} ]'
+Endif
+ 
+ 
+Return oRest:setResponse(cJson)

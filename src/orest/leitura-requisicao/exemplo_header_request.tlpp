@@ -1,0 +1,36 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("sample/function/header")
+User Function sampleHeader()
+ 
+Local cReturn := ""
+Local jHeader := Nil
+ 
+// 1. Extrai o conteúdo completo do Header da requisição
+jHeader := oRest:getHeaderRequest()
+ 
+// 2. Valida se a extração foi bem-sucedida
+If (jHeader <> Nil)
+     
+    // Converte o objeto JSON inteiro em String para exibição/retorno
+    cReturn := "Parâmetros capturados: [" + jHeader:ToJson() + "]"
+     
+EndIf
+ 
+// 3. Envia a resposta final de volta ao cliente
+oRest:setResponse(cReturn)
+ 
+ 
+Return .T.
+Extraindo Valores Específicos do Header
+Como o retorno já é um objeto JSON carregado, para aceder ao dado de um parâmetro específico enviado no cabeçalho (por exemplo, uma chave customizada chamada code ou a chave de protocolo Host), basta aceder à propriedade do JSON diretamente:
+
+Local cCode   := ""
+Local jHeader
+ 
+// Resgata o objeto JSON contendo os cabeçalhos
+jHeader := oRest:getHeaderRequest()
+ 
+// Acede diretamente ao valor da chave desejada
+cCode := jHeader['code']

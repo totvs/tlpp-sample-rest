@@ -1,0 +1,30 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("sample/setStatusCode_1")
+User Function sampleSetStatusCode_1()
+ 
+Local cUser   := ""
+Local cReturn := ""
+Local jQuery
+ 
+// Resgata os parâmetros da URL
+jQuery := oRest:getQueryRequest()
+If (jQuery <> Nil)
+    cUser := jQuery['user']
+EndIf
+ 
+// Valida se o utilizador foi preenchido
+If (!Empty(cUser))
+    cReturn := '{"user":"' + cUser + '","message":""}'
+Else
+    // Altera o status para 400 (Bad Request)
+    oRest:setStatusCode(400)
+    cReturn := '{"user":"","message":"invalid user"}'
+EndIf
+ 
+// Prepara a resposta final
+oRest:setResponse( cReturn )
+ 
+ 
+Return .T.

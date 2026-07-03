@@ -1,0 +1,7 @@
+{
+  "name": "totvstec-rest-samples",
+  "private": true,
+  "scripts": {
+    "docs:exemplos": "node scripts/generate-exemplos-docs.mjs"
+  }
+}

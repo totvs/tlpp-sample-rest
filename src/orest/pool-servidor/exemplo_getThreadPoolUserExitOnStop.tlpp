@@ -1,0 +1,24 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadPoolUserExitOnStop")
+Function u_fGetTPUserExitOnStop()
+ 
+Local cResponse := ""
+Local cFuncStop := ""
+ 
+cFuncStop := oRest:getThreadPoolUserExitOnStop()
+ 
+If (ValType(cFuncStop) == 'C' .And. !Empty(cFuncStop))
+     
+    cResponse := '{"getThreadPoolUserExitOnStop": "' + cFuncStop + '", "message": "Esta e a funcao de encerramento de thread configurada para o pool."}'
+     
+Else
+     
+    cResponse := '{"getThreadPoolUserExitOnStop": "", "message": "Nenhuma funcao de finalizacao (OnStop) foi configurada para este Thread Pool."}'
+     
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+Return .T.

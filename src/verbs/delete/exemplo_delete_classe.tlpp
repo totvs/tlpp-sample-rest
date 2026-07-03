@@ -1,0 +1,50 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+Class classDeleteExamples
+ 
+Public Method New()
+ 
+@Delete("examples/class/delete/path/user/:user")
+Public Method methodExamplesDeletePath()
+ 
+@Delete("examples/class/delete/query/user")
+Public Method methodExamplesDeleteQuery()
+ 
+ 
+EndClass
+ 
+Method New() class classDeleteExamples
+ 
+Return self
+ 
+/* --------------------------------------------- */
+Method methodExamplesDeletePath() class classDeleteExamples
+ 
+Local cJson := ""
+Local jPath
+ 
+jPath := JsonObject():New()
+jPath := oRest:getPathParamsRequest()
+ 
+If (jPath <> Nil)
+    cJson := '[ {"description": "methodExamplesDeletePath successfully executed, parameter received: ' + jPath['user'] + '"} ]'
+Endif
+ 
+ 
+Return oRest:setResponse(cJson)
+ 
+/* --------------------------------------------- */
+Method methodExamplesDeleteQuery() class classDeleteExamples
+Local cJson := ""
+Local jQuery
+ 
+jQuery := JsonObject():New()
+jQuery := oRest:getQueryRequest()
+ 
+If (jQuery <> Nil)
+    cJson := '[ {"description": "methodExamplesDeleteQuery successfully executed, parameter received: ' + jQuery['user'] + '"} ]'
+Endif
+ 
+ 
+Return oRest:setResponse(cJson)

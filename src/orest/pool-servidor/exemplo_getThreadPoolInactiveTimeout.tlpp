@@ -1,0 +1,19 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadPoolInactiveTimeout")
+User Function fGetThreadPoolInactiveTimeout()
+ 
+Local cResponse := ""
+Local nRet      := oRest:getThreadPoolInactiveTimeout()
+ 
+If (ValType(nRet) == 'N')
+    cResponse := '{"getThreadPoolInactiveTimeout": "' + cValToChar(nRet) + ' ms e o inactive timeout configurado para o thread pool ' + oRest:getThreadPoolName() + '"}'
+Else
+    cResponse := '{"getThreadPoolInactiveTimeout": "Metodo getThreadPoolInactiveTimeout nao foi executado"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

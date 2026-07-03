@@ -1,0 +1,23 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getStatusResponse")
+User Function fTestaGetStatus()
+ 
+Local nCodeHttp := 0
+Local cResponse := ""
+ 
+oRest:setStatusCode(201)
+ 
+nCodeHttp := oRest:getStatusResponse()
+ 
+If (ValType(nCodeHttp) == 'N')
+    cResponse := '{"Sucesso": true, "Status_Atual_Na_Memoria": ' + cValToChar(nCodeHttp) + '}'
+Else
+    oRest:setStatusCode(500)
+    cResponse := '{"Sucesso": false, "Erro": "O metodo falhou em ler a memoria."}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+Return .T.

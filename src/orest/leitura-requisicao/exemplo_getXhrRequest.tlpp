@@ -1,0 +1,14 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+// Chamada: http://localhost:9090/documentacao/getxhrrequest
+@Get("/documentacao/getxhrrequest")
+User Function fGetXhrRequest()
+ 
+Local lRet      := oRest:getXhrRequest()
+Local cResponse := ""
+ 
+cResponse := '{"getXhrRequest": ' + If(lRet, 'true', 'false') + '}'
+ 
+ 
+Return oRest:setResponse(cResponse)

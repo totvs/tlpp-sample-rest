@@ -1,0 +1,14 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("sample/setResponse/Json")
+User Function sampleSetResponseJson()
+ 
+// 1. Modifica o cabeçalho da resposta para indicar o formato JSON
+oRest:setKeyHeaderResponse('Content-Type', 'application/json')
+ 
+// 2. Define o corpo da mensagem
+oRest:setResponse('{"sample":"format"}')
+ 
+ 
+Return .T.

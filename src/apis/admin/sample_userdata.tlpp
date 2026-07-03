@@ -1,0 +1,35 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("sample/userData")
+Function u_sampleUserData()
+ 
+Local cReturn   := ''
+Local cTemp     := ''
+Local jUserData
+ 
+// 1. Resgata os dados ao nível do Servidor
+jUserData := oRest:getThreadPoolServerUserData()
+ 
+cTemp := jUserData["config"]
+If (ValType(cTemp) <> 'C')
+    cTemp := ''
+EndIf
+ 
+cReturn += '{"serverUserData":"' + cTemp + '"'
+ 
+// 2. Resgata os dados ao nível da Thread de atendimento (Pool ou Slave)
+jUserData := oRest:getThreadPoolUserData()
+ 
+cTemp := jUserData["config"]
+If (ValType(cTemp) <> 'C')
+    cTemp := ''
+EndIf
+ 
+cReturn += ',"threadpoolUserData":"' + cTemp + '"}'
+ 
+// Envia o JSON combinado de volta para o cliente
+oRest:setResponse( cReturn )
+ 
+ 
+Return .T.

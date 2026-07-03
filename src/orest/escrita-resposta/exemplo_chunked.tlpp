@@ -1,0 +1,40 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/chunked/ctry/:ctry")
+Function u_Chunked()
+Local jParams  := oRest:getPathParamsRequest() As Object
+Local cContent := ""                           As Character
+Local nTry     := 0                            As Numeric
+Local nA       := 0                            As Numeric
+ 
+If (jParams <> Nil .And. jParams['ctry'] <> Nil .And. !Empty(jParams['ctry']))
+    nTry := Val(jParams['ctry'])
+    If (nTry > 0)
+         
+        For nA := 1 To nTry
+            cContent := StrTran(sPutChunkedValue(), "#change!", cValToChar(nA))
+             
+            If (nA == nTry)
+                oRest:setLastChunkedResponse(cContent)
+            Else
+                oRest:setChunkedResponse(cContent)
+            EndIf
+        Next
+         
+    EndIf
+EndIf
+ 
+ 
+Return .T.
+ 
+Static Function sPutChunkedValue()
+Local cContent := "" As Character
+ 
+cContent := "1:Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eros turpis, finibus vitae eros eu, consectetur lacinia nisl. Duis et dapibus nisi. Pellentesque facilisis arcu quam, ac tincidunt lectus pharetra in. Morbi dapibus semper dolor eget euismod. Pellentesque ut commodo lorem. Suspendisse efficitur congue leo, id lacinia dolor auctor vitae. Vestibulum vitae elit in ligula pellentesque cursus. Donec quis leo in massa interdum aliquam. Vivamus auctor quam nec mattis dignissim. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Etiam at orci luctus, egestas est vitae, scelerisque nisl."
+cContent += "Cras finibus sem sed dignissim rutrum. Nam a lectus porttitor, elementum sapien sed, porta ex. Morbi accumsan porttitor libero, auctor mollis augue aliquet eu. Sed cursus sapien ut nisi laoreet tempus. Donec congue laoreet eros sit amet semper. Phasellus ac urna ut velit volutpat sagittis. Vestibulum ullamcorper ex in dictum rutrum. Ve. Ut scelerisque id.:#change!"
+ 
+Return cContent
+COMO TESTAR O EXEMPLO
+
+Para validar o funcionamento dinâmico do envio de chunks no seu ambiente de homologação, execute uma requisição apontando diretamente para o endpoint de teste:

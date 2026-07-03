@@ -1,0 +1,19 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get('/documentation/getThreadPoolMaxThreads')
+User Function fGetThreadPoolMaxThreads()
+ 
+Local cResponse := ""
+Local nQtd      := oRest:getThreadPoolMaxThreads()
+ 
+If (ValType(nQtd) == 'N')
+    cResponse := '{"getThreadPoolMaxThreads": "' + cValToChar(nQtd) + ' e o numero maximo de threads que atendem o thread pool ' + oRest:getThreadPoolName() + '"}'
+Else
+    cResponse := '{"getThreadPoolMaxThreads": "Metodo getThreadPoolMaxThreads nao foi executado"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

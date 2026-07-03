@@ -1,0 +1,31 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/setHeaderResponse")
+User Function fSetHeaderResponse()
+ 
+Local cJson     := '{"Content-Type": "application/json", "X-Meu-Cabecalho-Teste": "Funcionou perfeitamente!"}'
+Local cResponse := ""
+Local jHeaders  := Nil
+Local jRet      := Nil
+Local uRet      := .F.
+ 
+jHeaders := JsonObject():New()
+uRet     := jHeaders:fromJson(cJson)
+ 
+If (ValType(uRet) == 'U')
+     
+    jRet := oRest:setHeaderResponse(jHeaders)
+ 
+    If (ValType(jRet) == 'J')
+        cResponse := '{"setHeaderResponse": ' + jRet:toJson() + '}'
+    Else
+        cResponse := '{"setHeaderResponse": "metodo setHeaderResponse falhou"}'
+    EndIf
+     
+Else
+    cResponse := '{"setHeaderResponse": "falha ao ler a string JSON inicial"}'
+EndIf
+ 
+ 
+Return oRest:setResponse(cResponse)

@@ -1,0 +1,43 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("sample/request/body")
+User Function sampleBody()
+ 
+Local cCode   := ""
+Local cReturn := ""
+Local cBody   := ""
+Local jBody   // Declarado sem tipagem inicial para receber um Objeto
+Local uRet
+ 
+// 1. Extrai o conteúdo bruto enviado no Body da requisição
+cBody := oRest:getBodyRequest()
+ 
+If (!Empty(cBody))
+ 
+    cReturn := "Parâmetros capturados: [" + cBody + "]"
+ 
+    // 2. Instancia o objeto e tenta transformar a string recebida em JSON
+    jBody := JsonObject():New()
+    uRet  := jBody:FromJson(cBody)
+ 
+    // 3. Valida se a conversão do JSON foi bem-sucedida (Retorno "U" na classe nativa)
+    If (ValType(uRet) == "U")
+         
+        // Extrai a propriedade "code" do JSON recebido
+        cCode := jBody:GetJsonText("code")
+         
+    EndIf
+ 
+    // Boas práticas: Libera o objeto da memória
+    FreeObj(jBody)
+ 
+EndIf
+ 
+// 4. Envia a resposta final de volta ao cliente
+oRest:setResponse(cReturn)
+ 
+ 
+Return .T.
+
+TRATAMENTO DO FORMATO DE DADOS (PARSE)

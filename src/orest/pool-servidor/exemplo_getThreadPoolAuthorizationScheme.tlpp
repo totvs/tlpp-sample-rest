@@ -1,0 +1,17 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadPoolAuthorizationScheme")
+User Function authorizationType()
+ 
+Local cRet      := oRest:getThreadPoolAuthorizationScheme()
+Local cResponse := ""
+ 
+ConOut("O usuario deve implementar as regras de autenticacao do tipo " + cRet)
+ 
+cResponse := '{"getThreadPoolAuthorizationScheme": "' + cRet + '"}'
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

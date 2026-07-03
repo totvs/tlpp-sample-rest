@@ -1,0 +1,19 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadPool_SvcId_TPType")
+User Function fGetThreadPool_SvcId_TPType()
+ 
+Local cResponse := ""
+Local cRet      := oRest:getThreadPool_SvcId_TPType()
+ 
+If (ValType(cRet) == 'C')
+    cResponse := '{"getThreadPool_SvcId_TPType": "As informacoes do threadpool ' + oRest:getThreadPoolName() + ' sao: ' + cRet + '"}'
+Else
+    cResponse := '{"getThreadPool_SvcId_TPType": "Metodo getThreadPool_SvcId_TPType nao foi executado"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

@@ -1,0 +1,15 @@
+#include 'tlpp-core.th'
+#include 'tlpp-rest.th'
+ 
+User Function sLoadURNs()
+Local cGetPath := "/api/sample"
+Local jEndpoints := JsonObject():New()
+ 
+jEndpoints[cGetPath] := JsonObject():New()
+jEndpoints[cGetPath]['GET']              := JsonObject():New()
+jEndpoints[cGetPath]['GET']['ClassName'] := ""
+jEndpoints[cGetPath]['GET']['Function']  := "U_apiSample"
+jEndpoints[cGetPath]['GET']['EndPoint']  := {"api","sample"}
+ 
+ 
+Return jEndpoints

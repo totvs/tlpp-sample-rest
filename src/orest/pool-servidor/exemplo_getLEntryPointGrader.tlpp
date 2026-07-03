@@ -1,0 +1,23 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/existEntryPointGrader")
+User Function existEntryPointGrader()
+ 
+Local lRet      := .F.
+Local cResponse := ""
+ 
+lRet := oRest:getLEntryPointGrader()
+ 
+If (lRet)
+    ConOut("Foi configurado um ponto de função para o balanceamento de threads: " + oRest:getCEntryPointGrader())
+    cResponse := '{"exist_balancer": true}'
+Else
+    ConOut("Nao foi configurado ponto de função para o balanceamento de threads.")
+    cResponse := '{"exist_balancer": false}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

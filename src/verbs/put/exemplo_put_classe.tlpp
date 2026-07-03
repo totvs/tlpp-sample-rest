@@ -1,0 +1,54 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+Class classPutExamples
+ 
+Public Method New()
+ 
+@Put("examples/class/put/path/user/:user")
+Public Method methodExamplesPutPath()
+ 
+@Put("examples/class/put/query/user")
+Public Method methodExamplesPutQuery()
+ 
+ 
+EndClass
+ 
+Method New() class classPutExamples
+ 
+Return self
+ 
+/* --------------------------------------- */
+Method methodExamplesPutPath() class classPutExamples
+ 
+Local cJson := ""
+Local cBody := ""
+Local jPath
+ 
+jPath := JsonObject():New()
+jPath := oRest:getPathParamsRequest()
+cBody := oRest:getBodyRequest()
+ 
+If (jPath <> Nil)
+    cJson := '[ {"description": "examplesMethodPutPath successfully executed, parameter received: ' + jPath['user'] + '" , "body received":"'+ cBody + '"} ]'
+Endif
+ 
+ 
+Return oRest:setResponse(cJson)
+ 
+/* --------------------------------------- */
+Method methodExamplesPutQuery() class classPutExamples
+Local cJson := ""
+Local cBody := ""
+Local jQuery
+ 
+jQuery  := JsonObject():New()
+jQuery  := oRest:getQueryRequest()
+cBody   := oRest:getBodyRequest()
+ 
+If (jQuery <> Nil)
+    cJson := '[ {"description": "examplesMethodPutQuery successfully executed, parameter received: ' + jQuery['user'] + '" , "body received":"'+ cBody + '"} ]'
+Endif
+ 
+ 
+Return oRest:setResponse(cJson)

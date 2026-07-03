@@ -1,0 +1,53 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+Class classGetExamples
+ 
+Public Method New()
+ 
+@Get("examples/class/get/path/user/:user")
+Public Method methodExamplesGetPath()
+ 
+@Get("examples/class/get/query/user")
+Public Method methodExamplesGetQuery()
+ 
+ 
+ 
+EndClass
+ 
+Method New() class classGetExamples
+ 
+Return self
+ 
+/* --------------------------------------- */
+Method methodExamplesGetPath() class classGetExamples
+ 
+Local cJson := ""
+Local jPath
+ 
+jPath := JsonObject():New()
+jPath := oRest:getPathParamsRequest()
+ 
+If (jPath <> Nil)
+    cJson := '[ {"description": "methodExamplesGetPath successfully executed, parameter received: ' + jPath['user'] + '"} ]'
+Endif
+ 
+ 
+ 
+Return oRest:setResponse(cJson)
+ 
+/* --------------------------------------- */
+Method methodExamplesGetQuery() class classGetExamples
+Local cJson := ""
+Local jQuery
+ 
+jQuery := JsonObject():New()
+jQuery := oRest:getQueryRequest()
+ 
+If (jQuery <> Nil)
+    cJson := '[ {"description": "methodExamplesGetQuery successfully executed, parameter received: ' + jQuery['user'] + '"} ]'
+Endif
+ 
+ 
+ 
+Return oRest:setResponse(cJson)

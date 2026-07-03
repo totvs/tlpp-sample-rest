@@ -1,0 +1,16 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/existkeyheaderresponse")
+User Function fexistKeyHeaderResponse()
+ 
+Local lReturn := .F.
+Local cKey    := "Meu-Header-Customizado"
+ 
+oRest:setKeyHeaderResponse(cKey, "Top-Secret-Value")
+ 
+lReturn := oRest:existKeyHeaderResponse( cKey )
+ 
+oRest:setResponse('{"existKeyHeaderResponse":"' + cValToChar(lReturn) + '"}')
+ 
+Return .T.

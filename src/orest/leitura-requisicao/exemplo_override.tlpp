@@ -1,0 +1,20 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+// Rota 1: Registada com a variável ":used"
+@Get("/pathparamsexample/:used")
+ 
+// Rota 2: Registada no mesmo caminho com a variável ":ignored"
+@Put("/pathparamsexample/:ignored")
+ 
+Function U_samplePathParam()
+Local jPath As Json
+jPath := oRest:getPathParamsRequest()
+Return oRest:SetResponse( jPath )
+Se o cliente efetuar as seguintes chamadas:
+
+GET http://127.0.0.1:9080/pathparamsexample/123
+
+PUT http://127.0.0.1:9080/pathparamsexample/123
+
+A resposta (jPath) para ambas as requisições será sempre indexada pela variável da primeira anotação compilada:

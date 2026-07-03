@@ -1,0 +1,23 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/existEntryPointExit")
+User Function existEntryPointExit()
+ 
+Local lRet      := .F.
+Local cResponse := ""
+ 
+lRet := oRest:getLEntryPointExit()
+ 
+If (lRet)
+    ConOut("Foi configurado um ponto de função para finalização da thread (OnStop): " + oRest:getCEntryPointExit())
+    cResponse := '{"existEntryPointExit": true}'
+Else
+    ConOut("Nao foi configurado ponto de função para finalização da thread.")
+    cResponse := '{"existEntryPointExit": false}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

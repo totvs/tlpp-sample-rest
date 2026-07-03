@@ -1,0 +1,19 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get('/documentation/getThreadPoolType')
+Function u_fGetThreadPoolType()
+ 
+Local cResponse := ""
+Local cRet      := oRest:getThreadPoolType()
+ 
+If (ValType(cRet) == 'C')
+    cResponse := '{"getThreadPoolType": "' + cRet + ' e o tipo do threadpool ' + oRest:getThreadPoolName() + ' que esta ativo"}'
+Else
+    cResponse := '{"getThreadPoolType": "Metodo getThreadPoolType nao foi executado"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return oRest:setResponse(cResponse)

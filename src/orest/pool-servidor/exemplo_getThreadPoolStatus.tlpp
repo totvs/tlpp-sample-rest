@@ -1,0 +1,21 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get('/documentation/getThreadPoolStatus')
+User Function fGetThreadPoolStatus()
+ 
+Local aStatus   := {"STOPPED", "STARTING", "STARTED", "STOPPING"}
+Local cResponse := ""
+Local nRet      := oRest:getThreadPoolStatus()
+ 
+If (ValType(nRet) == 'N')
+    // Efetuamos a soma de "+ 1" para alinhar o retorno numérico (0 a 3) com o índice do array (1 a 4)
+    cResponse := '{"getThreadPoolStatus": "O status do threadpool ' + oRest:getThreadPoolName() + ' e: ' + cValToChar(nRet) + ' (' + aStatus[nRet + 1] + ')"}'
+Else
+    cResponse := '{"getThreadPoolStatus": "Metodo getThreadPoolStatus nao foi executado"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

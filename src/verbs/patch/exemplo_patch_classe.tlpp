@@ -1,0 +1,54 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+Class classPatchExamples
+ 
+Public Method New()
+ 
+@Patch("examples/class/patch/path/user/:user")
+Public Method methodExamplesPatchPath()
+ 
+@Patch("examples/class/patch/query/user")
+Public Method methodExamplesPatchQuery()
+ 
+ 
+EndClass
+ 
+Method New() class classPatchExamples
+ 
+Return self
+ 
+/* ------------------------------------------- */
+Method methodExamplesPatchPath() class classPatchExamples
+ 
+Local cJson := ""
+Local cBody := ""
+Local jPath
+ 
+jPath := JsonObject():New()
+jPath := oRest:getPathParamsRequest()
+cBody := oRest:getBodyRequest()
+ 
+If (jPath <> Nil)
+    cJson := '[ {"description": "examplesMethodPatchPath successfully executed, parameter received: ' + jPath['user'] + '" , "body received":"'+ cBody + '"} ]'
+Endif
+ 
+ 
+Return oRest:setResponse(cJson)
+ 
+/* ------------------------------------------- */
+Method methodExamplesPatchQuery() class classPatchExamples
+Local cJson := ""
+Local cBody := ""
+Local jQuery
+ 
+jQuery  := JsonObject():New()
+jQuery  := oRest:getQueryRequest()
+cBody   := oRest:getBodyRequest()
+ 
+If (jQuery <> Nil)
+    cJson := '[ {"description": "examplesMethodPatchQuery successfully executed, parameter received: ' + jQuery['user'] + '" , "body received":"'+ cBody + '"} ]'
+Endif
+ 
+ 
+Return oRest:setResponse(cJson)

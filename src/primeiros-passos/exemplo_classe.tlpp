@@ -1,0 +1,20 @@
+#include 'tlpp-core.th'
+#include 'tlpp-rest.th'
+ 
+class helloWorld
+  public data cReturn as character
+ 
+  public method new()
+ 
+  @Get("/test/helloWorld")
+  public method sayHello() as logical
+endClass
+ 
+method new() class helloWorld
+    ::cReturn := "Meu primeiro REST em TLPP"
+return self
+ 
+method sayHello() as logical class helloWorld
+return oRest:setResponse(::cReturn)
+Anatomia do Código (Explicando os Componentes)
+Tomando como base os exemplos acima, existem 3 engrenagens principais responsáveis pelo funcionamento de qualquer serviço REST em TLPP:

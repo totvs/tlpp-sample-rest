@@ -1,0 +1,18 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/sendZippedCompress")
+User Function fSendZippedCompress()
+Local cResponse := ""
+Local lRet      := .F.
+ 
+lRet := oRest:sendZipped({"COMPRESS"})
+ 
+If (lRet)
+    cResponse := '{"sendZipped": "Metodo sendZipped executado com sucesso"}'
+Else
+    cResponse := '{"sendZipped": "Metodo sendZipped nao foi executado"}'
+EndIf
+ 
+ 
+Return oRest:setResponse(cResponse)

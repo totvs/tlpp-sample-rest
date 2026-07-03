@@ -1,0 +1,21 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadPoolUserData")
+Function u_fGetThreadPoolUserData()
+ 
+Local cResponse := ""
+Local jRet      := Nil
+ 
+jRet := oRest:getThreadPoolUserData()
+ 
+If (ValType(jRet) == 'J')
+    cResponse := '{"getThreadPoolUserData": ' + jRet:toJSON() + '}'
+Else
+    cResponse := '{"getThreadPoolUserData": "metodo getThreadPoolUserData nao foi executado"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return oRest:setResponse(cResponse)

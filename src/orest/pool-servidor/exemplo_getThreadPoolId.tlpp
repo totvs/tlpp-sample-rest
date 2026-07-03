@@ -1,0 +1,19 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadPoolId")
+User Function fGetThreadPoolId()
+ 
+Local cResponse := ""
+Local nRet      := oRest:getThreadPoolId()
+ 
+If (ValType(nRet) == 'N')
+    cResponse := '{"getThreadPoolId": "O ID do threadpool ' + oRest:getThreadPoolName() + ' e: ' + cValToChar(nRet) + '"}'
+Else
+    cResponse := '{"getThreadPoolId": "Metodo getThreadPoolId nao foi executado"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

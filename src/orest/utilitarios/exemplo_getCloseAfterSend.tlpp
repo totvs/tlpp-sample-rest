@@ -1,0 +1,16 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getCloseAfterSend")
+User Function fGetCloseAfterSend()
+ 
+Local cResponse := ""
+Local lRet      := .F.
+ 
+lRet := oRest:getCloseAfterSend()
+ 
+cResponse := '{"getCloseAfterSend": "Neste momento, a propriedade de encerramento de conexao (CloseAfterSend) é: ' + cValToChar(lRet) + '"}'
+ 
+oRest:setResponse(cResponse)
+ 
+Return .T.

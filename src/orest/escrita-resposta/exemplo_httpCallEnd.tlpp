@@ -1,0 +1,11 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+ 
+User Function fErrorRecover( oError )
+ 
+If ( oRest != Nil )
+ 
+ oRest:setStatusCode(500)
+ 
+ oRest:setFault("Erro interno capturado e tratado pela funcao de callback do usuario.")

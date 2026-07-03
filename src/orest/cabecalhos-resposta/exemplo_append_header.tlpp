@@ -1,0 +1,24 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+// Chamada: http://localhost:9090/api/testAppendKeyHeader
+@Get("testAppendKeyHeader")
+User Function appendKeyHeaderExample()
+ 
+Local lRet := .F.
+Local cRet := "Append OK - Verifique o Header Response"
+ 
+If !oRest:setKeyHeaderResponse("Content-Type", "text/html")
+     
+    cRet := "Erro ao setar valor base na chave Content-Type"
+     
+Else
+     
+    If !oRest:appendKeyHeaderResponse("Content-Type", "charset=utf-8")
+        cRet := "Erro ao efetuar o append na chave Content-Type"
+    EndIf
+     
+EndIf
+ 
+ 
+Return oRest:setResponse(cRet)

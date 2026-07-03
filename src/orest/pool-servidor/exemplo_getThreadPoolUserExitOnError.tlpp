@@ -1,0 +1,24 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadPoolUserExitOnError")
+Function u_fGetTPUserExitOnError()
+ 
+Local cResponse  := ""
+Local cFuncError := ""
+ 
+cFuncError := oRest:getThreadPoolUserExitOnError()
+ 
+If (ValType(cFuncError) == 'C' .And. !Empty(cFuncError))
+     
+    cResponse := '{"getThreadPoolUserExitOnError": "' + cFuncError + '", "message": "Esta e a funcao de tratamento de falhas configurada para o pool."}'
+     
+Else
+     
+    cResponse := '{"getThreadPoolUserExitOnError": "", "message": "Nenhuma funcao de tratamento de erro (OnError) foi configurada para este Thread Pool."}'
+     
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+Return .T.

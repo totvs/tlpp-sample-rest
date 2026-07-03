@@ -1,0 +1,19 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+/* --------------------------------------- */
+@Get("examples/function/get/query/user")
+User Function examplesFunctionGetQuery()
+Local cJson := ""
+Local jQuery
+ 
+jQuery := JsonObject():New()
+jQuery := oRest:getQueryRequest()
+ 
+If (jQuery <> Nil)
+    cJson := '[ {"description": "examplesFunctionGetQuery successfully executed, parameter received: ' + jQuery['user'] + '"} ]'
+Endif
+ 
+ 
+ 
+Return oRest:setResponse(cJson)

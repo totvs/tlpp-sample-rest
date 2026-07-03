@@ -1,0 +1,26 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getQueryRequest/user")
+User Function fGetQueryRequest()
+ 
+Local cResponse := ""
+Local cRet      := ""
+Local jParams   := JsonObject():New()
+ 
+jParams := oRest:getQueryRequest()
+ 
+If (ValType(jParams) == 'J')
+    cRet := jParams['user']
+EndIf
+ 
+If (ValType(cRet) == 'C')
+    cResponse := '{"getQueryRequest":"' + cValToChar(cRet) + '"}'
+Else
+    cResponse := '{"getQueryRequest": "metodo getQueryRequest nao foi executado"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

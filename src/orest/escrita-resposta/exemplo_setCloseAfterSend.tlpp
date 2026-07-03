@@ -1,0 +1,20 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/setCloseAfterSend")
+User Function fSetCloseAfterSend()
+ 
+Local cResponse := ""
+Local lRet      := .F.
+ 
+cResponse := '{"setCloseAfterSend": "Metodo setCloseAfterSend executado com sucesso, forçado o encerramento para header keep-alive"}'
+ 
+lRet := oRest:setCloseAfterSend(.T.)
+ 
+ 
+Return oRest:setResponse(cResponse)
+COMO TESTAR O EXEMPLO
+
+Configure explicitamente o cabeçalho (Header) da requisição com a chave Connection definida como "keep-alive";
+
+Dispare a requisição apontando para a URI: /documentation/setCloseAfterSend;

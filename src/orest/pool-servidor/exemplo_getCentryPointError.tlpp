@@ -1,0 +1,26 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getEntryPointError")
+User Function getEntryPointError()
+ 
+Local cRet := ""
+Local cMsg := ""
+ 
+cRet := oRest:getCentryPointError()
+ 
+If (cRet != "")
+     
+    cMsg := "O ponto de função para tratamento de erros (OnError) é: [" + cRet + "]"
+    ConOut(cMsg)
+     
+Else
+     
+    cMsg := "Atenção: Não foi configurado um ponto de função (OnError) para tratamento de falhas neste servidor."
+    ConOut(cMsg)
+     
+EndIf
+ 
+oRest:setResponse('{"status_error_handler": "' + cMsg + '"}')
+ 
+Return .T.

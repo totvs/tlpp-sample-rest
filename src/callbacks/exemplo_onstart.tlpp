@@ -1,0 +1,16 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+/*
+ 
+Callback executado no arranque de cada Thread do REST Server.
+*/
+User Function onStart() As Logical
+ 
+Local lOK := .T. As Logical
+ 
+// Somente permitirá criar a Thread se conseguir preparar o Ambiente
+// A lógica de implementação (abertura de filiais, set de variáveis) fica a critério do negócio
+lOK := U_preparaAmbiente()
+ 
+Return lOK

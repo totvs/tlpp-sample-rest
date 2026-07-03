@@ -1,0 +1,31 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+/*
+ 
+@param cClassName    Nome da classe requisitada
+ 
+@param cFunctionName Nome do método/função requisitado
+ 
+@param cProgramType  Tipo de programa (1=Annotation, 2=LoadURNs)
+*/
+Function u_restGrader( cClassName As Character, cFunctionName As Character, cProgramType As Character ) As Integer
+ 
+Local nIndex  := -1 As Integer
+Local aSlaves := oRest:GetThreadPoolSlaves() As Array
+Local nA      := 0 As Integer
+ 
+// Itera sobre os Slaves disponíveis no Pool atual
+For nA := 1 To Len(aSlaves)
+ 
+ // Aplica a lógica de negócio desejada para escolher o Slave
+ // (Exemplo: verificar se o ID do Slave é igual a 6)
+ If (aSlaves[nA]:ID == 6)
+     nIndex := nA
+     Exit
+ EndIf
+ 
+ 
+Next
+ 
+Return nIndex

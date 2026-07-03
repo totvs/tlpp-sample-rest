@@ -1,0 +1,20 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/testUpdateKeyHeader")
+User Function UpdateKeyHeaderExample()
+ 
+Local lRet := .F.
+Local cRet := "Update realizado com sucesso"
+ 
+lRet := oRest:updateKeyHeaderResponse("Content-Type", "application/json")
+ 
+If !lRet
+    cRet := "Fail - Nao foi possivel atualizar a chave de cabecalho"
+EndIf
+ 
+oRest:setResponse(cRet)
+ 
+Return .T.
+
+E - Todas as funções

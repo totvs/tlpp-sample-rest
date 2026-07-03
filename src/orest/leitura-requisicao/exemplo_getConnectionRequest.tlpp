@@ -1,0 +1,20 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getConnectionRequest")
+User Function fGetConnectionRequest()
+ 
+Local cResponse   := ""
+Local nConnection := 0
+ 
+nConnection := oRest:getConnectionRequest()
+ 
+If (ValType(nConnection) == 'N')
+    cResponse := '{"getConnectionRequest": "' + cValToChar(nConnection) + '"}'
+Else
+    cResponse := '{"getConnectionRequest": "Método getConnectionRequest não obteve um retorno numérico válido."}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+Return .T.

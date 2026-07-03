@@ -1,0 +1,15 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/setFault")
+User Function fSetFault()
+ 
+Local cResponse := ""
+Local lRet      := .F.
+ 
+cResponse := '{"setFault": "Metodo setFault executado com sucesso, mensagem de retorno padrao alterada e Status HTTP definido como 500"}'
+ 
+lRet := oRest:setFault(cResponse)
+ 
+ 
+Return lRet

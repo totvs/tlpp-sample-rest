@@ -1,0 +1,23 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/existEntryPointError")
+User Function existEntryPointError()
+ 
+Local lRet      := .F.
+Local cResponse := ""
+ 
+lRet := oRest:getLEntryPointError()
+ 
+If (lRet)
+    ConOut("Foi configurado um ponto de função para tratamento de erros: " + oRest:getCEntryPointError())
+    cResponse := '{"existEntryPointError": true}'
+Else
+    ConOut("Nao foi configurado ponto de função para tratamento de erros.")
+    cResponse := '{"existEntryPointError": false}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

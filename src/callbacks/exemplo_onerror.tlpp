@@ -1,0 +1,30 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+/*
+ 
+@param oError   Objeto com as propriedades e rastreio da falha de runtime
+*/
+Function U_onError( oError As Object )
+ 
+Local cCodeTrace := U_getCodeTrace() As Character
+Local cFault     := ""               As Character
+ 
+// Envia os dados reais e sensíveis do erro para uma rotina customizada
+// de gravação de logs ou envio de alertas à equipa de infraestrutura.
+U_TrataErro( cCodeTrace, oError:genCode, oError:description )
+ 
+// Monta um JSON amigável ("mascarado") para devolver ao cliente,
+// impedindo que a arquitetura do servidor seja exposta.
+cFault += '{'
+cFault += '  "code": "' + cCodeTrace + '",'
+cFault += '  "message": "Um erro interno ocorreu, por favor informe o administrador de sistema."'
+cFault += '}'
+ 
+// Valida se a classe do REST está instanciada no escopo atual
+// e injeta o JSON mascarado como a resposta da falha.
+If ( Type('oRest') == 'O' )
+oRest:SetFault( cFault )
+EndIf
+ 
+Return Nil

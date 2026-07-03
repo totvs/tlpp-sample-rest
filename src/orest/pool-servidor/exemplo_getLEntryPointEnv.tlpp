@@ -1,0 +1,23 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/existEntryPoint")
+User Function existEntryPoint()
+ 
+Local lRet      := .F.
+Local cResponse := ""
+ 
+lRet := oRest:getLEntryPointEnvironment()
+ 
+If (lRet)
+    ConOut("Foi configurado um ponto de função para preparação de ambiente: " + oRest:getCEntryPointEnvironment())
+    cResponse := '{"existEntryPoint": true}'
+Else
+    ConOut("Nao foi configurado ponto de função para preparação de ambiente")
+    cResponse := '{"existEntryPoint": false}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

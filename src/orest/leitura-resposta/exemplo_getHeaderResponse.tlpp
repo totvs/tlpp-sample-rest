@@ -1,0 +1,22 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getHeaderResponse")
+User Function fgetHeaderResponse()
+ 
+Local cResponse := ""
+Local jResp     := Nil
+ 
+oRest:setKeyHeaderResponse("Meu-Header-Teste", "Protheus-TLPP")
+ 
+jResp := oRest:getHeaderResponse()
+ 
+If (ValType(jResp) == "J")
+    cResponse := '{"fgetHeaderResponse": "Metodo getHeaderResponse executado com sucesso", "Header Response Content": ' + jResp:toJSON() + '}'
+Else
+    cResponse := '{"fgetHeaderResponse": "Falha", "Motivo": "Nenhum header de saida encontrado."}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+Return .T.

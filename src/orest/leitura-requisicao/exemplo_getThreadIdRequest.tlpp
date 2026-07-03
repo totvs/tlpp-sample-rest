@@ -1,0 +1,21 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadIdRequest")
+User Function fGetThreadIdRequest()
+ 
+Local cResponse := ""
+Local nThreadId := 0
+ 
+nThreadId := oRest:getThreadIdRequest()
+ 
+If (ValType(nThreadId) == 'N')
+    cResponse := '{"getThreadIdRequest": "' + cValToChar(nThreadId) + '"}'
+Else
+    cResponse := '{"getThreadIdRequest": "Método getThreadIdRequest não obteve um retorno numérico válido."}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

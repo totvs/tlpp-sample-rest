@@ -1,0 +1,24 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/sampleMigrateRestTlpp")
+User Function GETsampleMigrateRestTlpp()
+ 
+Local cId   := ''
+Local cData := ''
+Local jPath
+ 
+jPath := oRest:getQueryRequest()
+ 
+If ( jPath <> Nil )
+    cId := jPath['id']
+    If ( ValType(cId) == 'U' )
+        cId := ''
+    EndIf
+EndIf
+ 
+cData := '{ "METHOD" : "GET" ,"id" : "' + cId + '" }'   
+oRest:setResponse( cData )
+ 
+ 
+Return .T.

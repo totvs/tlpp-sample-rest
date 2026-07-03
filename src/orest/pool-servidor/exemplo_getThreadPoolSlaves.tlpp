@@ -1,0 +1,45 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadPoolSlaves")
+User Function fGetThreadPoolSlaves()
+ 
+Local aSlaves
+Local cResponse  := ""
+Local nIndex     := 1
+Local nLenSlaves := 0
+ 
+aSlaves := oRest:getThreadPoolSlaves()
+ 
+If (ValType(aSlaves) == 'A')
+ 
+    nLenSlaves := Len(aSlaves)
+     
+    If (nLenSlaves > 0)
+     
+        cResponse := '{"ThreadPool": "' + oRest:getThreadPoolName() + '", '
+        cResponse += '"Total_Slaves": ' + cValToChar(nLenSlaves) + ', '
+        cResponse += '"Slaves_Ativos": ['
+         
+        For nIndex := 1 To nLenSlaves
+            cResponse += '"' + cValToChar(aSlaves[nIndex]:id) + '"'
+             
+            If nIndex < nLenSlaves
+                cResponse += ', '
+            EndIf
+        Next
+         
+        cResponse += ']}'
+         
+    Else
+        cResponse := '{"getThreadPoolSlaves": "Nao existem slaves configurados para o threadpool: ' + oRest:getThreadPoolName() + '"}'
+    EndIf
+     
+Else
+    cResponse := '{"getThreadPoolSlaves": "Metodo falhou ou retornou diferente de array"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

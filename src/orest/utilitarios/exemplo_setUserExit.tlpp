@@ -1,0 +1,15 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/setUserExit")
+User Function fsetUserExit()
+ 
+Local lRet := .F.
+ 
+// Força o encerramento da espera por novas requisições na Thread atual
+lRet := oRest:setUserExit(.T.)
+ 
+// Despacha a confirmação de interrupção
+ 
+ 
+Return oRest:setResponse('{"UserExit": "A proxima requisicao nao sera respondida. Status: ' + cValToChar(lRet) + '"}')

@@ -1,0 +1,54 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+Class classPostExamples
+ 
+Public Method New()
+ 
+@Post("examples/class/post/path/user/:user")
+Public Method methodExamplesPostPath()
+ 
+@Post("examples/class/post/query/user")
+Public Method methodExamplesPostQuery()
+ 
+ 
+EndClass
+ 
+Method New() class classPostExamples
+ 
+Return self
+ 
+/* ----------------------------------------- */
+Method methodExamplesPostPath() class classPostExamples
+ 
+Local cJson := ""
+Local cBody := ""
+Local jPath
+ 
+jPath := JsonObject():New()
+jPath := oRest:getPathParamsRequest()
+cBody := oRest:getBodyRequest()
+ 
+If (jPath <> Nil)
+    cJson := '[ {"description": "examplesMethodPostPath successfully executed, parameter received: ' + jPath['user'] + '" , "body received":"'+ cBody + '"} ]'
+Endif
+ 
+ 
+Return oRest:setResponse(cJson)
+ 
+/* ----------------------------------------- */
+Method methodExamplesPostQuery() class classPostExamples
+Local cJson := ""
+Local cBody := ""
+Local jQuery
+ 
+jQuery  := JsonObject():New()
+jQuery  := oRest:getQueryRequest()
+cBody   := oRest:getBodyRequest()
+ 
+If (jQuery <> Nil)
+    cJson := '[ {"description": "examplesMethodPostQuery successfully executed, parameter received: ' + jQuery['user'] + '" , "body received":"'+ cBody + '"} ]'
+Endif
+ 
+ 
+Return oRest:setResponse(cJson)

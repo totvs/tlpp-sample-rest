@@ -1,0 +1,12 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+/* Callback de validação da autenticação Basic. */
+User Function onAuthorization( cUser As Character, cPass As Character ) As Logical
+ 
+Local lRet := .F. As Logical
+ 
+// Regra de negócio: Valida utilizador e senha específicos
+lRet := (cUser == 'test_user' .And. cPass == 'test_pass')
+ 
+Return lRet

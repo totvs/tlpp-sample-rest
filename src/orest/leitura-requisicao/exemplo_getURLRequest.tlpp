@@ -1,0 +1,16 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+// Chamada: http://localhost:9090/documentation/getURLRequest
+@Get("/documentation/getURLRequest")
+User Function fGetURLRequest()
+Local cReturn := ""
+ 
+cReturn := oRest:getURLRequest()
+ 
+ConOut("URN da requisicao capturada: " + cReturn)  // Vai exibir: /documentation/getURLRequest
+ 
+cReturn := '{"url": "' + cReturn + '"}'
+ 
+ 
+Return oRest:SetResponse(cReturn)

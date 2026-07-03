@@ -1,0 +1,27 @@
+name: Notify Hub
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve hub target from ecosystem.config.json
+        id: hub
+        run: |
+          HUB=$(node -pe "const c=require('./ecosystem.config.json'); c.site.owner + '/' + c.site.name")
+          EVENT=$(node -pe "const c=require('./ecosystem.config.json'); c.notifyHub.eventType")
+          echo "repository=$HUB" >> $GITHUB_OUTPUT
+          echo "event_type=$EVENT" >> $GITHUB_OUTPUT
+
+      - name: Trigger hub rebuild
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.HUB_DISPATCH_TOKEN }}
+          repository: ${{ steps.hub.outputs.repository }}
+          event-type: ${{ steps.hub.outputs.event_type }}
+          client-payload: '{"ref": "${{ github.sha }}"}'

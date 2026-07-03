@@ -1,0 +1,24 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadPoolUserExitOnSelect")
+Function u_fGetTPUserExitOnSelect()
+ 
+Local cResponse   := ""
+Local cFuncSelect := ""
+ 
+cFuncSelect := oRest:getThreadPoolUserExitOnSelect()
+ 
+If (ValType(cFuncSelect) == 'C' .And. !Empty(cFuncSelect))
+     
+    cResponse := '{"getThreadPoolUserExitOnSelect": "' + cFuncSelect + '", "message": "Esta e a funcao orquestradora (balanceador) configurada para o pool."}'
+     
+Else
+     
+    cResponse := '{"getThreadPoolUserExitOnSelect": "", "message": "Nenhuma funcao de orquestracao (OnSelect) foi configurada para este Thread Pool."}'
+     
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+Return .T.

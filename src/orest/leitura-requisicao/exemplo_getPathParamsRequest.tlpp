@@ -1,0 +1,24 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getPathParamsRequest/:cKey")
+User Function fGetPathParamsRequest()
+ 
+Local cResponse := ""
+Local cRet      := ""
+Local jParams   := oRest:getPathParamsRequest()
+ 
+If (ValType(jParams) == 'J')
+    cRet := jParams['cKey']
+EndIf
+ 
+If (ValType(cRet) == 'C' .And. !Empty(cRet))
+    cResponse := '{"getPathParamsRequest": "' + cValToChar(cRet) + '"}'
+Else
+    cResponse := '{"getPathParamsRequest": "metodo getPathParamsRequest nao foi executado"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

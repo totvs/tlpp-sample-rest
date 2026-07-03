@@ -1,0 +1,32 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+Function U_OnSend()
+Local cMsgSend As Character
+Local jValue   As Json
+Local uRet     // Variável para captura do resultado do parser
+ 
+// 1 - Captura o conteúdo de retorno gerado pelo REST executado na thread
+cMsgSend := oRest:getBodyResponse()
+ 
+If (!Empty(cMsgSend))
+ 
+    jValue := JsonObject():New()
+ 
+    // 2 - Tenta converter o conteúdo capturado para o formato JSON
+    uRet := jValue:FromJson(cMsgSend)
+ 
+    // 3 - Injeta o Content-Type apropriado no Header da resposta
+    // Na classe Json nativa, o retorno tipo "U" (Nil/Undefined) indica ausência de erros na conversão
+    If (ValType(uRet) == "U")
+        oRest:updateKeyHeaderResponse("Content-Type", "application/json")
+    Else
+        oRest:updateKeyHeaderResponse("Content-Type", "text/plain")
+    EndIf
+ 
+    FreeObj(jValue)
+ 
+EndIf
+ 
+ 
+Return .T.

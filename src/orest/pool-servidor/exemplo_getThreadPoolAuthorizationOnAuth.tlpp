@@ -1,0 +1,17 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadPoolAuthorizationOnAuth")
+User Function authorizationFunction()
+ 
+Local cFunc     := oRest:getThreadPoolAuthorizationOnAuth()
+Local cResponse := ""
+ 
+ConOut("O usuario deve implementar as regras de autenticacao aqui: " + cFunc)
+ 
+cResponse := '{"getThreadPoolAuthorizationOnAuth": "' + cFunc + '"}'
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

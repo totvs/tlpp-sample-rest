@@ -1,0 +1,38 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Post("/sampleMigrateRestTlpp/:id")
+User Function PostsampleMigrateRestTlpp()
+ 
+Local cId   := ''
+Local cData := ''
+Local jPath
+Local jBody
+ 
+jPath := oRest:getPathParamsRequest()
+If ( jPath <> Nil )
+    cId := jPath['id']
+    If ( ValType(cId) == 'U' )
+        cId := ''
+    EndIf
+EndIf
+ 
+cData := '{ "METHOD" : "POST" , "id" : "' + cId + '" '   
+ 
+jBody := JsonObject():new()   
+jBody:fromJson( oRest:GetBodyRequest() )   
+ 
+If ( jBody <> Nil )       
+    If ( !Empty(jBody:GetJsonText("cpo1")) )           
+        cData += ', "cpo1" : "' + jBody:GetJsonText("cpo1") + '" '       
+    EndIf       
+    If ( !Empty(jBody:GetJsonText("cpo2")) )           
+        cData += ', "cpo2" : "' + jBody:GetJsonText("cpo2") + '" '       
+    EndIf   
+EndIf   
+ 
+cData += '}'   
+oRest:setResponse( cData )
+ 
+ 
+Return .T.

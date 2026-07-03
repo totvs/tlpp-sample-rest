@@ -1,0 +1,11 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getBodyResponse")
+User Function fGetBodyResponse()
+ 
+Local cResponse := ""
+ 
+oRest:setResponse('test_getBodyResponse')
+ 
+cResponse := oRest:getBodyResponse()

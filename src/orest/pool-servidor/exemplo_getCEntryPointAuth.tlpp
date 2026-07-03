@@ -1,0 +1,23 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getEntryPointAuth")
+User Function getEntryPointAuth()
+ 
+Local cRet := ""
+ 
+cRet := oRest:getCEntryPointAuthorizationOnAuth()
+ 
+If (cRet != "")
+     
+    ConOut("O ponto de função para realizar a autenticação para as requisições HTTP é: " + cRet)
+     
+Else
+     
+    ConOut("Atenção: Não foi configurado um ponto de função (OnAuth) para validar as requisições HTTP neste ambiente.")
+     
+EndIf
+ 
+oRest:setResponse(cRet)
+ 
+Return .T.

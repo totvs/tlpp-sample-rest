@@ -1,0 +1,16 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getCentryPointAuthorizationScheme")
+User Function getCentryPointAuthScheme()
+ 
+Local cResponse := ""
+Local cScheme   := ""
+ 
+cScheme := cValToChar(oRest:getCEntryPointAuthorizationScheme())
+ 
+cResponse := '{"getCentryPointAuthorizationScheme": "Metodo executado com sucesso, retornando: [' + cScheme + ']"}'
+ 
+oRest:setResponse(cResponse)
+ 
+Return .T.

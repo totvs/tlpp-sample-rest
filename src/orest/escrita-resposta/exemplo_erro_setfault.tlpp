@@ -1,0 +1,31 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("sample/setFault")
+User Function sampleSetFault()
+ 
+Local cUser := ""
+Local jQuery
+ 
+// Extração do parâmetro via Query String
+jQuery := oRest:getQueryRequest()
+If (jQuery <> Nil)
+    cUser := jQuery['user']
+EndIf
+ 
+// Validação de negócio (apenas "ADMIN" tem permissão)
+If (Upper(cUser) == "ADMIN")
+    oRest:setResponse('{"admin":"ok"}')
+Else
+    // Define a mensagem de erro e altera o HTTP Status para 500
+    oRest:setFault('{"admin":"no"}')
+EndIf
+ 
+ 
+Return .T.
+Mais detalhes sobre o método oRest:setFault()
+
+Abordagem 2: Geração de Erro Específico (Status Customizado)
+Em muitos casos, o erro genérico 500 (Internal Server Error) não expressa corretamente o que aconteceu (ex: falhas de permissão, campos ausentes, registos não encontrados).
+
+Neste segundo modelo, fazemos uso de dois métodos combinados: um para modificar o Status Code para o código mais adequado à situação (ex: 403) e outro para definir o conteúdo do corpo da mensagem.

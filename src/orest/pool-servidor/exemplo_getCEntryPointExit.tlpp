@@ -1,0 +1,26 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getEntryPointExit")
+User Function getEntryPointExit()
+ 
+Local cRet := ""
+Local cMsg := ""
+ 
+cRet := oRest:getCEntryPointExit()
+ 
+If (cRet != "")
+     
+    cMsg := "O ponto de função para realizar tratamento na finalização da thread (OnStop) é: [" + cRet + "]"
+    ConOut(cMsg)
+     
+Else
+     
+    cMsg := "Atenção: Não foi configurado um ponto de função para tratamento na finalização da thread."
+    ConOut(cMsg)
+     
+EndIf
+ 
+oRest:setResponse('{"status_onstop": "' + cMsg + '"}')
+ 
+Return .T.

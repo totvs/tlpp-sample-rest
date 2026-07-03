@@ -1,0 +1,24 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Delete("/sampleMigrateRestTlpp/:id")
+User Function DeletesampleMigrateRestTlpp()
+ 
+Local cId   := ''
+Local cData := ''
+Local jPath
+ 
+jPath := oRest:getPathParamsRequest()
+ 
+If ( jPath <> Nil )
+    cId := jPath['id']
+    If ( ValType(cId) == 'U' )
+        cId := ''
+    EndIf
+EndIf
+ 
+cData := '{ "METHOD" : "DELETE" , "id" : "' + cId + '" }'   
+oRest:setResponse( cData )
+ 
+ 
+Return .T.

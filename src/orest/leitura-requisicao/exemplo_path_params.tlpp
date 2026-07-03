@@ -1,0 +1,23 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+// O caractere ":" indica que "code" é um parâmetro obrigatório na URL
+@Get("sample/function/pathparamsexample/:code")
+User Function samplePathParamsExample()
+ 
+Local cReturn     := ""
+Local jPathParams := Nil
+ 
+// Extrai os parâmetros passados na URI
+jPathParams := oRest:getPathParamsRequest()
+ 
+// Valida se o objeto extraído é um JSON válido
+If (ValType(jPathParams) == 'J')
+    cReturn := "Parâmetros capturados: [" + jPathParams:ToJSon() + "]"
+EndIf
+ 
+oRest:SetResponse( cReturn )
+ 
+ 
+Return .T.
+Para que o exemplo acima seja acionado corretamente, a chamada do cliente deverá respeitar o endpoint completo. Exemplo de requisição:

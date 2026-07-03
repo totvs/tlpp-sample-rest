@@ -1,0 +1,3 @@
+// Static Function responsável por criar o nó contendo o vínculo entre as URNs e as APIs (funções) no objeto JSON recebido como parâmetro.
+Static Function sLoadURNs(jEndpoints)
+Local cDelPath      := "/documentation/noannotation/delete"

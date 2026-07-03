@@ -1,0 +1,18 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/setHttpEnd")
+User Function fsetHttpEnd()
+Local cResponse := ""
+Local lRet      := .F.
+ 
+lRet := oRest:setHttpEnd()
+ 
+If (lRet)
+    cResponse := '{"setHttpEnd": "metodo setHttpEnd executado com sucesso"}'
+Else
+    cResponse := '{"setHttpEnd": "O metodo setHttpEnd nao foi executado"}'
+EndIf
+ 
+ 
+Return oRest:setResponse(cResponse)

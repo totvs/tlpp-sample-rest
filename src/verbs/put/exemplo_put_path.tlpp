@@ -1,0 +1,20 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+/* --------------------------------------- */
+@Put("examples/function/put/path/user/:user")
+User Function examplesFunctionPutPath()
+Local cJson := ""
+Local jPath
+Local cBody := ""
+ 
+jPath := JsonObject():New()
+jPath := oRest:getPathParamsRequest()
+cBody := oRest:getBodyRequest()
+ 
+If (jPath <> Nil)
+    cJson := '[ { "description": "examplesFunctionPutPath successfully executed, parameter received: ' + jPath['user'] + '" , "body received":"'+ cBody + '"} ]'
+Endif
+ 
+ 
+Return oRest:setResponse(cJson)

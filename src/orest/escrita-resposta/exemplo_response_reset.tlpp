@@ -1,0 +1,12 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("sample/setResponse_3")
+User Function sampleSetResponse_3()
+ 
+Local cReturn := ''
+ 
+// Mensagem inicial (supostamente errada)
+oRest:setResponse( '{"sample":"0"}' )
+ 
+// Reseta/Apaga o conteúdo da mensagem injetada até aqui

@@ -1,0 +1,21 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getKeyHeaderResponse")
+User Function fgetKeyHeaderResponse()
+ 
+Local lRet := .F.
+Local cRet := ""
+ 
+oRest:setKeyHeaderResponse("Meu-Header-Teste", "Protheus-TLPP")
+ 
+lRet := oRest:getKeyHeaderResponse("Meu-Header-Teste", @cRet)
+ 
+If (lRet == .F. .Or. ValType(cRet) <> "C" .Or. cRet == Nil)
+    cRet := "Valor nao encontrado"
+EndIf
+ 
+oRest:setResponse('[ {"description": "fgetKeyHeaderResponse executado. Valor lido: ' + cRet + '"} ]')
+ 
+ 
+Return .T.

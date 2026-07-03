@@ -1,0 +1,13 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("sample/setResponse_1")
+User Function sampleSetResponse_1()
+ 
+Local cReturn := '{"sample":"1"}'
+ 
+// Define a mensagem de retorno a ser devolvida no Body
+oRest:setResponse( cReturn )
+ 
+ 
+Return .T.

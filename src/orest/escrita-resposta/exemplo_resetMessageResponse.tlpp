@@ -1,0 +1,19 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/resetMessageResponse")
+User Function fResetMessageResponse()
+ 
+Local cResponse := ""
+Local lRet      := .F.
+ 
+lRet := oRest:resetMessageResponse()
+ 
+If (lRet)
+    cResponse := '{"resetMessageResponse": "Metodo resetMessageResponse executado com sucesso"}'
+Else
+    cResponse := '{"resetMessageResponse": "Nao foi possivel executar o metodo resetMessageResponse"}'
+EndIf
+ 
+ 
+Return oRest:setResponse(cResponse)

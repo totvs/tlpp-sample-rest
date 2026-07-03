@@ -1,0 +1,19 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+// http://localhost:9090/mypath/teste
+@Get("/mypath/teste")
+User Function getPathExample()
+ 
+Local cReturn := ""
+ 
+cReturn := oRest:getPathRequest()
+ 
+ConOut(cReturn) // Vai exibir a URN da requisição, por exemplo /api/mypath/teste
+ 
+cReturn := '{"path": "' + cReturn + '"}'
+ 
+oRest:SetResponse(cReturn)
+ 
+ 
+Return .T.

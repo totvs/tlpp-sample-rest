@@ -1,0 +1,20 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+/* ------------------------------------------- */
+@Patch("examples/function/patch/query/user")
+User Function examplesFunctionPatchQuery()
+Local cJson     := ""
+Local cBody     := ""
+Local jQuery
+ 
+jQuery  := JsonObject():New()
+jQuery  := oRest:getQueryRequest()
+cBody   := oRest:getBodyRequest()
+ 
+If (jQuery <> Nil)
+    cJson := '[ {"description": "examplesFunctionPatchQuery successfully executed, parameter received: ' + jQuery['user'] + '" , "body received":"'+ cBody + '"} ]'
+Endif
+ 
+ 
+Return oRest:setResponse(cJson)

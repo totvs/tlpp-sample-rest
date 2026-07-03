@@ -1,5 +1,34 @@
-# EXEMPLOS de uso do REST nativo do TLPP
+# totvs/tlpp-sample-rest
 
-> [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)<br>Esta é uma iniciativa open source, sob **Licença MIT**, e como tal, é disponibilizada **sem qualquer garantia, expressa ou implícita**, não havendo restrições sobre usar, copiar, modificar, fundir, publicar, distribuir, sublicenciar e/ou vender cópias de seu conteúdo.
+Exemplos TLPP REST organizados por tema: oREST, verbos HTTP, configurações, callbacks e primeiros passos.
 
-Na pasta server, estão todos os exemplos para criar Webservices REST como servidor através do TLPP
+**Metadados, doc-generate e OpenAPI** ficam em [totvs/tlpp-sample-rest-documentation](https://github.com/totvs/tlpp-sample-rest-documentation).
+
+## Estrutura `src/`
+
+| Pasta | Conteúdo |
+|-------|----------|
+| `primeiros-passos/` | `rest_start`, função/classe, `load_urns` |
+| `configuracoes/` | Annotations, `fInitService`, URNs sem annotation |
+| `verbs/{get,post,put,patch,delete}/` | Exemplos por verbo HTTP |
+| `orest/` | Leitura/escrita oREST, pool, cabeçalhos |
+| `callbacks/` | User exits REST |
+| `authorization/` | `onAuth` |
+| `apis/admin/` | APIs administrativas |
+
+Cada `.tlpp` contém apenas código de exemplo válido (sem narrativa do TDN).
+
+## Atualizar páginas do hub
+
+```bash
+npm run docs:exemplos
+```
+
+Gera `docs/exemplos/*.mdx` a partir da árvore `src/`.
+
+## Repositórios relacionados
+
+| Repo | Papel |
+|------|-------|
+| [totvs/tlpp-sample-rest-documentation](https://github.com/totvs/tlpp-sample-rest-documentation) | Metadados, doc-generate, OpenAPI |
+| [totvs/totvstec-doc](https://github.com/totvs/totvstec-doc) | Site de documentação |

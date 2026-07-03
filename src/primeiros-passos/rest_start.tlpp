@@ -1,0 +1,263 @@
+#include "tlpp-core.th"
+  
+/*
+  
+Uso:   rest.u_start
+*/
+  
+namespace rest
+  
+Function u_start()
+Local oVdrCtrl            := Nil
+Local nResult             := 0
+Local jo                  := Nil
+Local cEnv                := ""
+Local cURLTest            := ""
+Local cURLTest2           := ""
+Local cURLTest3           := ""
+Local cGetWithoutAnnot    := "test_without_annotation"
+Local cGetPath            := "/" + cGetWithoutAnnot
+  
+// Sessoes
+Local sSS_HTTPSERVER      := "HTTPSERVER"
+Local sSS_ServerName      := "TEST_REST_SERVER"
+Local sSS_Location        := "TEST_REST_LOCATION"
+Local sSS_ThreadPool      := "TEST_REST_THREADPOOL"
+Local sSS_ContentTypes    := "TEST_REST_CONTENTTYPES"
+Local sSS_Slave01         := "TEST_REST_SLAVE01"
+Local sSS_CORS            := ""
+  
+Local sSS_UserExits       := ""
+Local sSS_UserExitsSlave  := ""
+  
+// Variaveis
+Local cAppPath            := "/rest"
+Local cAppRootPath        := "C:\tlppCore\bin\root\web"
+Local nAppPort            := 10002
+  
+Local cAppSSL_Certificate := ""
+Local cAppSSL_key         := ""
+Local cAppSSL_passphrase  := ""
+Local cAppSSL_method      := "SSL/TLS"
+  
+Local cOnStartFunc        := "rest.u_main_on_start"
+Local cOnStopFunc         := ""
+Local cOnSelectFunc       := "rest.u_main_on_select"
+Local cOnErrorFunc        := ""
+  
+Local cOnStartFuncSlave   := "rest.u_slave_on_start"
+Local cOnStopFuncSlave    := ""
+Local cOnSelectFuncSlave  := "rest.u_slave_on_select"
+Local cOnErrorFuncSlave   := ""
+  
+// Habilita o uso das funcoes locais de preparacao de ambientes e selecao de thread pool slaves e/ou tratamento da mensagem
+// sSS_UserExits             := "TEST_REST_UE"
+// sSS_UserExitsSlave        := "TEST_REST_UE_SLV"
+  
+// Obtem o environment
+cEnv := GetEnvServer()
+  
+//------------------------------------------------------------------------------
+// Cria o objeto de start do Server
+oVdrCtrl := VdrCtrl():New()
+  
+// Cria o objeto de json com as informacoes do servico
+jo := JsonObject():new()
+  
+jo[sSS_HTTPSERVER] := JsonObject():new()
+  
+jo[sSS_HTTPSERVER]['Log'] := .F.
+jo[sSS_HTTPSERVER]['Servers'] := {sSS_ServerName}
+  
+jo[sSS_ServerName] := JsonObject():new()
+jo[sSS_ServerName]['HostName'] := "Meu servidor rest"
+jo[sSS_ServerName]['Port'] := nAppPort
+jo[sSS_ServerName]['Charset'] := "UTF-8"
+jo[sSS_ServerName]['Locations'] := {sSS_Location}
+  
+If(!Empty(cAppSSL_Certificate))
+jo[sSS_ServerName]['SslCertificate'] := cAppSSL_Certificate
+  
+If(!Empty(cAppSSL_key))
+  jo[sSS_ServerName]['SslCertificateKey'] := cAppSSL_key
+EndIf
+If(!Empty(cAppSSL_passphrase))
+  jo[sSS_ServerName]['SslCertificatePass'] := cAppSSL_passphrase
+EndIf
+If(!Empty(cAppSSL_method))
+  jo[sSS_ServerName]['SslMethod'] := cAppSSL_method
+EndIf
+  
+cURLTest := "https://"
+  
+  
+Else
+cURLTest := "http://"
+EndIf
+  
+If(!Empty(sSS_ContentTypes))
+jo[sSS_ServerName]['ContentTypes'] := sSS_ContentTypes
+EndIf
+  
+jo[sSS_Location] := JsonObject():new()
+jo[sSS_Location]['Path'] := cAppPath
+jo[sSS_Location]['RootPath'] := cAppRootPath
+jo[sSS_Location]['DefaultPage'] := {"index.html"}
+jo[sSS_Location]['ThreadPool'] := sSS_ThreadPool
+  
+jo[sSS_ThreadPool] := JsonObject():new()
+jo[sSS_ThreadPool]['Environment'] := cEnv
+jo[sSS_ThreadPool]['MinThreads'] := 1
+jo[sSS_ThreadPool]['MaxThreads'] := 5
+jo[sSS_ThreadPool]['GrowthFactor'] := 1
+jo[sSS_ThreadPool]['MinFreeThreads'] := 1
+jo[sSS_ThreadPool]['InactiveTimeout'] := 180000 // 180 segundos
+jo[sSS_ThreadPool]['AcceptTimeout'] := 5000 // 5 segundos
+  
+If(!Empty(sSS_UserExits))
+jo[sSS_ThreadPool]['UserExits'] := sSS_UserExits
+  
+jo[sSS_UserExits] := JsonObject():new()
+  
+If(!Empty(cOnStartFunc))
+  jo[sSS_UserExits]['OnStart'] := cOnStartFunc
+EndIf
+If(!Empty(cOnStopFunc))
+  jo[sSS_UserExits]['OnStop'] := cOnStopFunc
+EndIf
+If(!Empty(cOnSelectFunc))
+  jo[sSS_UserExits]['OnSelect'] := cOnSelectFunc
+EndIf
+If(!Empty(cOnErrorFunc))
+  jo[sSS_UserExits]['OnError'] := cOnErrorFunc
+EndIf
+  
+  
+EndIf
+  
+If(!Empty(sSS_Slave01))
+jo[sSS_ThreadPool]['Slaves'] := {sSS_Slave01}
+  
+jo[sSS_Slave01] := JsonObject():new()
+jo[sSS_Slave01]['Environment'] := cEnv
+jo[sSS_Slave01]['MinThreads'] := 1
+jo[sSS_Slave01]['MaxThreads'] := 5
+jo[sSS_Slave01]['MinFreeThreads'] := 1
+jo[sSS_Slave01]['GrowthFactor'] := 1
+  
+If(!Empty(sSS_UserExitsSlave))
+  jo[sSS_Slave01]['UserExits'] := sSS_UserExitsSlave
+  
+  jo[sSS_UserExitsSlave] := JsonObject():new()
+  
+  If(!Empty(cOnStartFuncSlave))
+    jo[sSS_UserExitsSlave]['OnStart'] := cOnStartFuncSlave
+  EndIf
+  If(!Empty(cOnStopFuncSlave))
+    jo[sSS_UserExitsSlave]['OnStop'] := cOnStopFuncSlave
+  EndIf
+  If(!Empty(cOnSelectFuncSlave))
+    jo[sSS_UserExitsSlave]['OnSelect'] := cOnSelectFuncSlave
+  EndIf
+  If(!Empty(cOnErrorFuncSlave))
+    jo[sSS_UserExitsSlave]['OnError'] := cOnErrorFuncSlave
+  EndIf
+EndIf
+  
+  
+EndIf
+  
+If(!Empty(sSS_ContentTypes))
+jo[sSS_ContentTypes] := JsonObject():new()
+  
+jo[sSS_ContentTypes]['htm']   := "text/html"
+jo[sSS_ContentTypes]['html']  := "text/html"
+jo[sSS_ContentTypes]['json']  := "application/json"
+jo[sSS_ContentTypes]['js']    := "application/javascript"
+jo[sSS_ContentTypes]['txt']   := "text/plain"
+jo[sSS_ContentTypes]['*']     := "application/octet-stream"
+  
+  
+EndIf
+  
+If (!Empty(sSS_CORS))
+jo[sSS_Location]['CORS'] := {sSS_CORS}
+  
+jo[sSS_CORS] := JsonObject():new()
+jo[sSS_CORS]['AllowOrigins']  := {"http://127.0.0.1:8080","http://localhost:8080"}
+jo[sSS_CORS]['AllowMethods'] := {"POST", "GET", "PUT", "DELETE", "PATCH"}
+  
+  
+EndIf
+  
+// Criar uma URN diretamente (sem annotation)
+If (!Empty(cGetWithoutAnnot))
+jEndpoints := JsonObject():new()
+jo[sSS_ServerName]['LoadURNs']                := jEndpoints
+  
+jEndpoints[cGetPath] := JsonObject():new()
+  
+jEndpoints[cGetPath]['GET']                   := JsonObject():new()
+jEndpoints[cGetPath]['GET']['ClassName']      := ""
+jEndpoints[cGetPath]['GET']['Function']       := "rest.u_getWithoutAnnotation"
+jEndpoints[cGetPath]['GET']['EndPoint']       := {cGetWithoutAnnot, "get"}
+  
+  
+EndIf
+  
+ConOut("Starting rest server on port: " + cValToChar(jo[sSS_ServerName]['Port']))
+nResult := oVdrCtrl:Start(jo)
+  
+If(ValType(nResult) == 'N' .AND. nResult == 0)
+ConOut("Rest server started")
+  
+cURLTest  += "localhost:"
+cURLTest  += cValToChar(jo[sSS_ServerName]['Port'])
+cURLTest  += jo[sSS_Location]['Path']
+cURLTest2 := cURLTest
+cURLTest3 := cURLTest
+cURLTest  += "/tlpp/environment"
+cURLTest2 += "/test"
+cURLTest3 += cGetPath
+  
+ConOut("To test try on browser: ")
+ConOut(cURLTest)
+ConOut(cURLTest2)
+ConOut(cURLTest3)
+ConOut("")
+  
+Return .T.
+  
+  
+Else
+// Falhou
+ConOut("Fail to start rest server [" + cValToChar(nResult) + "] - " + cValToChar(oVdrCtrl:nErr) + " - " + cValToChar(oVdrCtrl:cErr))
+Return .F.
+EndIf
+Return .F.
+  
+@Get("/test")
+Function u_getWithAnnotation()
+oRest:setResponse(time() + " " + "Hello TLPP World")
+Return .T.
+  
+Function u_getWithoutAnnotation()
+oRest:setResponse(time() + " " + "Hello TLPP World - Without Annotation")
+Return .T.
+  
+Function u_main_on_start()
+ConOut(cValToChar(ThreadId()) + " MAIN:  " + ProcName())
+Return .T.
+  
+Function u_main_on_select()
+ConOut(cValToChar(ThreadId()) + " MAIN:  " + ProcName())
+Return -1
+  
+Function u_slave_on_start()
+ConOut(cValToChar(ThreadId()) + " SLAVE: " + ProcName())
+Return .T.
+  
+Function u_slave_on_select()
+ConOut(cValToChar(ThreadId()) + " SLAVE: " + ProcName())
+Return 0
+ Para saber mais sobre a carga dinâmica de rotas via a chave LoadURNs, acessando as URNs diretamente e criando serviços, veja a documentação de REST sem uso de annotation.

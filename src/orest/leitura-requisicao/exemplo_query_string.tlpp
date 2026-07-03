@@ -1,0 +1,36 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("sample/request/querystringexample")
+User Function sampleQueryString()
+ 
+Local cReturn      := ""
+Local jQueryString := Nil
+ 
+// Extrai os parâmetros passados na Query String da URL
+jQueryString := oRest:getQueryRequest()
+ 
+// Valida se o objeto extraído é um JSON válido e populado
+If (ValType(jQueryString) == 'J')
+    cReturn := "Parâmetros capturados: [" + jQueryString:ToJson() + "]"
+EndIf
+ 
+oRest:setResponse(cReturn)
+ 
+ 
+Return .T.
+Extraindo Valores Específicos
+Como a extração devolve um JSON pronto em memória, para aceder ao valor de um parâmetro isolado (por exemplo, a chave code), basta aceder à respetiva propriedade do objeto diretamente:
+
+Local cCode := ""
+Local jQueryString
+ 
+// Resgata o objeto JSON contendo os parâmetros
+jQueryString := oRest:getQueryRequest()
+ 
+// Acede diretamente ao valor da chave declarada na URL
+cCode := jQueryString['code']
+URLs de Chamada para Teste
+Para que o código acima consiga intercetar o parâmetro code, o cliente que consome a sua API deverá realizar a chamada HTTP anexando a Query String, conforme os exemplos:
+
+Com 1 parâmetro:

@@ -1,0 +1,26 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getEntryPointGrader")
+User Function getEntryPointGrader()
+ 
+Local cRet := ""
+Local cMsg := ""
+ 
+cRet := oRest:getCEntryPointGrader()
+ 
+If (cRet != "")
+     
+    cMsg := "O ponto de função para realizar o balanceamento de threads (OnSelect) é: [" + cRet + "]"
+    ConOut(cMsg)
+     
+Else
+     
+    cMsg := "Atenção: Não foi configurado um ponto de função para orquestração/balanceamento de threads."
+    ConOut(cMsg)
+     
+EndIf
+ 
+oRest:setResponse('{"status_balancer": "' + cMsg + '"}')
+ 
+Return .T.

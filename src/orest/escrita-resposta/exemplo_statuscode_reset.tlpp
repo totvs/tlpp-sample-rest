@@ -1,0 +1,29 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("sample/setStatusCode_2")
+User Function sampleSetStatusCode_2()
+    Local cReturn := ""
+    Local jPath   := oRest:getQueryRequest() // Resgata os parâmetros enviados via Query String na URL
+    Local lValid  := .F.
+    Local cUser   := ""
+ 
+    // 1. Assume um estado de falha inicial (HTTP 400 - Bad Request)
+    oRest:setStatusCode(400)
+ 
+    // 2. Valida se a requisição possui parâmetros e se a chave 'user' foi informada
+    If (ValType(jPath) == "J" .And. jPath:hasProperty("user"))
+ 
+        cUser := jPath["user"] // Extrai o valor do parâmetro
+ 
+        // Verifica se o conteúdo do parâmetro não está vazio
+        If !Empty(cUser)
+            lValid := .T.
+        EndIf
+ 
+    EndIf
+ 
+    // 3. Avalia o resultado da validação para definir a resposta
+    If ( lValid )
+ 
+        // Validação OK: Reseta o status HTTP de volta ao estado de sucesso (200 - OK)

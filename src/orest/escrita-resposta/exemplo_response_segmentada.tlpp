@@ -1,0 +1,23 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("sample/setResponse_2")
+User Function sampleSetResponse_2()
+ 
+Local cReturn := ''
+ 
+// Inicia a string
+oRest:setResponse( '{"sample":"' )
+ 
+// Lógica para decidir qual parte concatenar no meio
+If ( '_2' $ ProcName() )
+    oRest:setResponse( '2' )
+Else
+    oRest:setResponse( 'unknown' )
+EndIf
+ 
+// Concatena o fechamento do JSON
+oRest:setResponse( '"}' )
+ 
+ 
+Return .T.

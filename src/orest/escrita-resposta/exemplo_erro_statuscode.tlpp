@@ -1,0 +1,33 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("sample/erro/mode_2")
+User Function sampleErrorMode2()
+ 
+Local cUser   := ""
+Local cReturn := ""
+Local jQuery
+ 
+// Extração do parâmetro via Query String
+jQuery := oRest:getQueryRequest()
+If (jQuery <> Nil)
+    cUser := jQuery['user']
+EndIf
+ 
+// Validação de negócio
+If (Upper(cUser) == "ADMIN")
+    cReturn := '{"admin":"ok"}'
+Else
+    // 1. Modifica o Status Code para 403 (Forbidden / Acesso Negado)
+    oRest:setStatusCode(403)
+     
+    // 2. Prepara a string de retorno do erro
+    cReturn := '{"admin":"no"}'
+EndIf
+ 
+// Devolve a mensagem final em conjunto com o status definido
+oRest:setResponse(cReturn)
+ 
+ 
+Return .T.
+Mais detalhes sobre como modificar o Status Code HTTP

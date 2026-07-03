@@ -1,0 +1,25 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/existKeyHeaderRequest")
+User Function fExistKeyHeaderRequest()
+ 
+Local cKey      := "Connection"
+Local cResponse := ""
+Local lRet      := .F.
+ 
+lRet := oRest:existKeyHeaderRequest(cKey)
+ 
+If (lRet)
+     
+    cResponse := '{"existKeyHeaderRequest": "Chave ' + cKey + ' existe no header da requisição"}'
+     
+Else
+     
+    cResponse := '{"existKeyHeaderRequest": "A chave ' + cKey + ' não existe no header ou o método falhou."}'
+     
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+Return .T.

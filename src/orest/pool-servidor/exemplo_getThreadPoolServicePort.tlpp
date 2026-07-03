@@ -1,0 +1,21 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadPoolServicePort")
+User Function fGetThreadPoolServicePort()
+ 
+Local cResponse := ""
+Local nRet      := -1
+ 
+nRet := oRest:getThreadPoolServicePort()
+ 
+If (ValType(nRet) == 'N' .And. nRet >= 0)
+    cResponse := '{"getThreadPoolServicePort": ' + cValToChar(nRet) + '}'
+Else
+    cResponse := '{"getThreadPoolServicePort": "Metodo getThreadPoolServicePort nao foi executado"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

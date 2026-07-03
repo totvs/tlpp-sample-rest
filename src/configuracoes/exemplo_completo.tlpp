@@ -1,0 +1,31 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+/*
+ 
+O caractere ";" permite quebrar a anotação em várias linhas no TLPP.
+*/
+@Get(;
+endpoint="/rest/exemplo/completo/:id",;
+description="Exemplo completo demonstrando o poder da documentacao ativa",;
+title="Consulta Completa de Clientes",;
+params='[' +;
+'{"name":"id", "description":"ID no path", "in":"path", "type":"integer", "required":true},' +;
+'{"name":"formato", "description":"Formato de retorno", "in":"query", "type":"character", "required":false, "default":"json", "values":[' +;
+'{"value":"json", "description":"Retorno JSON"},' +;
+'{"value":"xml", "description":"Retorno XML"}' +;
+']}' +;
+']',;
+responses='[' +;
+'{"statusCode":200, "description":"Sucesso"},' +;
+'{"statusCode":400, "description":"Requisicao invalida"}' +;
+']';
+)
+User Function exemplo_completo()
+ 
+// A sua lógica de negócio entraria aqui, resgatando os parâmetros
+// que foram devidamente validados e documentados pela anotação acima.
+ 
+oRest:setResponse('{"status": "ok", "mensagem": "API consumida com sucesso."}')
+ 
+Return .T.

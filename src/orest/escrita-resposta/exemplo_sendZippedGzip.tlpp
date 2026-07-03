@@ -1,0 +1,13 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/sendZipped")
+User Function fSendZippedGzip()
+Local lRet := .F.
+Local cMsg := ""
+ 
+lRet := oRest:sendZipped({"GZIP"})
+cMsg := '{"Send Zipped GZIP": "' + cValToChar(lRet) + '"}'
+ 
+ 
+Return oRest:setResponse(cMsg)

@@ -1,0 +1,23 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getBodyRequest")
+User Function fGetBodyRequest() As Logical
+ 
+Local cBody := oRest:getBodyRequest() As Character
+Local cResp := ""                     As Character
+ 
+cResp := '{'
+cResp +=   '"getBodyRequest": ' + If(Empty(cBody), 'false', 'true')
+cResp +=   ','
+cResp +=   '"length": '         + cValToChar(Len(cBody))
+cResp += '}'
+ 
+ConOut(' # EndPoint: /documentation/getBodyRequest')
+ConOut(' # Body....: ' + cBody)
+ConOut(' # Response: ' + cResp)
+ 
+oRest:setKeyHeaderResponse('Content-Type', 'application/json')
+oRest:setResponse(cResp)
+ 
+Return .T.

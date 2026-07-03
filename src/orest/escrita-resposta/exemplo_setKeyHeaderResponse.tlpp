@@ -1,0 +1,18 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+// http://localhost:9090/testSetKeyHeaderResponse
+@Get("/testSetKeyHeaderResponse")
+User Function setKeyHeaderResponseExample()
+ 
+Local lRet := .F.
+Local cRet := "Erro. Nao foi possivel definir a chave"
+ 
+lRet := oRest:setKeyHeaderResponse("Content-Type", "text/plain")
+ 
+If (lRet)
+    cRet := "Chave definida com sucesso"
+EndIf
+ 
+ 
+Return oRest:setResponse(cRet)

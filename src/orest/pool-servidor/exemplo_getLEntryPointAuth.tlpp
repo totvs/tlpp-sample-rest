@@ -1,0 +1,23 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/existEntryPointAuth")
+User Function existEntryPointAuth()
+ 
+Local lRet      := .F.
+Local cResponse := ""
+ 
+lRet := oRest:getLEntryPointAuthorization()
+ 
+If (lRet)
+    ConOut("Foi configurado um ponto de função para realizar a autenticação para as requisições HTTP: " + oRest:getCEntryPointAuthorizationOnAuth())
+    cResponse := '{"existEntryPointAuth": true}'
+Else
+    ConOut("Nao foi configurado ponto de função para realizar a autenticação para as requisições HTTP.")
+    cResponse := '{"existEntryPointAuth": false}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

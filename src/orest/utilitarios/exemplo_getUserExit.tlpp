@@ -1,0 +1,17 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+// Chamada: http://localhost:9090/documentation/getUserExit
+@Get("/documentation/getUserExit")
+User Function fgetUserExit()
+ 
+Local lRet := .F.
+ 
+// Força o encerramento da espera por novas conexões na Thread atual
+oRest:setUserExit(.T.)
+ 
+// Recupera a sinalização de saída gravada na memória
+lRet := oRest:getUserExit()
+ 
+ 
+Return oRest:setResponse('{"UserExit": "A proxima requisicao nao sera respondida. Status: ' + cValToChar(lRet) + '"}')

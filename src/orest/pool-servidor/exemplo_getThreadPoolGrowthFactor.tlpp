@@ -1,0 +1,19 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadPoolGrowthFactor")
+User Function fGetThreadPoolGrowthFactor()
+ 
+Local cResponse := ""
+Local nRet      := oRest:getThreadPoolGrowthFactor()
+ 
+If (ValType(nRet) == 'N')
+    cResponse := '{"getThreadPoolGrowthFactor": "' + cValToChar(nRet) + ' e o growth factor (fator de crescimento das threads) configurado para o thread pool ' + oRest:getThreadPoolName() + '"}'
+Else
+    cResponse := '{"getThreadPoolGrowthFactor": "Metodo getThreadPoolGrowthFactor nao foi executado"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

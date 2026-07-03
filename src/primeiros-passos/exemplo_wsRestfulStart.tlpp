@@ -1,0 +1,69 @@
+#include "tlpp-core.th"
+ 
+Function u_doc_wsRestfulStart()
+ 
+Local nResult          := 0
+Local jo               := Nil
+Local cEnv             := GetEnvServer()
+Local _Port_           := 40011
+Local _Charset_        := "UTF-8"
+Local _Server_         := "HTTP_SRV"
+Local _Location_       := "HTTP_APP"
+Local _ContentTypes_   := "APP_CONTENTTYPES"
+Local _ThreadPool_     := "TP_APP"
+ 
+// HTTP Config
+// -----------
+jo := JsonObject():new()
+jo['HTTPSERVER'] := JsonObject():new()
+jo['HTTPSERVER']['Log']                 := .F.
+jo['HTTPSERVER']['Charset']             := _Charset_
+jo['HTTPSERVER']['Servers']             := {_Server_}
+jo['HTTPSERVER']['LoadJSON']            := .F.
+jo['HTTPSERVER']['OldUrns']             := .F.
+ 
+// Server Config
+// -------------
+jo[_Server_] := JsonObject():new()
+jo[_Server_]['HostName']                := "TOTVS_HTTP_SERVER"
+jo[_Server_]['Port']                    := _Port_
+jo[_Server_]['ContentTypes']            := _ContentTypes_
+jo[_Server_]['Locations']               := { _Location_ }
+ 
+// Aplicativo (Location)
+// ---------------------
+jo[_Location_] := JsonObject():new()
+jo[_Location_]['Path']                  := '/'
+jo[_Location_]['RootPath']              := "root/web"
+jo[_Location_]['DefaultPage']           := {"index.html"}
+jo[_Location_]['ThreadPool']            := _ThreadPool_
+ 
+// Configuração básica de Thread Pool
+// ----------------------------------
+jo[_ThreadPool_] := JsonObject():new()
+jo[_ThreadPool_]['Environment']         := cEnv
+jo[_ThreadPool_]['MinThreads']          := 1
+jo[_ThreadPool_]['MaxThreads']          := 4
+jo[_ThreadPool_]['MinFreeThreads']      := 1
+jo[_ThreadPool_]['GrowthFactor']        := 1
+jo[_ThreadPool_]['InactiveTimeout']     := 30000
+jo[_ThreadPool_]['AcceptTimeout']       := 10000
+ 
+// ContentTypes
+// ------------
+jo[_ContentTypes_] := JsonObject():new()
+jo[_ContentTypes_]['htm']               := "text/html"
+jo[_ContentTypes_]['html']              := "text/html"
+jo[_ContentTypes_]['js']                := "application/x-javascript"
+jo[_ContentTypes_]['css']               := "text/css"
+jo[_ContentTypes_]['txt']               := "text/plain"
+jo[_ContentTypes_]['json']              := "application/json"
+jo[_ContentTypes_]['stm']               := "text/html"
+jo[_ContentTypes_]['tsp']               := "text/html"
+ 
+// Inicializa serviço HTTP mantendo a compatibilidade WsRestful
+// ------------------------------------------------------------
+nResult := tlpp.rest.wsRestfulStart( jo, '/myrest' )
+ 
+ 
+Return nResult

@@ -1,0 +1,17 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get('/documentation/getThreadPoolServiceId')
+User Function GetServiceId()
+ 
+Local nRet      := oRest:getThreadPoolServiceId()
+Local cResponse := ""
+ 
+ConOut("O Id do servico do threadpool " + oRest:getThreadPoolName() + " e " + cValToChar(nRet))
+ 
+cResponse := '{"getThreadPoolServiceId": ' + cValToChar(nRet) + '}'
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

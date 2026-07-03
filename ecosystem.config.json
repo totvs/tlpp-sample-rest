@@ -1,0 +1,28 @@
+{
+  "self": {
+    "id": "rest-samples",
+    "owner": "totvs",
+    "name": "tlpp-sample-rest",
+    "branch": "master",
+    "slug": "totvs/tlpp-sample-rest"
+  },
+  "site": {
+    "owner": "totvs",
+    "name": "totvstec-doc",
+    "branch": "main",
+    "slug": "totvs/totvstec-doc",
+    "pagesHost": "https://totvs.github.io",
+    "baseUrl": "/totvstec-doc/"
+  },
+  "notifyHub": {
+    "eventType": "rest-samples-updated"
+  },
+  "siblings": {
+    "doc-generate": {
+      "owner": "totvs",
+      "name": "tlpp-sample-rest-documentation",
+      "branch": "main",
+      "slug": "totvs/tlpp-sample-rest-documentation"
+    }
+  }
+}

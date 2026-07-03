@@ -1,0 +1,19 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadPoolAcceptTimeout")
+User Function fGetThreadPoolAcceptTimeout()
+ 
+Local cResponse := ""
+Local nQtd      := oRest:getThreadPoolAcceptTimeout()
+ 
+If (ValType(nQtd) == 'N')
+    cResponse := '{"getThreadPoolAcceptTimeout": "' + cValToChar(nQtd) + ' ms e o accept timeout configurado para o thread pool ' + oRest:getThreadPoolName() + '"}'
+Else
+    cResponse := '{"getThreadPoolAcceptTimeout": "Metodo getThreadPoolAcceptTimeout nao foi executado"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.

@@ -1,0 +1,19 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+// Chamada: http://localhost:9090/protocolo
+@Get("/protocolo")
+User Function getProtocolExample()
+ 
+Local cReturn := ""
+ 
+cReturn := oRest:getProtocolRequest()
+ 
+ConOut(cReturn) // Vai exibir o protocolo utilizado na requisição, por exemplo HTTP
+ 
+cReturn := '{"protocol": "' + cReturn + '"}'
+ 
+oRest:SetResponse(cReturn)
+ 
+ 
+Return .T.

@@ -1,0 +1,18 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/setStatusCode")
+User Function fSetStatusCode()
+ 
+Local cResponse := ""
+Local lRet      := .F.
+ 
+lRet := oRest:setStatusCode(350)
+ 
+If (lRet)
+    cResponse := '{"setStatusCode": "Metodo setStatusCode executado com sucesso"}'
+Else
+    cResponse := '{"setStatusCode": "Nao foi possivel executar o metodo setStatusCode"}'
+EndIf
+ 
+Return oRest:setResponse(cResponse)

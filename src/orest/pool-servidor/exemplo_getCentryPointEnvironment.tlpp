@@ -1,0 +1,26 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getEntryPoint")
+User Function getEntryPoint()
+ 
+Local cRet := ""
+Local cMsg := ""
+ 
+cRet := oRest:getCentryPointEnvironment()
+ 
+If (cRet != "")
+     
+    cMsg := "O ponto de função para preparação de ambiente (OnStart) é: [" + cRet + "]"
+    ConOut(cMsg)
+     
+Else
+     
+    cMsg := "Atenção: Não foi configurado um ponto de função (OnStart) para preparação de ambiente neste servidor."
+    ConOut(cMsg)
+     
+EndIf
+ 
+oRest:setResponse('{"status_ambiente": "' + cMsg + '"}')
+ 
+Return .T.

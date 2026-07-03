@@ -1,0 +1,96 @@
+#include "tlpp-core.th"
+ 
+Function u_fInitService()
+Local oVdrCtrl := VdrCtrl():New() as object
+Local cAppPath := "/examples" as character
+Local nResult  := -1 as integer
+Local jConfig  := JsonObject():New() as Json
+ 
+// Obtém o ambiente atual do servidor
+Local cEnv     := GetEnvServer() as character
+ 
+// Definição das configurações do HttpServer
+jConfig['HTTPSERVER']                             := JsonObject():New()
+jConfig['HTTPSERVER']['Enable']                   := .T.
+jConfig['HTTPSERVER']['Log']                      := .F.
+jConfig['HTTPSERVER']['Charset']                  := "ISO-8859-1"
+jConfig['HTTPSERVER']['Servers']                  := {"INIT_HTTP_REST"}
+ 
+jConfig['INIT_HTTP_REST']                         := JsonObject():New()
+jConfig['INIT_HTTP_REST']['Port']                 := 9995
+jConfig['INIT_HTTP_REST']['HostName']             := "TLPP_REST_SERVER"
+jConfig['INIT_HTTP_REST']['Locations']            := {"HTTP_ROOT_01"}
+jConfig['INIT_HTTP_REST']['ContentTypes']         := "INIT_ContentTypes"
+ 
+jConfig['HTTP_ROOT_01']                           := JsonObject():new()
+jConfig['HTTP_ROOT_01']['Path']                   := cAppPath
+jConfig['HTTP_ROOT_01']['RootPath']               := "C:\tlppCore\bin\root\web"
+jConfig['HTTP_ROOT_01']['DefaultPage']            := {"index.html"}
+jConfig['HTTP_ROOT_01']['ThreadPool']             := "INIT_THREAD_POOL_01"
+ 
+jConfig['INIT_THREAD_POOL_01']                    := JsonObject():new()
+jConfig['INIT_THREAD_POOL_01']['Environment']     := cEnv
+jConfig['INIT_THREAD_POOL_01']['MinThreads']      := 1
+jConfig['INIT_THREAD_POOL_01']['MaxThreads']      := 4
+jConfig['INIT_THREAD_POOL_01']['MinFreeThreads']  := 0
+jConfig['INIT_THREAD_POOL_01']['GrowthFactor']    := 1
+jConfig['INIT_THREAD_POOL_01']['AcceptTimeout']   := 10000
+jConfig['INIT_THREAD_POOL_01']['InactiveTimeout'] := 30000
+jConfig['INIT_THREAD_POOL_01']['ActiveTimeout']   := 120000
+ 
+jConfig['INIT_THREAD_POOL_01']['Slaves']          := {"TP_AUX_1", "TP_AUX_2"}
+ 
+jConfig['TP_AUX_1']                               := JsonObject():new()
+jConfig['TP_AUX_1']['Environment']                := cEnv
+jConfig['TP_AUX_1']['MinThreads']                 := 2
+jConfig['TP_AUX_1']['MaxThreads']                 := 4
+jConfig['TP_AUX_1']['MinFreeThreads']             := 0
+jConfig['TP_AUX_1']['GrowthFactor']               := 1
+jConfig['TP_AUX_1']['AcceptTimeout']              := 10000
+jConfig['TP_AUX_1']['InactiveTimeout']            := 30000
+jConfig['TP_AUX_1']['ActiveTimeout']              := 120000
+ 
+jConfig['TP_AUX_2']                               := JsonObject():new()
+jConfig['TP_AUX_2']['Environment']                := cEnv
+jConfig['TP_AUX_2']['MinThreads']                 := 2
+jConfig['TP_AUX_2']['MaxThreads']                 := 4
+jConfig['TP_AUX_2']['MinFreeThreads']             := 0
+jConfig['TP_AUX_2']['GrowthFactor']               := 1
+jConfig['TP_AUX_2']['AcceptTimeout']              := 10000
+jConfig['TP_AUX_2']['InactiveTimeout']            := 30000
+jConfig['TP_AUX_2']['ActiveTimeout']              := 120000
+ 
+jConfig['INIT_ContentTypes']                      := JsonObject():new()
+jConfig['INIT_ContentTypes']['htm']               := "text/html"
+jConfig['INIT_ContentTypes']['html']              := "text/html"
+jConfig['INIT_ContentTypes']['stm']               := "text/html"
+jConfig['INIT_ContentTypes']['tsp']               := "text/html"
+jConfig['INIT_ContentTypes']['js']                := "text/javascript"
+jConfig['INIT_ContentTypes']['json']              := "application/json;charset=utf-8"
+jConfig['INIT_ContentTypes']['*']                 := "application/octet-stream"
+ 
+/* -----------------------------------------------------------
+Aqui é feita a chamada para a função responsável por criar o
+vínculo entre as URNs e as aplicações (APIs)
+----------------------------------------------------------- */
+jConfig['INIT_HTTP_REST']['LoadURNs']             := JsonObject():new()
+if !( sLoadURNs(@jConfig['INIT_HTTP_REST']['LoadURNs']) )
+    return Nil
+endif
+/*------------------------------------------------------------*/
+ 
+nResult := oVdrCtrl:Start(jConfig)
+if ( ValType(nResult) == 'N' .AND. nResult == 0 )
+    conout("### Servidor HTTP inicializado com sucesso!")
+else
+    conout("### Erro ao iniciar HTTP Server - ret: " + cValToChar(nResult) + " - err: " + cValToChar(oVdrCtrl:nErr) + " desc: '" + cValToChar(oVdrCtrl:cErr) + "'" )
+endif
+ 
+ 
+return nResult
+Caso já possua um serviço REST inicializado via código através de um objeto JSON, basta incluir a chamada para a função static sLoadURNs no nó correspondente à propriedade LoadURNs do seu servidor.
+
+Vinculando a URN à API
+Como o recurso de Annotations não está sendo empregado nesta abordagem, precisamos registrar manualmente a associação entre as rotas (URNs), os verbos HTTP e as respectivas funções de execução.
+
+Este vínculo é realizado estruturando nós filhos dentro do objeto JSON que foi associado à chave LoadURNs. Abaixo, demonstramos como implementar essa rotina de mapeamento dinâmico:

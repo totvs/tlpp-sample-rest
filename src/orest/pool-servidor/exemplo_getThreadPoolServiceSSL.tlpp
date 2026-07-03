@@ -1,0 +1,19 @@
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+ 
+@Get("/documentation/getThreadPoolServiceSSL")
+User Function fGetThreadPoolServiceSSL()
+ 
+Local cResponse := ""
+Local lRet      := oRest:getThreadPoolServiceSSL()
+ 
+If (ValType(lRet) == 'L')
+    cResponse := '{"getThreadPoolServiceSSL": "' + cValToChar(lRet) + '"}'
+Else
+    cResponse := '{"getThreadPoolServiceSSL": "metodo getThreadPoolServiceSSL nao foi executado"}'
+EndIf
+ 
+oRest:setResponse(cResponse)
+ 
+ 
+Return .T.
