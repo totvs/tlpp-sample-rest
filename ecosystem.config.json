@@ -23,6 +23,12 @@
       "name": "tlpp-sample-rest-documentation",
       "branch": "main",
       "slug": "totvs/tlpp-sample-rest-documentation"
+    },
+    "probat-samples": {
+      "owner": "totvs",
+      "name": "tlpp-probat-samples",
+      "branch": "main",
+      "slug": "totvs/tlpp-probat-samples"
     }
   }
 }
