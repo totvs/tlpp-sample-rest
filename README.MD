@@ -1,34 +1,25 @@
-# totvs/tlpp-sample-rest
+# tlpp-sample-rest
 
-Exemplos TLPP REST organizados por tema: oREST, verbos HTTP, configurações, callbacks e primeiros passos.
+Exemplos TLPP de **REST** no AppServer — primeiros passos, verbos HTTP, objeto `oRest`, configurações, callbacks e autorização.
 
-**Metadados, doc-generate e OpenAPI** ficam em [totvs/tlpp-sample-rest-documentation](https://github.com/totvs/tlpp-sample-rest-documentation).
+Cada arquivo `.tlpp` em `src/` é um exemplo autocontido, organizado por pasta.
 
 ## Estrutura `src/`
 
 | Pasta | Conteúdo |
 |-------|----------|
-| `primeiros-passos/` | `rest_start`, função/classe, `load_urns` |
+| `primeiros-passos/` | Inicialização do serviço REST, função/classe, `load_urns` |
 | `configuracoes/` | Annotations, `fInitService`, URNs sem annotation |
 | `verbs/{get,post,put,patch,delete}/` | Exemplos por verbo HTTP |
-| `orest/` | Leitura/escrita oREST, pool, cabeçalhos |
-| `callbacks/` | User exits REST |
-| `authorization/` | `onAuth` |
+| `orest/` | Leitura/escrita com `oRest`, pool, cabeçalhos |
+| `callbacks/` | User exits do ciclo de vida REST |
+| `authorization/` | Autenticação (`onAuth`) |
 | `apis/admin/` | APIs administrativas |
 
-Cada `.tlpp` contém apenas código de exemplo válido (sem narrativa do TDN).
+Metadados, **Doc Generate** e OpenAPI ficam em [tlpp-sample-rest-documentation](https://github.com/totvs/tlpp-sample-rest-documentation).
 
-## Atualizar páginas do hub
+## Documentação
 
-```bash
-npm run docs:exemplos
-```
+Conceitos, trilha de leitura e mapa dos exemplos:
 
-Gera `docs/exemplos/*.mdx` a partir da árvore `src/`.
-
-## Repositórios relacionados
-
-| Repo | Papel |
-|------|-------|
-| [totvs/tlpp-sample-rest-documentation](https://github.com/totvs/tlpp-sample-rest-documentation) | Metadados, doc-generate, OpenAPI |
-| [totvs/totvstec-doc](https://github.com/totvs/totvstec-doc) | Site de documentação |
+**https://totvs.github.io/totvstec-doc/docs/tlpp/rest/**
