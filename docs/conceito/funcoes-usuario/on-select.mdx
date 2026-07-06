@@ -1,0 +1,62 @@
+---
+title: OnSelect
+description: Callback OnSelect — roteamento entre slaves.
+sidebar_position: 4
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import {EXEMPLO_ONSELECT} from '@site/src/snippets/tdn';
+
+OnSelect sobrescreve o algoritmo nativo de balanceamento. Você decide **qual slave** (índice do array) atende cada requisição — ou rejeita/derruba a conexão antes do endpoint rodar.
+
+Configure no **Thread Pool** principal (orquestrador), não no slave.
+
+## Quando usar
+
+- Balanceamento customizado entre slaves
+- Rotear por endpoint/classe antes de executar a API
+- Barrar requisições suspeitas sem chegar ao handler
+
+## Configuração
+
+```ini
+[TP_UEX]
+OnSelect=U_OnSelect
+```
+
+## Assinatura
+
+```tlpp
+Function U_OnSelect(cClassName, cFunctionName, cProgramType) As Integer
+```
+
+| Parâmetro | Conteúdo |
+|-----------|----------|
+| `cClassName` | Classe do endpoint (vazio se for função) |
+| `cFunctionName` | Função ou método que será executado |
+| `cProgramType` | `1` = annotation · `2` = LoadURNs |
+
+Lista de slaves: `oRest:GetThreadPoolSlaves()`.
+
+## Retorno (obrigatório — numérico)
+
+| Valor | Efeito |
+|-------|--------|
+| `> 0` | Índice do slave que atende (1-based no array) |
+| `-1` | Delega ao algoritmo padrão do tlppCore |
+| `-2` | Rejeita — resposta de recusa ao cliente |
+| `-3` | Drop silencioso — fecha conexão sem HTTP (útil contra scan/DDoS) |
+
+## Exemplo
+
+<SourceFile
+  title="u_restGrader — escolher slave por ID"
+  path="exemplo_onselect.tlpp"
+  code={EXEMPLO_ONSELECT}
+  defaultOpen
+/>
+
+Você já sabe **quem** vai executar antes da API rodar — dá para validar permissão ou rota nesta camada, além do [Authorization](/docs/tlpp/rest/authorization) em `TlppData`.
+
+**Próximo passo:** [OnStart](/docs/tlpp/rest/funcoes-usuario/on-start)

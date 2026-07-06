@@ -1,0 +1,208 @@
+---
+title: Referência JSON
+description: Árvore JsonObject para VdrCtrl():Start() — espelho da configuração INI.
+sidebar_position: 4
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import {
+  JSON_CONFIG_MINIMO,
+  JSON_LOAD_URNS_MINIMO,
+  F_INIT_SERVICE,
+} from '@site/src/snippets/tdn';
+import {REST_START_TLPP} from '@site/src/snippets/rest_start';
+
+O REST também sobe via `VdrCtrl():Start(jConfig)`, onde `jConfig` é um `JsonObject` com a **mesma árvore** das seções do `appserver.ini`. Cada seção INI vira uma chave de primeiro nível; cada chave interna vira propriedade do objeto filho.
+
+Chaves são **case-sensitive** — `Port` ≠ `port`. Um erro de capitalização impede o start.
+
+Contexto dos dois caminhos: [Configuração INI e JSON](/docs/tlpp/rest/primeiros-passos/configuracao). Equivalente em INI: [Referência INI](/docs/tlpp/rest/configuracoes/referencia-ini).
+
+## Hierarquia
+
+```
+jConfig
+├── HTTPSERVER          → Enable, Servers[], Log, Charset
+├── <ServerName>        → Port, HostName, Locations[], LoadURNs, TlppData, …
+├── <LocationName>      → Path, RootPath, ThreadPool, CORS, …
+├── <ThreadPoolName>    → Environment, MinThreads, Slaves[], UserExits
+├── <SlaveName>         → mesmo formato do thread pool
+├── <UserExitsName>     → OnStart, OnStop, OnSelect, OnError, OnBlock, OnSend
+├── <ContentTypesName>  → extensão → MIME type
+└── <CORSName>          → AllowOrigins[], AllowMethods[]
+```
+
+Referências entre nós usam **string com o nome da chave** (como no INI). Arrays no JSON substituem listas separadas por vírgula — ex.: `Servers := {"HTTP_REST"}` em vez de `Servers=HTTP_REST`.
+
+## Equivalência INI ↔ JSON
+
+| INI | JSON (TLPP) |
+|-----|-------------|
+| `[HTTPSERVER] Enable=1` | `jConfig['HTTPSERVER']['Enable'] := .T.` |
+| `Servers=HTTP_REST` | `jConfig['HTTPSERVER']['Servers'] := {"HTTP_REST"}` |
+| `[HTTP_REST] port=9995` | `jConfig['HTTP_REST']['Port'] := 9995` |
+| `locations=HTTP_ROOT` | `jConfig['HTTP_REST']['Locations'] := {"HTTP_ROOT"}` |
+| `[HTTP_ROOT] Path=/` | `jConfig['HTTP_ROOT']['Path'] := "/"` |
+| `ThreadPool=THREAD_POOL` | `jConfig['HTTP_ROOT']['ThreadPool'] := "THREAD_POOL"` |
+| `[THREAD_POOL] Environment=ENV` | `jConfig['THREAD_POOL']['Environment'] := "ENV"` |
+| `UserExits=MY_UEX` | `jConfig['THREAD_POOL']['UserExits'] := "MY_UEX"` |
+| `[MY_UEX] OnStart=fn` | `jConfig['MY_UEX']['OnStart'] := "fn"` |
+
+## Nó `HTTPSERVER`
+
+| Propriedade | Tipo | Descrição |
+|-------------|------|-----------|
+| `Enable` | bool | `.T.` = ativo (equivalente a `Enable=1`) |
+| `Servers` | array | Nomes dos servidores — cada nome é outra chave em `jConfig` |
+| `Log` | bool | Log do HTTP server |
+| `Charset` | string | Codepage global (padrão UTF-8) |
+
+## Nó do servidor (`<ServerName>`)
+
+| Propriedade | Tipo | Descrição |
+|-------------|------|-----------|
+| `Port` | int | Porta HTTP(S) |
+| `HostName` | string | Host virtual |
+| `Locations` | array | Nomes das locations |
+| `Charset` | string | Codepage deste servidor |
+| `ContentTypes` | string | Nome do nó de MIME types |
+| `TlppData` | string | JSON do framework (auth, `OnBlockSoft`, etc.) — ver [Authorization](/docs/tlpp/rest/authorization) |
+| `UserData` | string | JSON livre do desenvolvedor |
+| `LoadURNs` | object | Mapeamento de rotas sem annotation — ver abaixo |
+| `SslCertificate` | string | Caminho do certificado |
+| `SslCertificateKey` | string | Chave privada |
+| `SslCertificatePass` | string | Senha da chave (opcional) |
+| `SslMethod` | string | Ex.: `SSL/TLS` |
+
+## Nó da location (`<LocationName>`)
+
+| Propriedade | Tipo | Descrição |
+|-------------|------|-----------|
+| `Path` | string | Prefixo de URL |
+| `RootPath` | string | Arquivos estáticos no disco |
+| `DefaultPage` | array | Páginas padrão (ex.: `{"index.html"}`) |
+| `AllowMethods` | string | Verbos permitidos para estáticos |
+| `ThreadPool` | string | Nome do thread pool |
+| `CORS` | array | Nomes dos nós CORS |
+
+## Nó do thread pool (`<ThreadPoolName>`)
+
+| Propriedade | Tipo | Descrição |
+|-------------|------|-----------|
+| `Environment` | string | Ambiente RPO |
+| `MinThreads` | int | Mínimo de threads (> 0) |
+| `MaxThreads` | int | Teto do pool |
+| `MinFreeThreads` | int | Threads ociosas mínimas |
+| `GrowthFactor` | int | Fator de crescimento |
+| `InactiveTimeout` | int | Timeout inatividade (ms) |
+| `AcceptTimeout` | int | Timeout de aceite (ms) |
+| `ActiveTimeout` | int | Timeout de requisição ativa (ms) |
+| `Slaves` | array | Nomes de pools auxiliares |
+| `UserExits` | string | Nome do nó de callbacks |
+
+Slaves (`<SlaveName>`) repetem as mesmas propriedades do pool principal, sem `Slaves` aninhados.
+
+## Nó `UserExits`
+
+| Propriedade | Função |
+|-------------|--------|
+| `OnBlock` | Bloqueia URNs na subida do REST |
+| `OnAllow` | Permite só URNs listadas (lista branca) |
+| `OnStart` | Thread criada |
+| `OnStop` | Thread encerrada |
+| `OnSelect` | Escolha de slave |
+| `OnError` | Tratamento de erro |
+| `OnSend` | Antes de enviar a resposta |
+
+Detalhes: [Callbacks](/docs/tlpp/rest/funcoes-usuario/callbacks).
+
+## `ContentTypes` e `CORS`
+
+**ContentTypes** — objeto com extensão → MIME:
+
+```tlpp
+jConfig['MY_TYPES'] := JsonObject():New()
+jConfig['MY_TYPES']['json'] := "application/json"
+jConfig['MY_TYPES']['html'] := "text/html"
+jConfig['HTTP_REST']['ContentTypes'] := "MY_TYPES"
+```
+
+**CORS** — referenciado na location:
+
+| Propriedade | Tipo | Descrição |
+|-------------|------|-----------|
+| `AllowOrigins` | array | Origens permitidas |
+| `AllowMethods` | array | Verbos HTTP |
+
+## `LoadURNs` — rotas sem annotation
+
+O nó `LoadURNs` fica **no servidor**, não na location. Estrutura:
+
+```
+LoadURNs
+└── "/caminho/:param"          ← path completo da URN
+    └── GET | POST | PUT | …   ← verbo HTTP
+        ├── ProgramType          0 = função, 1 = classe/método
+        ├── ClassName
+        ├── Function
+        └── EndPoint             array com segmentos da rota
+```
+
+<SourceFile
+  title="LoadURNs — mapeamento mínimo"
+  path="load_urns_minimo.tlpp"
+  code={JSON_LOAD_URNS_MINIMO}
+/>
+
+Guia completo com todos os verbos: [Sem annotation](/docs/tlpp/rest/configuracoes/sem-annotation).
+
+## Logs (global)
+
+As chaves abaixo costumam ficar no `appserver.ini` (não no `jConfig` do `Start`), mas afetam o REST:
+
+| Chave | Descrição |
+|-------|-----------|
+| `rest_log_level` | Verbosidade (3–6) |
+| `rest_error_full` | Stack no log de erro |
+| `rest_log_stringsize` | Tamanho máximo do log |
+| `rest_reload_time` | Releitura de config |
+| `rest_trace_time` | Timer de trace |
+
+## `VdrCtrl():Start()` — retorno
+
+| Retorno | Significado |
+|---------|-------------|
+| `0` | Servidor iniciado |
+| Outro | Falha — consulte `oVdrCtrl:nErr` e `oVdrCtrl:cErr` |
+
+## Exemplos
+
+### Estrutura mínima
+
+Equivalente ao [INI mínimo](/docs/tlpp/rest/primeiros-passos/quickstart):
+
+<SourceFile
+  title="JSON mínimo — VdrCtrl():Start()"
+  path="json_config_minimo.tlpp"
+  code={JSON_CONFIG_MINIMO}
+  defaultOpen
+/>
+
+### Serviço com slaves, content-types e LoadURNs
+
+<SourceFile
+  title="u_fInitService — start via JSON"
+  path="fInitService.tlpp"
+  code={F_INIT_SERVICE}
+/>
+
+### Modelo completo (SSL, CORS, user exits, endpoint manual)
+
+<SourceFile
+  title="rest.u_start — configuração abrangente"
+  path="rest_start.tlpp"
+  code={REST_START_TLPP}
+/>
+
+**Próximo passo:** [Avisos e dicas](/docs/tlpp/rest/configuracoes/avisos-dicas) — feche o bloco Servidor e rotas antes de entrar no oREST.

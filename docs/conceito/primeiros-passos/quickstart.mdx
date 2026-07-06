@@ -1,0 +1,106 @@
+---
+title: Quickstart
+description: Suba seu primeiro serviço REST TLPP.
+sidebar_position: 1
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import ExemploRef from '@site/src/components/ExemploRef';
+import {INI_BASICO} from '@site/src/snippets/tdn';
+
+Neste guia você sobe um serviço REST no AppServer e responde `Hello World` a uma requisição HTTP. Não é necessário conhecer OAuth, callbacks nem OpenAPI — só o básico de TLPP e do `appserver.ini`.
+
+## Trilha deste bloco (Começando)
+
+| Etapa | O que você aprende | Comece em |
+|-------|-------------------|-----------|
+| **1 — Quickstart** | Primeiro endpoint em minutos | Esta página |
+| **2 — Configuração** | INI vs JSON, seções do AppServer | [Configuração](/docs/tlpp/rest/primeiros-passos/configuracao) |
+| **3 — Composição da URL** | Path virtual + endpoint | [Composição da URL](/docs/tlpp/rest/primeiros-passos/composicao-url) |
+| **4 — Avisos e dicas** | Cuidados antes de avançar | [Avisos e dicas](/docs/tlpp/rest/primeiros-passos/avisos-dicas) |
+
+## O que é REST (em uma frase)
+
+REST é uma forma de expor **funções do seu RPO pela internet** usando URLs e verbos HTTP (`GET`, `POST`…). O cliente chama uma URL; o AppServer executa sua função e devolve JSON (ou outro formato).
+
+## O que você vai precisar
+
+| Item | Para quê |
+|------|----------|
+| AppServer com TLPP | Executar o REST |
+| `tlpp.rpo` na pasta do `appserver.exe` | Runtime TLPP |
+| Includes `tlpp-core.th` e `tlpp-rest.th` | Compilar código REST |
+| Editor de texto + acesso ao `appserver.ini` | Configurar a porta HTTP |
+| Navegador, Postman ou `curl` | Testar o endpoint |
+
+## Pré-requisitos no projeto
+
+1. `tlpp.rpo` copiado para a pasta do `appserver.exe`
+2. Includes TLPP no projeto (`tlpp-core.th`, `tlpp-rest.th`)
+
+## Passo 1 — Ative o HTTP no AppServer
+
+Cole o bloco abaixo no `appserver.ini` ao lado do executável. Ajuste `Environment=` para o ambiente do seu RPO:
+
+<SourceFile
+  title="INI mínimo"
+  path="appserver.ini"
+  code={INI_BASICO}
+  language="ini"
+  defaultOpen
+/>
+
+Reinicie o AppServer após salvar o INI.
+
+:::info O que esse INI faz
+Liga o servidor HTTP na porta indicada e associa um **path virtual** (prefixo da URL) ao ambiente RPO onde suas funções estão compiladas. Detalhes em [Configuração INI e JSON](/docs/tlpp/rest/primeiros-passos/configuracao).
+:::
+
+## Passo 2 — Crie o endpoint
+
+Crie uma função com a annotation `@Get` — ela registra a rota e o verbo HTTP:
+
+```tlpp
+#include "tlpp-core.th"
+#include "tlpp-rest.th"
+
+@Get("hello")
+User Function hello()
+    oRest:setResponse('{"message":"Hello World"}')
+Return .T.
+```
+
+- `@Get("hello")` — a rota será `/hello` (somada ao path virtual do INI)
+- `oRest:setResponse(...)` — corpo da resposta HTTP (JSON neste exemplo)
+- `Return .T.` — indica sucesso na execução da função
+
+Compile no RPO e recarregue o ambiente.
+
+## Passo 3 — Teste
+
+Se o INI usa `port=9995` e `Path=/` (como no exemplo mínimo):
+
+```http
+GET http://localhost:9995/hello
+```
+
+Resposta esperada: `{"message":"Hello World"}`
+
+Se você configurou um `Path` diferente (ex.: `/api`), a URL fica `http://localhost:9995/api/hello` — veja [Composição da URL](/docs/tlpp/rest/primeiros-passos/composicao-url).
+
+## Se não funcionar
+
+| Sintoma | Verifique |
+|---------|-----------|
+| 404 | RPO recompilado e ambiente recarregado; URL com o `Path` correto do INI |
+| Conexão recusada | AppServer rodando e `port=` igual ao que você testa |
+| 500 | Console do AppServer — erro na função `hello` |
+
+## Exemplos no GitHub
+
+Mais variações (função, classe, start do serviço) em [Primeiros passos](/docs/tlpp/rest/exemplos-repositorio/primeiros-passos):
+
+<ExemploRef repo="rest-samples" file="exemplo_funcao.tlpp" path="primeiros-passos" />
+
+**Próximo passo:** [Configuração INI e JSON](/docs/tlpp/rest/primeiros-passos/configuracao) — entenda cada seção do INI e o caminho alternativo via JSON.

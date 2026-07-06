@@ -1,0 +1,26 @@
+---
+title: Avisos e dicas
+description: Cuidados ao configurar o REST — seção Começando.
+sidebar_class_name: sidebar-avisos-dicas
+displayed_sidebar: restSidebar
+---
+
+import AvisosDicasPage from '@site/src/components/AvisosDicasPage';
+
+<AvisosDicasPage section="Começando" />
+
+## INI ou JSON — escolha um
+
+Configure o REST **ou** no `appserver.ini` **ou** via `VdrCtrl():Start(jo)` em TLPP. Misturar as duas formas para o mesmo serviço gera conflito.
+
+No caminho JSON, o único trecho comum no INI é o `[OnStart]` que agenda a função de start — isso não configura o REST, só dispara o código no boot. Detalhes em [Configuração INI e JSON](/docs/tlpp/rest/primeiros-passos/configuracao).
+
+## JSON case-sensitive
+
+Chaves do objeto em `VdrCtrl():Start()` devem coincidir **exatamente** com os nomes das seções INI. Um erro de capitalização impede o REST de subir.
+
+## Porta e ambiente
+
+Confira se `port=` no INI bate com a URL que você testa e se `Environment=` aponta para o RPO onde a função foi compilada.
+
+**Próximo passo:** [Annotations](/docs/tlpp/rest/configuracoes/annotations)

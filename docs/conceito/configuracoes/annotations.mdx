@@ -1,0 +1,78 @@
+---
+title: Annotations
+description: Rotas REST com @Get, @Post e demais verbos.
+sidebar_position: 1
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import ExemploRef from '@site/src/components/ExemploRef';
+import {EXEMPLO_ANNOTATION_METADADOS} from '@site/src/snippets/tdn';
+
+Use annotations para mapear verbos HTTP diretamente em funções ou métodos compilados no RPO, sem arquivo externo de rotas.
+
+:::tip Primeira API?
+Se você acabou de concluir o [Quickstart](/docs/tlpp/rest/primeiros-passos/quickstart), já usou `@Get` — esta página explica os demais verbos e opções da annotation.
+:::
+
+## Trilha deste bloco (Servidor e rotas)
+
+| Etapa | O que você aprende | Comece em |
+|-------|-------------------|-----------|
+| **1 — Annotations** | `@Get` / `@Post` e propriedades | Esta página |
+| **2 — Sem annotation** | `LoadURNs` e rotas dinâmicas | [Sem annotation](/docs/tlpp/rest/configuracoes/sem-annotation) |
+| **3 — Referência INI** | Chaves do `appserver.ini` | [Referência INI](/docs/tlpp/rest/configuracoes/referencia-ini) |
+| **4 — Referência JSON** | Configuração via JSON | [Referência JSON](/docs/tlpp/rest/configuracoes/referencia-json) |
+| **5 — Avisos e dicas** | Cuidados antes do oREST | [Avisos e dicas](/docs/tlpp/rest/configuracoes/avisos-dicas) |
+
+## Verbos
+
+| Annotation | Uso típico |
+|------------|------------|
+| `@Get` | Ler recurso |
+| `@Post` | Criar recurso |
+| `@Put` | Substituir recurso |
+| `@Patch` | Atualizar parcialmente |
+| `@Delete` | Remover recurso |
+
+## Propriedades da annotation
+
+| Propriedade | Obrigatório | Função |
+|-------------|-------------|--------|
+| `endpoint` | Sim | URN da rota, relativa ao path virtual do INI |
+| `description` | Não | Texto para documentação OpenAPI (trilha [Doc Generate](/docs/tlpp/rest/metadados/visao-geral), opcional para expor a API) |
+| `title`, `params`, `responses` | Não | Metadados OpenAPI adicionais na própria annotation |
+
+Para **expor a rota**, só o `endpoint` importa. Os demais campos são opcionais e servem para o Doc Generate.
+
+## Exemplo — roteamento
+
+```tlpp
+@Get("users/:id")
+User Function getUser()
+    Local jParams := oRest:getPathParamsRequest()
+    // jParams["id"] contém o valor capturado na URL
+Return .T.
+```
+
+Path params usam `:nome` no endpoint. O valor fica disponível via `oRest:getPathParamsRequest()` — você verá os detalhes em [Leitura da requisição](/docs/tlpp/rest/objeto-orest/leitura-requisicao) (seção oREST).
+
+## Exemplo — com metadados OpenAPI (opcional)
+
+Se você também quer gerar documentação OpenAPI a partir do código, pode enriquecer a annotation com `title`, `description`, `params` e `responses`. A API funciona igual — esses campos só alimentam o motor REST-DOC:
+
+<SourceFile
+  title="Annotation com metadados"
+  path="exemplo_annotation_metadados.tlpp"
+  code={EXEMPLO_ANNOTATION_METADADOS}
+/>
+
+Para o detalhe de cada propriedade (`description`, `params`, `responses`, i18n, etc.), use a trilha [Doc Generate](/docs/tlpp/rest/metadados/visao-geral) quando for documentar a API — não é necessário para o primeiro endpoint funcionar. O `statusCode` em `responses` é descritivo; o status real depende de `oRest:setStatusResponse()` no código.
+
+## Exemplos no GitHub
+
+Verbos HTTP e annotations em [Configurações](/docs/tlpp/rest/exemplos-repositorio/configuracoes) e [Verbos · GET](/docs/tlpp/rest/exemplos-repositorio/verbs-get):
+
+<ExemploRef repo="rest-samples" file="exemplo_get_classe.tlpp" path="verbs/get" />
+
+**Próximo passo:** [Sem annotation](/docs/tlpp/rest/configuracoes/sem-annotation)

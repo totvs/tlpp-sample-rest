@@ -1,0 +1,22 @@
+---
+title: Leitura da requisição
+description: Métodos oRest para ler body, headers, path, query e metadados da URL.
+sidebar_position: 2
+displayed_sidebar: restSidebar
+---
+
+import OrestMethodCatalog from '@site/src/components/OrestMethodCatalog';
+
+Use estes métodos para ler o que o cliente enviou — corpo JSON, cabeçalhos, parâmetros na URL (`:id`) e query string (`?campo=valor`).
+
+:::caution Objetos por referência
+`getHeaderRequest`, `getQueryRequest` e `getPathParamsRequest` retornam **referência interna** — não altere o JSON retornado ([detalhes](/docs/tlpp/rest/objeto-orest/avisos-dicas#objetos-por-referencia)).
+:::
+
+<OrestMethodCatalog groupId="leitura-requisicao" />
+
+## Exemplos no GitHub
+
+Fontes `.tlpp` por método: [oREST · leitura requisição](/docs/tlpp/rest/exemplos-repositorio/orest-leitura-requisicao).
+
+**Próximo passo:** [Leitura da resposta](/docs/tlpp/rest/objeto-orest/leitura-resposta)

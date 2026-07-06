@@ -1,0 +1,67 @@
+---
+title: OnBlock
+description: Callback OnBlock — bloqueio e ocultação de endpoints.
+sidebar_position: 2
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import {EXEMPLO_ONBLOCK} from '@site/src/snippets/tdn';
+
+OnBlock roda **uma vez na subida do REST**, antes do mapa de serviços ser publicado. Tudo que não estiver em `block()` continua liberado — o oposto é o [OnAllow](/docs/tlpp/rest/funcoes-usuario/on-allow) (lista branca).
+
+## Quando usar
+
+- Modo manutenção — bloquear APIs temporariamente
+- Ocultar endpoints internos da documentação/listagem
+- Bloquear verbos específicos (`POST` liberado, `DELETE` bloqueado)
+
+## Onde configurar
+
+A chave `OnBlock` só é lida no **Thread Pool** (não nos Slaves). Exemplo:
+
+```ini
+[THREAD_POOL]
+UserExits=TP_UEX
+
+[TP_UEX]
+OnBlock=U_onBlock
+```
+
+## Assinatura e parâmetro
+
+A função recebe um objeto `oList` com métodos para bloquear ou ocultar serviços:
+
+| Método | Ação |
+|--------|------|
+| `oList:block(endpoint, metodo)` | Bloqueia endpoint + verbo |
+| `oList:hide(endpoint, metodo)` | Oculta da listagem (sem bloquear execução direta) |
+| `oList:getApiList()` | Lista de APIs disponíveis na subida |
+| `oList:getServiceName()` | Nome do serviço HTTP |
+| `oList:getThreadPoolName()` | Nome do thread pool |
+
+O retorno é ignorado — devolva `Nil`.
+
+## Exemplo
+
+<SourceFile
+  title="U_onBlock — bloquear e ocultar endpoints"
+  path="exemplo_onblock.tlpp"
+  code={EXEMPLO_ONBLOCK}
+  defaultOpen
+/>
+
+Para cada ação informe **endpoint e método** separadamente. É possível bloquear todos os verbos de um path ou apenas alguns.
+
+## Modo Soft
+
+Se uma exceção ocorrer durante o OnBlock, o AppServer **não reinicia** por padrão (comportamento seguro). Para permitir o start mesmo com falha na lista, configure em `TlppData`:
+
+```ini
+[THREAD_POOL]
+TlppData={"OnBlockSoft":true}
+```
+
+Para lista branca (só o que você permitir fica disponível), use [OnAllow](/docs/tlpp/rest/funcoes-usuario/on-allow) em vez de OnBlock.
+
+**Próximo passo:** [OnAllow](/docs/tlpp/rest/funcoes-usuario/on-allow)

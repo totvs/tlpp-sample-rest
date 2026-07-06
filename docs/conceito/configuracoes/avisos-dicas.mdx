@@ -1,0 +1,31 @@
+---
+title: Avisos e dicas
+description: Cuidados com rotas e servidor — seção Servidor e rotas.
+sidebar_class_name: sidebar-avisos-dicas
+displayed_sidebar: restSidebar
+---
+
+import AvisosDicasPage from '@site/src/components/AvisosDicasPage';
+
+<AvisosDicasPage section="Servidor e rotas" />
+
+## Path parameters
+
+O nome da variável em `:param` é fixado pela **primeira rota registrada** no mesmo path base. Rotas subsequentes devem reutilizar o mesmo nome.
+
+```tlpp
+@Get("users/:id")     // registra :id
+@Get("users/:userId") // ERRADO — nome diferente no mesmo path base
+```
+
+## Annotation vs metadados OpenAPI
+
+`statusCode` em `responses` na annotation é **descritivo** para a documentação. O status HTTP real depende de `oRest:setStatusResponse()` no código.
+
+Roteamento fica nesta seção; enriquecer a spec OpenAPI é trilha [Doc Generate](/docs/tlpp/rest/metadados/visao-geral).
+
+## Autenticação vem depois
+
+Basic Auth e OAuth2 são configurados em `TlppData` — leia [Autenticação](/docs/tlpp/rest/authorization) **após** a seção oREST (em especial [Pool e serviço](/docs/tlpp/rest/objeto-orest/pool-servidor)).
+
+**Próximo passo:** [Visão geral do oRest](/docs/tlpp/rest/objeto-orest/visao-geral)

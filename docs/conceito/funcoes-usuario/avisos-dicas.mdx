@@ -1,0 +1,36 @@
+---
+title: Avisos e dicas
+description: Cuidados com User Exits — seção Callbacks.
+sidebar_class_name: sidebar-avisos-dicas
+displayed_sidebar: restSidebar
+---
+
+import AvisosDicasPage from '@site/src/components/AvisosDicasPage';
+
+<AvisosDicasPage section="Callbacks" />
+
+## OnBlock vs OnAllow
+
+Já detalhado em [Callbacks](/docs/tlpp/rest/funcoes-usuario/callbacks) — um por ambiente, OnAllow vence se ambos estiverem ativos. Só no Thread Pool.
+
+## OnSelect — retorno -3
+
+Drop silencioso (`-3`) derruba a conexão sem HTTP — use com critério em produção (cliente não recebe feedback).
+
+## OnStart — retorno .F.
+
+Thread não entra no pool. Pool com muitas falhas em OnStart pode ficar sem capacidade de atendimento.
+
+## OnStop e objetos
+
+Não assuma que `oRest` ainda existe — valide antes de usar.
+
+## OnError e o console
+
+Com OnError ativo, o erro **não** é impresso automaticamente no console. Use `ConOut()` na sua função se quiser manter o log na tela.
+
+## Funções no RPO
+
+Cada callback deve apontar para uma função **compilada** no RPO do `Environment` do thread pool. Função inexistente: o callback é ignorado ou impede o start, conforme a criticidade.
+
+**Próximo passo:** [Operação do servidor](/docs/tlpp/rest/apis/referencia)

@@ -1,0 +1,273 @@
+---
+title: Authorization
+description: Basic Auth e OAuth2 via TlppData — OnAuth, tokens e callbacks.
+sidebar_position: 1
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import ExemploRef from '@site/src/components/ExemploRef';
+import {
+  INI_BASIC_AUTH,
+  EXEMPLO_ON_AUTH,
+  JSON_BASIC_AUTH,
+  INI_OAUTH2,
+  OAUTH2_NO_CHECK_URI,
+  OAUTH2_VALIDA_TOKEN,
+  OAUTH2_PARAMS_PROVIDER,
+  OAUTH2_FLEXIBLE_PARAMS,
+} from '@site/src/snippets/tdn';
+
+:::info Quando ler esta página
+Recomendamos concluir a seção [oREST](/docs/tlpp/rest/objeto-orest/visao-geral) antes — em especial [Pool e serviço](/docs/tlpp/rest/objeto-orest/pool-servidor), onde `TlppData` e `UserData` são explicados. Você não precisa de auth para o [Quickstart](/docs/tlpp/rest/primeiros-passos/quickstart).
+:::
+
+O REST Server protege requisições HTTP **antes** de chegar ao seu endpoint. A configuração fica na chave `TlppData` do **servidor** (seção INI ou nó JSON) — não por location ou thread pool.
+
+| Esquema | `scheme` em `TlppData` | Desde |
+|---------|------------------------|-------|
+| Basic Auth | `"basic"` | 12.1.27+ |
+| OAuth2 (Password Grant) | `"oAuth2"` | 19.3.1+ |
+
+`TlppData` é reservado ao framework. Para dados seus, use `UserData` — ver [Pool e serviço](/docs/tlpp/rest/objeto-orest/pool-servidor).
+
+## Onde configurar
+
+A regra vale para **todo o servidor** naquela porta. Não dá para ter Basic numa location e OAuth2 em outra no mesmo servidor.
+
+**INI** — na seção do servidor (`[HTTP_SRV]`, etc.):
+
+```ini
+TlppData='{"Authorization":{"scheme":"basic","OnAuth":"U_onAuthorization"}}'
+```
+
+**JSON** — no nó do servidor passado a `VdrCtrl():Start()`:
+
+<SourceFile
+  title="TlppData Basic Auth via JSON"
+  path="fInitService.tlpp"
+  code={JSON_BASIC_AUTH}
+/>
+
+Se o JSON crescer, aponte para arquivo externo: `TlppData=auth.json` (limite de caracteres no INI).
+
+---
+
+## Basic Auth
+
+O servidor valida o cabeçalho `Authorization: Basic …` e delega a decisão final à sua função `OnAuth`.
+
+### Fluxo em duas etapas
+
+**Caminho A — header Basic ausente ou inválido**
+
+1. Cliente envia a requisição HTTP.
+2. O servidor verifica o header `Authorization: Basic {base64}`.
+3. Formato errado ou ausente → **sua função `OnAuth` não roda**.
+4. Resposta **401 Unauthorized**:
+   - Body: `{"code":401,"detailedMessage":"","message":"Unauthorized"}`
+   - Header: `WWW-Authenticate: Basic realm="Access to REST", charset="ISO-8859-1"`
+
+**Caminho B — header OK, validação de negócio**
+
+1. Cliente envia credenciais no header Basic.
+2. O servidor decodifica usuário e senha.
+3. Chama `OnAuth(cUser, cPass)`.
+4. Se retornar **`.T.`** → requisição segue para o endpoint.
+5. Se retornar **`.F.`** (ou qualquer outro tipo) → **403 Forbidden**:
+   - Body: `{"code":403,"detailedMessage":"","message":"Forbidden"}`
+
+**Etapa 1 — protocolo (servidor):** validação do header. Sem Basic válido, `OnAuth` nem é invocado.
+
+**Etapa 2 — negócio (sua função):** você decide se as credenciais decodificadas liberam o acesso.
+
+### Configuração
+
+<SourceFile
+  title="INI — scheme basic + OnAuth"
+  path="appserver.ini"
+  code={INI_BASIC_AUTH}
+  language="ini"
+  defaultOpen
+/>
+
+`OnAuth` é **obrigatório** em Basic Auth e a função deve existir no RPO do `Environment` do serviço. Se não existir, o **start do servidor aborta**.
+
+### Contrato da função `OnAuth`
+
+| Entrada | Tipo | Descrição |
+|---------|------|-----------|
+| `cUser` | Character | Usuário decodificado do header |
+| `cPass` | Character | Senha em plain text |
+
+| Retorno | Resultado HTTP |
+|---------|----------------|
+| `.T.` | Prossegue para o endpoint |
+| `.F.` | 403 Forbidden — `{"code":403,"message":"Forbidden"}` |
+| Qualquer outro tipo | Tratado como `.F.` (proteção contra bug) |
+
+### Implementação
+
+<SourceFile
+  title="exemplo_onAuth.tlpp"
+  path="exemplo_onAuth.tlpp"
+  code={EXEMPLO_ON_AUTH}
+  defaultOpen
+/>
+
+---
+
+## OAuth2
+
+Disponível a partir da **19.3.1**. Implementa **Password Grant** (RFC 6749): o cliente envia `username`/`password`, recebe `access_token` + `refresh_token` e usa `Authorization: Bearer …` nas APIs.
+
+**HTTPS é obrigatório** — configure `SslCertificate` e `SslCertificateKey` no servidor.
+
+### Modelo no TlppCore
+
+1. Cliente solicita token em `/tlpp/oauth2/token` (query params)
+2. `onAuthparams` fornece `client_id`, `client_secret`, usuários, expiração
+3. Servidor gera access/refresh tokens (usuário/senha **não ficam** no servidor após a geração)
+4. Cliente chama APIs com `Authorization: Bearer {access_token}`
+5. Token expirado → renova com `refresh_token` no mesmo endpoint
+
+### Configuração (INI + SSL)
+
+<SourceFile
+  title="INI — servidor dedicado OAuth2"
+  path="appserver.ini"
+  code={INI_OAUTH2}
+  language="ini"
+/>
+
+### Propriedades em `TlppData.Authorization`
+
+O JSON deve seguir estritamente `"chave":"valor"`. Erro de sintaxe quebra na requisição ou na validação de tokens.
+
+| Propriedade | Obrigatório | Descrição |
+|-------------|-------------|-----------|
+| `Authorization` | Sim | Nó raiz — ativa o protocolo na porta |
+| `scheme` | Sim | Valor exato `"oAuth2"` |
+| `onAuthparams` | Sim | Função que fornece parâmetros do cliente (tokens) |
+| `onAuth` | Não | Validação customizada do access token — `""` usa validador nativo |
+| `onAuthNoCheckUri` | Não | White-list de URIs públicas — `""` exige token em tudo |
+
+### `onAuth` — validação de token (opcional)
+
+Recebe `cToken` (access token do header) e `cPath` (URI da requisição). Retorno `.T.` libera, `.F.` nega.
+
+<SourceFile
+  title="u_validaToken — onAuth customizado"
+  path="oauth2_valida_token.tlpp"
+  code={OAUTH2_VALIDA_TOKEN}
+/>
+
+### `onAuthNoCheckUri` — rotas públicas
+
+Retorna **array** de paths que não passam pela validação OAuth2:
+
+<SourceFile
+  title="u_noCheckUri — white-list"
+  path="oauth2_no_check_uri.tlpp"
+  code={OAUTH2_NO_CHECK_URI}
+/>
+
+Sem essa função (ou com `""`), **todas** as URIs da porta exigem token.
+
+### `onAuthparams` — parâmetros do cliente
+
+Função **obrigatória**. O TlppCore **não persiste** credenciais — você carrega tudo neste entry point.
+
+**Appserver 20.3.1+** — a função **retorna** um `JsonObject` (parâmetros da requisição não são mais injetados por referência):
+
+<SourceFile
+  title="u_paramsProvider — um usuário fixo"
+  path="oauth2_params_provider.tlpp"
+  code={OAUTH2_PARAMS_PROVIDER}
+/>
+
+| Propriedade | Tipo | Exemplo |
+|-------------|------|---------|
+| `client_id` | string | `"id_do_cliente"` |
+| `client_secret` | string | `"secret_do_cliente"` |
+| `username` | string ou array em `users[]` | `"nomedousuario"` |
+| `password` | string ou array em `users[]` | `"senha"` |
+| `grant_type` | string | `"password"` (fixo no modelo atual) |
+| `access_expires` | int (ms) | `3600` |
+| `refresh_expires` | date/string | `"Date()+1"` ou `"12/31/2026"` |
+
+**Múltiplos usuários** — JSON flexível com arrays `client`, `users`, `expires`, `types`:
+
+<SourceFile
+  title="U_flexibleParamsProvider — múltiplos usuários"
+  path="oauth2_flexible_params.tlpp"
+  code={OAUTH2_FLEXIBLE_PARAMS}
+/>
+
+`username`, `password` e `grant_type` enviados na requisição de token **devem existir** nos parâmetros retornados por esta função.
+
+---
+
+## Obter e usar tokens
+
+### 1. Solicitar access token
+
+```http
+GET https://localhost:47500/rest/tlpp/oauth2/token?grant_type=password&username=josemaria&password=123456abc
+```
+
+Parâmetros via **query string**. Com SSL configurado, use `https://`.
+
+Resposta 200:
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIs...",
+  "refresh_token": "7-oP9sZyBG4Vd-...",
+  "scope": "default",
+  "token_type": "Bearer",
+  "expires_in": 3600
+}
+```
+
+### 2. Chamar a API
+
+```http
+GET https://localhost:47500/rest/sua/rota
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIs...
+```
+
+### 3. Renovar com refresh token
+
+Quando o access token expira:
+
+```http
+POST https://localhost:47500/rest/tlpp/oauth2/token?refresh_token={token}&grant_type=refresh_token
+```
+
+Refresh expirado → refaça o passo 1 (password grant).
+
+---
+
+## Leitura em runtime
+
+Dentro de um endpoint, consulte o esquema e a função configurados:
+
+| Método oRest | Retorno |
+|--------------|---------|
+| `getCEntryPointAuthorizationScheme()` | `"basic"` ou `"oAuth2"` |
+| `getCEntryPointAuthorizationOnAuth()` | Nome da função `OnAuth`/`onAuth` |
+| `getLEntryPointAuthorization()` | `.T.` se há callback configurado |
+| `getThreadPoolAuthorizationScheme()` | Scheme do thread pool atual |
+| `getThreadPoolAuthorizationOnAuth()` | `OnAuth` do thread pool |
+
+Catálogo completo: [Pool e serviço](/docs/tlpp/rest/objeto-orest/pool-servidor).
+
+## Exemplos no GitHub
+
+Basic Auth, OAuth2 e `OnAuth` em [Authorization](/docs/tlpp/rest/exemplos-repositorio/authorization):
+
+<ExemploRef repo="rest-samples" file="exemplo_onAuth.tlpp" path="authorization" />
+
+**Próximo passo:** [Callbacks](/docs/tlpp/rest/funcoes-usuario/callbacks) — hooks de ciclo de vida (opcional para APIs simples).

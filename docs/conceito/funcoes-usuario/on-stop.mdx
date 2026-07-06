@@ -1,0 +1,47 @@
+---
+title: OnStop
+description: Callback OnStop — finalização de thread REST.
+sidebar_position: 6
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import {EXEMPLO_ONSTOP} from '@site/src/snippets/tdn';
+
+OnStop é o par do [OnStart](/docs/tlpp/rest/funcoes-usuario/on-start): roda quando a thread REST **vai ser destruída** — por parada do servidor, timeout, erro ou ciclo normal.
+
+## Quando usar
+
+- Fechar empresa/filial
+- Liberar conexões ou handles
+- Log de encerramento
+
+## Configuração
+
+```ini
+[SLAVES_UEX]
+OnStop=U_OnStop
+```
+
+## Assinatura
+
+```tlpp
+User Function onStop() As Logical
+```
+
+Sem parâmetros. O retorno é **ignorado** pelo framework.
+
+## Cuidado com objetos
+
+A thread pode estar morrendo por erro — `oRest` e objetos da API podem já ter sido destruídos. Valide com `ValType()` antes de acessar.
+
+## Exemplo
+
+<SourceFile
+  title="onStop — fechar ambiente"
+  path="exemplo_onstop.tlpp"
+  code={EXEMPLO_ONSTOP}
+  defaultOpen
+/>
+
+**Próximo passo:** [OnSend](/docs/tlpp/rest/funcoes-usuario/on-send)

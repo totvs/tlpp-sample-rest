@@ -1,0 +1,69 @@
+---
+title: REST TLPP
+description: Servidor REST nativo no AppServer — visão geral.
+sidebar_position: 1
+displayed_sidebar: restSidebar
+---
+
+import SectionCard from '@site/src/components/SectionCard';
+import RepoLink from '@site/src/components/RepoLink';
+
+# REST TLPP
+
+O REST TLPP roda **nativamente no AppServer**: você declara rotas no código (ou via JSON), atende requisições HTTP com o objeto `oRest` e, quando quiser, documenta a API na trilha **Doc Generate**.
+
+Os exemplos `.tlpp` desta seção vivem em <RepoLink id="rest-samples" /> — a doc ensina o conceito e aponta para o fonte completo no GitHub.
+
+## O que o REST TLPP oferece
+
+Capacidades do produto — **não** é o mapa de leitura (esse está na trilha abaixo).
+
+| Capacidade | O que resolve |
+|------------|---------------|
+| **Performance nativa** | HTTP no AppServer, sem camada externa |
+| **Rotas no código** | Annotations (`@Get`, `@Post`, …) ou mapeamento JSON |
+| **Runtime dinâmico** | Subir serviços em runtime com `tlpp.rest` |
+| **Isolamento por thread** | Cada requisição com seu `oRest` |
+| **Segurança HTTP** | Basic Auth e OAuth2 via `TlppData` |
+| **Extensão do ciclo de vida** | Callbacks (User Exits) opcionais |
+
+## Trilha sugerida
+
+Uma ordem só — do zero à API funcionando. O menu lateral espelha essa sequência; cada bloco termina em **Avisos e dicas**.
+
+| Etapa | O que você aprende | Comece em |
+|-------|-------------------|-----------|
+| **1 — Começando** | Subir o servidor, Hello World, montar URLs | [Quickstart](/docs/tlpp/rest/primeiros-passos/quickstart) |
+| **2 — Servidor e rotas** | Annotations, INI/JSON, rotas sem annotation | [Annotations](/docs/tlpp/rest/configuracoes/annotations) |
+| **3 — oREST** | Ler requisição, montar resposta, pool e utilitários | [Visão geral do oRest](/docs/tlpp/rest/objeto-orest/visao-geral) |
+| **4 — Autenticação** | Basic Auth e OAuth2 via `TlppData` | [Authorization](/docs/tlpp/rest/authorization) |
+| **5 — Callbacks** | OnBlock, OnError, OnSend… (opcional no primeiro endpoint) | [Callbacks](/docs/tlpp/rest/funcoes-usuario/callbacks) |
+| **6 — Referência** | Operação do servidor REST nativo | [Operação do servidor](/docs/tlpp/rest/apis/referencia) |
+| **7 — Exemplos REST** | Catálogo de `.tlpp` no repositório de samples | [Exemplos do repositório](/docs/tlpp/rest/exemplos-repositorio) |
+
+:::tip Por que autenticação vem depois do oREST?
+A configuração de auth usa `TlppData` no servidor e métodos do `oRest` para inspecionar o esquema em runtime — conceitos de [Pool e serviço](/docs/tlpp/rest/objeto-orest/pool-servidor). Você não precisa de auth para o Quickstart.
+:::
+
+Se você já conhece REST em outros frameworks, as etapas 1–2 cobrem o que é específico do AppServer; a etapa 3 (`oRest`) equivale ao objeto request/response do seu framework.
+
+## Escolha um caminho
+
+<div className="row" style={{marginBottom: '1rem'}}>
+  <div className="col col--6">
+    <SectionCard
+      title="Quero expor uma API"
+      description="Do zero ao primeiro endpoint — Quickstart, rotas e oRest."
+      to="/docs/tlpp/rest/primeiros-passos/quickstart"
+    />
+  </div>
+  <div className="col col--6">
+    <SectionCard
+      title="Quero documentar com OpenAPI"
+      description="Metadados e tlpp.doc.generate() — trilha Doc Generate."
+      to="/docs/tlpp/rest/metadados/visao-geral"
+    />
+  </div>
+</div>
+
+**Próximo passo:** [Quickstart](/docs/tlpp/rest/primeiros-passos/quickstart)

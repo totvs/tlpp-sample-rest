@@ -1,0 +1,104 @@
+---
+title: Callbacks (User Exits)
+description: Hooks do ciclo de vida das threads REST.
+sidebar_position: 1
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import ExemploRef from '@site/src/components/ExemploRef';
+import {USER_EXITS_INI, USER_EXITS_JSON} from '@site/src/snippets/tdn';
+
+User Exits são funções ADVPL/TLPP compiladas no RPO, referenciadas na chave `UserExits` do thread pool ou slave. Cada callback aponta para uma função existente no `Environment` daquele pool.
+
+:::info Antes de configurar callbacks
+Entenda [Pool e serviço](/docs/tlpp/rest/objeto-orest/pool-servidor) (thread pool vs slaves) e, se for proteger a API, [Autenticação](/docs/tlpp/rest/authorization). Callbacks são **opcionais** — muitas APIs funcionam só com annotations e `oRest`.
+:::
+
+Nenhuma chave é obrigatória — mas se você declarar `OnBlock=`, por exemplo, o valor não pode ficar vazio.
+
+## Trilha sugerida
+
+Os 7 callbacks, na ordem em que costumam aparecer no ciclo de vida. Cada página detalha assinatura e exemplo.
+
+| Etapa | Momento | Comece em |
+|-------|---------|-----------|
+| **1 — OnBlock** | Na subida — bloqueia URNs listadas (Thread Pool) | [OnBlock](/docs/tlpp/rest/funcoes-usuario/on-block) |
+| **2 — OnAllow** | Na subida — permite só URNs listadas (Thread Pool) | [OnAllow](/docs/tlpp/rest/funcoes-usuario/on-allow) |
+| **3 — OnSelect** | Antes de atender — escolhe o slave (Thread Pool) | [OnSelect](/docs/tlpp/rest/funcoes-usuario/on-select) |
+| **4 — OnStart** | Thread criada (Slave) | [OnStart](/docs/tlpp/rest/funcoes-usuario/on-start) |
+| **5 — OnStop** | Thread encerrada (Slave) | [OnStop](/docs/tlpp/rest/funcoes-usuario/on-stop) |
+| **6 — OnSend** | Antes de enviar a resposta (Slave) | [OnSend](/docs/tlpp/rest/funcoes-usuario/on-send) |
+| **7 — OnError** | Exceção na thread (Pool e/ou Slave) | [OnError](/docs/tlpp/rest/funcoes-usuario/on-error) |
+
+Autenticação HTTP (`OnAuth`) é outro recurso — configurada em `TlppData`, não em User Exits. Ver [Authorization](/docs/tlpp/rest/authorization).
+
+## Dois grupos
+
+**Infraestrutura do servidor** — rodam na orquestração, antes ou durante a distribuição:
+
+- OnBlock / OnAllow — montam o mapa de APIs na subida
+- OnSelect — decide qual thread/slave atende cada requisição
+
+**Ciclo da requisição** — rodam na thread que processa (em geral o slave):
+
+- OnStart → endpoint → OnSend → resposta ao cliente
+- OnStop quando a thread morre
+- OnError se der runtime error no meio
+
+## Ordem típica de uma requisição (com slaves)
+
+1. Cliente envia HTTP.
+2. **OnSelect** (pool principal) escolhe o slave — ou delega ao algoritmo nativo (`-1`).
+3. Thread do slave executa **OnStart** (se configurado).
+4. Sua API roda (`@Get`, `LoadURNs`, etc.).
+5. **OnSend** ajusta headers/body finais.
+6. Resposta vai ao cliente.
+7. Se houve exceção em qualquer passo → **OnError**.
+8. Ao encerrar a thread → **OnStop**.
+
+Sem slaves, OnStart/OnStop/OnSend ficam no thread pool que atende direto.
+
+## Topologia típica
+
+| Camada | Callbacks comuns |
+|--------|------------------|
+| Thread Pool principal | OnBlock ou OnAllow, OnSelect, OnError |
+| Slaves | OnStart, OnStop, OnSend, OnError |
+
+<SourceFile
+  title="INI — User Exits em Pool e Slaves"
+  path="appserver.ini"
+  code={USER_EXITS_INI}
+  language="ini"
+  defaultOpen
+/>
+
+Equivalente em JSON (`VdrCtrl():Start`):
+
+<SourceFile
+  title="JSON — User Exits"
+  path="rest_config.tlpp"
+  code={USER_EXITS_JSON}
+/>
+
+## OnBlock vs OnAllow
+
+Mesma finalidade (controlar APIs disponíveis), lógica oposta:
+
+| Callback | Lógica |
+|----------|--------|
+| **OnBlock** | Bloqueia o que você listar — o resto fica liberado |
+| **OnAllow** | Permite só o que você listar — o resto é bloqueado |
+
+Configure **apenas um** por ambiente. Se ambos estiverem ativos, **OnAllow vence** e OnBlock é ignorado.
+
+OnBlock e OnAllow só são lidos no **Thread Pool** — configurar nos slaves não tem efeito.
+
+## Exemplos no GitHub
+
+User Exits em [Callbacks](/docs/tlpp/rest/exemplos-repositorio/callbacks):
+
+<ExemploRef repo="rest-samples" file="exemplo_onstart.tlpp" path="callbacks" />
+
+**Próximo passo:** [OnBlock](/docs/tlpp/rest/funcoes-usuario/on-block)

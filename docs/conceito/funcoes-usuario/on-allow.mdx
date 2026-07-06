@@ -1,0 +1,76 @@
+---
+title: OnAllow
+description: Callback OnAllow — lista branca de endpoints REST.
+sidebar_position: 3
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import {EXEMPLO_ONALLOW} from '@site/src/snippets/tdn';
+
+OnAllow é o **inverso** do [OnBlock](/docs/tlpp/rest/funcoes-usuario/on-block): você declara o que **pode** rodar; todo o resto é bloqueado automaticamente.
+
+Disponível a partir de **AppServer 24.3.1.1 + tlppCore 01.05.10**.
+
+## Quando usar
+
+- Ambiente restrito — só algumas APIs públicas
+- Homologação com catálogo mínimo de rotas
+- Lista branca explícita (mais seguro que bloquear endpoint a endpoint)
+
+## Onde configurar
+
+Só no **Thread Pool** — igual ao OnBlock. Nos slaves é ignorado.
+
+```ini
+[THREAD_POOL]
+UserExits=TP_UEX
+
+[TP_UEX]
+;OnBlock=U_OnBlock
+OnAllow=U_OnAllow
+```
+
+Não configure OnBlock e OnAllow juntos — [OnAllow tem precedência](/docs/tlpp/rest/funcoes-usuario/callbacks).
+
+## Assinatura
+
+```tlpp
+Function U_onAllow(oList)
+```
+
+Mesma classe `oList` do OnBlock, com métodos diferentes:
+
+| Método | Ação |
+|--------|------|
+| `oList:allow(endpoint, metodo)` | Libera endpoint + verbo |
+| `oList:hide(endpoint, metodo)` | Oculta da listagem |
+| `oList:getApiList()` | APIs disponíveis na subida |
+| `oList:getServiceName()` | Nome do serviço HTTP |
+| `oList:getThreadPoolName()` | Nome do thread pool |
+| `oList:getServicePort()` | Porta do serviço |
+| `oList:getUserData()` | JSON de `UserData` |
+
+Retorno ignorado — devolva `Nil`.
+
+Endpoints não passados em `allow()` ficam **bloqueados**.
+
+## Exemplo
+
+<SourceFile
+  title="U_onAllow — permitir e ocultar endpoints"
+  path="exemplo_onallow.tlpp"
+  code={EXEMPLO_ONALLOW}
+  defaultOpen
+/>
+
+## Modo Soft
+
+Se a função lançar exceção na subida, o servidor **não sobe** por padrão (evita expor APIs por engano). Para subir mesmo com falha na lista:
+
+```ini
+[THREAD_POOL]
+TlppData={"OnAllowSoft":true}
+```
+
+**Próximo passo:** [OnSelect](/docs/tlpp/rest/funcoes-usuario/on-select)

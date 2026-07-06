@@ -1,0 +1,90 @@
+---
+title: Configuração INI e JSON
+description: Duas formas de configurar o REST Server.
+sidebar_position: 2
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import ExemploRef from '@site/src/components/ExemploRef';
+import {INI_BASICO} from '@site/src/snippets/tdn';
+import {REST_START_TLPP} from '@site/src/snippets/rest_start';
+
+No [Quickstart](/docs/tlpp/rest/primeiros-passos/quickstart) você configurou via INI. Aqui você entende cada seção e conhece a alternativa em JSON — **uma ou outra**, nunca as duas para o mesmo serviço.
+
+| Caminho | Como sobe o REST |
+|---------|------------------|
+| **INI** | Seções `[HTTPSERVER]`, `[HTTP_REST]`… no `appserver.ini` — o AppServer lê no boot |
+| **JSON** | Objeto `JsonObject` passado a `VdrCtrl():Start(jo)` — você chama em TLPP, no boot ou depois |
+
+No caminho JSON, o único trecho comum no INI é o `[OnStart]` que agenda a função de start — isso não configura o REST, só dispara a `rest.u_start` no boot.
+
+## Hierarquia (vale para INI e JSON)
+
+```
+HTTPSERVER → Server → Location → ThreadPool → Environment (RPO)
+```
+
+| Nível | Papel |
+|-------|-------|
+| `HTTPSERVER` | Liga o servidor HTTP no AppServer |
+| Server (ex.: `HTTP_REST`) | Porta, hostname, locations |
+| Location (ex.: `HTTP_ROOT`) | Prefixo de URL (`Path`), arquivos estáticos, thread pool |
+| ThreadPool | Qual RPO atende (`Environment`) e `MinThreads` |
+
+## Caminho A — via INI
+
+Usado no [Quickstart](/docs/tlpp/rest/primeiros-passos/quickstart). Cole no `appserver.ini` e reinicie o AppServer:
+
+<SourceFile
+  title="INI mínimo"
+  path="appserver.ini"
+  code={INI_BASICO}
+  language="ini"
+  defaultOpen={false}
+/>
+
+Chaves adicionais (SSL, slaves, logs, user exits): [Referência INI](/docs/tlpp/rest/configuracoes/referencia-ini). No caminho JSON, a mesma árvore em `JsonObject`: [Referência JSON](/docs/tlpp/rest/configuracoes/referencia-json).
+
+## Caminho B — via JSON
+
+Toda a árvore acima vai dentro de um `JsonObject`. Chame `VdrCtrl():Start(jo)` após o AppServer estar no ar (ou agende com `[OnStart]`). As chaves são case-sensitive — um erro de capitalização impede o start.
+
+| INI | JSON |
+|-----|------|
+| `[HTTPSERVER] Enable=1` | `jo['HTTPSERVER']['Enable'] := 1` |
+| `[HTTP_REST] port=9995` | `jo['HTTP_REST']['port'] := 9995` |
+| `[THREAD_POOL] Environment=ENV` | `jo['THREAD_POOL']['Environment'] := 'ENV'` |
+
+<SourceFile
+  title="rest.u_start — configuração 100% em JSON"
+  path="rest_start.tlpp"
+  code={REST_START_TLPP}
+/>
+
+Para subir no boot sem REST no INI:
+
+```ini
+[OnStart]
+Jobs=JOB1
+
+[JOB1]
+Main=rest.u_start
+Environment=SEU_ENV
+```
+
+## Qual caminho escolher?
+
+| Situação | Recomendação |
+|----------|--------------|
+| Serviço REST fixo, ambiente estável | **INI** |
+| Config em código, múltiplos serviços, start sob demanda | **JSON** |
+| Migração WsRESTful, `LoadURNs` dinâmico | **JSON** — [Sem annotation](/docs/tlpp/rest/configuracoes/sem-annotation) |
+
+## Exemplos no GitHub
+
+Subida do serviço e primeiros endpoints em [Primeiros passos](/docs/tlpp/rest/exemplos-repositorio/primeiros-passos):
+
+<ExemploRef repo="rest-samples" file="rest_start.tlpp" path="primeiros-passos" />
+
+**Próximo passo:** [Composição da URL](/docs/tlpp/rest/primeiros-passos/composicao-url)

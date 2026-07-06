@@ -1,0 +1,59 @@
+---
+title: OnError
+description: Callback OnError — tratamento global de exceções.
+sidebar_position: 3
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import {EXEMPLO_ONERROR} from '@site/src/snippets/tdn';
+
+O framework já trata falhas de runtime de forma segura. Com OnError configurado, você decide o que gravar em log e o que devolver ao cliente.
+
+## Configuração
+
+Configure em `[UserExits]` no thread pool e/ou nos slaves — erros podem ocorrer em qualquer camada:
+
+```ini
+[TP_UEX]
+OnError=U_onError
+
+[SLAVES_UEX]
+OnError=U_onError
+```
+
+## Assinatura
+
+```tlpp
+Function U_onError( oError As Object )
+```
+
+| Propriedade de `oError` | Tipo | Conteúdo |
+|-------------------------|------|----------|
+| `description` | String | Descrição técnica do erro |
+| `errorstack` | String | Stack trace completo |
+| `severity` | Numeric | Nível de severidade |
+| `genCode` | Numeric | Código de erro AdvPL |
+| `operation` | String | Operação que falhou |
+| `errorenv` | String | Espelho do ambiente no momento do erro |
+
+Retorno: `Nil` (sem retorno obrigatório).
+
+## Comportamento importante
+
+1. **Console silenciado** — com OnError ativo, o erro **não** é impresso automaticamente no console. Use `ConOut()` dentro da sua função se quiser manter o log na tela.
+2. **HTTP 500 padrão** — se você não alterar status nem corpo, o framework garante resposta 500 ao cliente.
+3. **Mascarar para o cliente** — use `oRest:SetFault(json)` para devolver uma mensagem amigável sem expor stack trace.
+
+## Exemplo
+
+<SourceFile
+  title="U_onError — log interno + resposta mascarada"
+  path="exemplo_onerror.tlpp"
+  code={EXEMPLO_ONERROR}
+  defaultOpen
+/>
+
+O padrão acima gera um código de rastreio para o cliente (`cCodeTrace`) e envia os detalhes reais para `U_TrataErro()`. Para controle avançado de conexão, veja `httpCallEnd` em [Utilitários](/docs/tlpp/rest/objeto-orest/utilitarios).
+
+**Próximo passo:** [Avisos e dicas](/docs/tlpp/rest/funcoes-usuario/avisos-dicas)

@@ -1,0 +1,51 @@
+---
+title: OnSend
+description: Callback OnSend — interceptar resposta antes do envio HTTP.
+sidebar_position: 7
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import {EXEMPLO_ONSEND} from '@site/src/snippets/tdn';
+
+OnSend roda **logo antes** do payload sair para o cliente. Vale para **todas** as rotas da thread — ponto único para headers globais, auditoria ou normalização de `Content-Type`.
+
+Disponível a partir do **tlppCore 01.03.04**.
+
+Configure no **slave** (ou pool sem slaves).
+
+## Quando usar
+
+- Forçar `Content-Type` conforme o body
+- Log centralizado de respostas
+- Headers de segurança em todas as APIs
+
+## Configuração
+
+```ini
+[SLAVES_UEX]
+OnSend=U_OnSend
+```
+
+## Assinatura
+
+```tlpp
+Function U_OnSend()
+```
+
+Sem parâmetros — leia a resposta montada com `oRest:getBodyResponse()` e altere headers com `oRest:updateKeyHeaderResponse()`.
+
+Retorno ignorado.
+
+## Exemplo
+
+Detecta se o body é JSON válido e ajusta `Content-Type`:
+
+<SourceFile
+  title="U_OnSend — Content-Type dinâmico"
+  path="exemplo_onsend.tlpp"
+  code={EXEMPLO_ONSEND}
+  defaultOpen
+/>
+
+**Próximo passo:** [OnError](/docs/tlpp/rest/funcoes-usuario/on-error)

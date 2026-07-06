@@ -1,0 +1,58 @@
+---
+title: Composição da URL
+description: Host, path virtual, endpoint e query string.
+sidebar_position: 3
+displayed_sidebar: restSidebar
+---
+
+Uma URL REST TLPP combina componentes fixos (configuração) e dinâmicos (código).
+
+## Estrutura
+
+```
+https://host:porta/pathVirtual/endpoint?query=valor
+```
+
+| Componente | Origem | Exemplo |
+|------------|--------|---------|
+| Protocolo | INI (HTTP/HTTPS) | `https` |
+| Host:Porta | INI + infraestrutura | `127.0.0.1:8080` |
+| Path virtual | `Path` na seção Location | `/totvs` |
+| Endpoint | `@Get("api/sample")` ou `LoadURNs` | `/api/sample` |
+| Query string | Cliente HTTP | `?id=1` |
+
+## Exemplo montado
+
+Com este INI:
+
+```ini
+[HTTP_REST]
+hostname=localhost
+port=9995
+
+[HTTP_ROOT]
+Path=/api
+```
+
+E esta annotation:
+
+```tlpp
+@Get("users/:id")
+User Function getUser()
+    // ...
+Return .T.
+```
+
+A URL completa fica: `http://localhost:9995/api/users/42?fields=name`
+
+- `/api` vem do `Path` no INI
+- `/users/42` vem do endpoint da annotation (`:id` = `42`)
+- `?fields=name` é enviado pelo cliente
+
+## HTTP vs HTTPS
+
+**HTTP:** `[HTTPSERVER] Enable=1` sem certificados — adequado para desenvolvimento local.
+
+**HTTPS:** informe `SslCertificate` e `SslCertificateKey` na seção do servidor — [Referência INI](/docs/tlpp/rest/configuracoes/referencia-ini) ou [Referência JSON](/docs/tlpp/rest/configuracoes/referencia-json).
+
+**Próximo passo:** [Avisos e dicas](/docs/tlpp/rest/primeiros-passos/avisos-dicas)

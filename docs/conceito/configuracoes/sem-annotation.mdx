@@ -1,0 +1,59 @@
+---
+title: Sem annotation
+description: LoadURNs e mapeamento JSON de endpoints.
+sidebar_position: 2
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import ExemploRef from '@site/src/components/ExemploRef';
+import {
+  F_INIT_SERVICE,
+  LOAD_URNS_NO_ANNOTATION,
+} from '@site/src/snippets/tdn';
+
+Para rotas dinâmicas ou legado, mapeie endpoints via JSON com `LoadURNs` — sem `@Get` / `@Post` no código.
+
+## Quando usar
+
+- URLs geradas em runtime
+- Migração de WsRESTful
+- Controle fino de `ProgramType`, `ClassName` e `Function` por verbo HTTP
+
+## Fluxo em duas etapas
+
+1. **Subir o serviço** — monte o `JsonObject` e chame `VdrCtrl():Start()`, incluindo o nó `LoadURNs`.
+2. **Preencher `LoadURNs`** — associe path + verbo à função ou método compilado no RPO.
+
+O TDN demonstra isso com `u_fInitService()` chamando `sLoadURNs()` antes do start.
+
+### 1. Inicialização do serviço (`fInitService.tlpp`)
+
+Thread pool, slaves, content-types e chamada a `sLoadURNs` no nó `LoadURNs`:
+
+<SourceFile
+  title="u_fInitService — start via JSON"
+  path="fInitService.tlpp"
+  code={F_INIT_SERVICE}
+  defaultOpen
+/>
+
+### 2. Mapeamento de URNs (`load_urns_no_annotation.tlpp`)
+
+Inclui `sLoadURNs`, handlers por verbo, path param (`:myparam`), classe/método (`ProgramType := 1`) e implementações de resposta:
+
+<SourceFile
+  title="sLoadURNs + endpoints de exemplo"
+  path="load_urns_no_annotation.tlpp"
+  code={LOAD_URNS_NO_ANNOTATION}
+/>
+
+As chaves do objeto de configuração devem coincidir exatamente com as seções INI (case-sensitive). Tabela completa: [Referência JSON](/docs/tlpp/rest/configuracoes/referencia-json) · equivalente INI: [Referência INI](/docs/tlpp/rest/configuracoes/referencia-ini).
+
+## Exemplos no GitHub
+
+`LoadURNs` e start sem annotation em [Primeiros passos](/docs/tlpp/rest/exemplos-repositorio/primeiros-passos) e [Configurações](/docs/tlpp/rest/exemplos-repositorio/configuracoes):
+
+<ExemploRef repo="rest-samples" file="load_urns.tlpp" path="primeiros-passos" />
+
+**Próximo passo:** [Referência INI](/docs/tlpp/rest/configuracoes/referencia-ini) — tabela de chaves do `appserver.ini` antes do caminho JSON completo.

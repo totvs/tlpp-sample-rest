@@ -1,0 +1,146 @@
+---
+title: Operação do servidor
+description: Endpoints nativos do tlppCore para logs, discovery, métricas e versão — não são suas APIs de negócio.
+sidebar_position: 1
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import RepoLink from '@site/src/components/RepoLink';
+import ExemploRef from '@site/src/components/ExemploRef';
+import {EXEMPLO_WS_RESTFUL_START} from '@site/src/snippets/tdn';
+
+## O que é (e o que não é)
+
+**Operação do servidor** são rotas HTTP que o **próprio tlppCore já expõe** quando o REST está no ar. Servem para operar e inspecionar o ambiente — sem reiniciar o AppServer.
+
+| | Suas APIs (`@Get`, `LoadURNs`) | APIs de operação (esta página) |
+|---|-------------------------------|--------------------------------|
+| Quem define | Você, no código TLPP | Framework, embutido |
+| Exemplo | `/api/clientes`, `/hello` | `/tlpp/rest/config`, `/tlpp/environment` |
+| Uso | Regra de negócio | Log, discovery, métricas, versão |
+
+Se você só expõe endpoints de negócio e não precisa tunar log ou listar rotas em runtime, **pode ignorar esta seção** até precisar diagnosticar produção.
+
+## Como montar a URL
+
+Todas as rotas abaixo (exceto monitoramento) usam o **mesmo host/porta/path** do seu serviço REST:
+
+```
+{protocolo}://{host}:{porta}{Path da Location}{URI nativa}
+```
+
+Exemplo com INI típico (`port=5012`, `Path=/rest`):
+
+```
+https://localhost:5012/rest/tlpp/rest/config
+         │         │    │    └─ URI fixa do framework
+         │         │    └─ prefixo da Location
+         │         └─ porta do servidor HTTP_REST
+         └─ host do servidor
+```
+
+Ajuste protocolo, host, porta e `Path` conforme o seu [appserver.ini](/docs/tlpp/rest/configuracoes/referencia-ini) ou [JSON](/docs/tlpp/rest/configuracoes/referencia-json).
+
+## Endpoints nativos do REST
+
+### Configuração de logs em runtime
+
+| | |
+|---|---|
+| **URI** | `/tlpp/rest/config` |
+| **Método** | GET (interface web no navegador) |
+| **Para quê** | Alterar `rest_log_level`, `rest_error_full`, `rest_trace_time`, `rest_reload_time`, `rest_log_stringsize` **sem restart** |
+
+Abra no browser: `https://localhost:5012/rest/tlpp/rest/config`
+
+A tela mostra três colunas: valor que você digita, valor do INI e default. O valor com borda laranja é o que está valendo agora.
+
+Chaves de origem ficam na seção `[GENERAL]` do `appserver.ini` (nem todas precisam existir — há defaults).
+
+### Lista de serviços (discovery)
+
+| | |
+|---|---|
+| **URI** | `/tlpp/rest/list/service` |
+| **Método** | GET |
+| **Para quê** | JSON com **todos os endpoints** registrados no ambiente (annotations e mapeamentos) |
+
+```http
+GET https://localhost:5012/rest/tlpp/rest/list/service
+```
+
+Útil para conferir o que subiu antes de integrar um cliente HTTP.
+
+### Métricas de tempo por entry point
+
+| | |
+|---|---|
+| **URI** | `/tlpp/rest/usage/time` |
+| **Método** | GET |
+| **Para quê** | Tempo em microssegundos e percentual por entry point, slave e thread pool |
+
+Retorno é uma **string HTML** — salve como `.html` para abrir no browser, ou leia no `console.log` do AppServer.
+
+Também aparece no log do ambiente. Indicada para investigar lentidão ou validar um endpoint novo.
+
+### Versão do ambiente
+
+| | |
+|---|---|
+| **URIs** | `/totvs/environment` · `/appserver/environment` · `/tlpp/environment` |
+| **Método** | GET |
+| **Para quê** | Versão, build e patch do AppServer e/ou TLPP em JSON |
+
+```http
+GET https://localhost:5012/rest/totvs/environment
+GET https://localhost:5012/rest/appserver/environment
+GET https://localhost:5012/rest/tlpp/environment
+```
+
+No [Quickstart](/docs/tlpp/rest/primeiros-passos/quickstart), o `rest.u_start` já sugere testar `/tlpp/environment` após subir o serviço.
+
+## Monitoramento de memória (serviço separado)
+
+Não é a mesma porta do REST. Exige habilitar o monitor no INI:
+
+```ini
+[APP_MONITOR]
+enable=1
+```
+
+| Endpoint | Retorno |
+|----------|---------|
+| `/appserver/metrics` | JSON com modos de consulta e campos disponíveis |
+| `/appserver/metrics?all` | Consumo de memória completo |
+| `/appserver/metrics?memory_resident` | Filtro por campo (query string) |
+
+URL típica (porta do monitor, não do REST):
+
+```http
+GET https://localhost:32033/api/appserver/metrics?all
+```
+
+## Consumir de dentro do TLPP
+
+Você pode chamar essas URIs com `HTTPGet` / `HttpQuote` a partir de uma `@Get` sua — o TDN traz exemplos em `apis/admin/` do repositório <RepoLink id="rest-samples" />. Catálogo espelhado: [APIs administrativas (samples)](/docs/tlpp/rest/exemplos-repositorio/apis-admin).
+
+## Legado: `wsRestfulStart` (não é API HTTP)
+
+`tlpp.rest.wsRestfulStart(jo, cPath)` **não** é endpoint administrativo — é função TLPP para **subir** o REST no modelo antigo **WsRESTful**, montando o JSON de infraestrutura e registrando um path virtual extra.
+
+<SourceFile
+  title="u_doc_wsRestfulStart — JSON + wsRestfulStart"
+  path="exemplo_wsRestfulStart.tlpp"
+  code={EXEMPLO_WS_RESTFUL_START}
+/>
+
+Relacionado: [Sem annotation](/docs/tlpp/rest/configuracoes/sem-annotation) · [Configuração JSON](/docs/tlpp/rest/primeiros-passos/configuracao).
+
+## Exemplos no GitHub
+
+Chamadas às rotas de operação em [APIs administrativas](/docs/tlpp/rest/exemplos-repositorio/apis-admin):
+
+<ExemploRef repo="rest-samples" file="rest-mod02-GET.tlpp" path="apis/admin" />
+
+**Próximo passo:** [Exemplos REST](/docs/tlpp/rest/exemplos-repositorio) — catálogo completo por tema.

@@ -1,0 +1,30 @@
+---
+title: Avisos e dicas
+description: Cuidados ao usar oRest — seção oREST.
+sidebar_class_name: sidebar-avisos-dicas
+displayed_sidebar: restSidebar
+---
+
+import AvisosDicasPage from '@site/src/components/AvisosDicasPage';
+
+<AvisosDicasPage section="oREST" />
+
+## Objetos por referência {#objetos-por-referencia}
+
+`getHeaderRequest()`, `getQueryRequest()` e `getPathParamsRequest()` retornam **referências internas**, não cópias. Não altere o JsonObject retornado — alterações podem vazar para outras requisições.
+
+Leia os valores e monte sua própria estrutura quando precisar transformar os dados.
+
+## Concatenação em `setResponse`
+
+Chamadas repetidas a `setResponse` **concatenam** o texto. Use `resetMessageResponse` ou `resetResponse` antes de montar uma resposta nova do zero.
+
+## Headers restritos
+
+Alguns headers definidos pelo RFC não podem ser removidos com `deleteKeyHeaderResponse` sem quebrar a comunicação com o cliente.
+
+## TlppData vs UserData
+
+`TlppData` é reservado ao framework (ex.: Authorization). `UserData` é para configuração customizada do seu projeto — não inverta os papéis.
+
+**Próximo passo:** [Autenticação](/docs/tlpp/rest/authorization) — Basic Auth e OAuth2.

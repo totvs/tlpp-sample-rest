@@ -1,0 +1,55 @@
+---
+title: OnStart
+description: Callback OnStart — inicialização de thread REST.
+sidebar_position: 5
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import {EXEMPLO_ONSTART} from '@site/src/snippets/tdn';
+
+OnStart roda no **momento em que a thread de atendimento é criada** — antes de ela entrar no pool para receber requisições.
+
+Configure no **slave** (ou no pool se não houver slaves).
+
+## Quando usar
+
+- Abrir empresa/filial na thread
+- Inicializar variáveis de contexto
+- Abortar criação da thread se o ambiente não estiver pronto
+
+## Configuração
+
+```ini
+[SLAVES_UEX]
+OnStart=U_OnStart
+```
+
+## Assinatura
+
+```tlpp
+User Function onStart() As Logical
+```
+
+Sem parâmetros de entrada — use métodos `oRest` se precisar de contexto do servidor.
+
+## Retorno (obrigatório — lógico)
+
+| Retorno | Efeito |
+|---------|--------|
+| `.T.` | Thread criada e disponível no pool |
+| `.F.` | Thread **não** sobe — encerrada na hora |
+| Outro tipo | Tratado como `.F.` |
+
+Cuidado: retorno `.F.` por engano deixa o pool sem threads suficientes.
+
+## Exemplo
+
+<SourceFile
+  title="onStart — preparar ambiente"
+  path="exemplo_onstart.tlpp"
+  code={EXEMPLO_ONSTART}
+  defaultOpen
+/>
+
+**Próximo passo:** [OnStop](/docs/tlpp/rest/funcoes-usuario/on-stop)

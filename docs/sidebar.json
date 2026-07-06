@@ -1,0 +1,104 @@
+{
+  "$comment": "Menu deste módulo — ids relativos ao docPrefix. Exemplos são auto-descobertos de docs/exemplos/.",
+  "docPrefix": "tlpp/rest",
+  "exemplos": {
+    "label": "Exemplos REST",
+    "key": "rest-exemplos-repo",
+    "mountSubpath": "exemplos-repositorio"
+  },
+  "items": [
+    {"type": "doc", "id": "index", "label": "Visão geral"},
+    {
+      "type": "category",
+      "label": "Começando",
+      "collapsed": true,
+      "items": [
+        "primeiros-passos/quickstart",
+        "primeiros-passos/configuracao",
+        "primeiros-passos/composicao-url",
+        {
+          "type": "doc",
+          "id": "primeiros-passos/avisos-dicas",
+          "label": "Avisos e dicas",
+          "key": "avisos-comecando",
+          "className": "sidebar-avisos-dicas"
+        }
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Servidor e rotas",
+      "collapsed": true,
+      "items": [
+        "configuracoes/annotations",
+        "configuracoes/sem-annotation",
+        "configuracoes/referencia-ini",
+        "configuracoes/referencia-json",
+        {
+          "type": "doc",
+          "id": "configuracoes/avisos-dicas",
+          "label": "Avisos e dicas",
+          "key": "avisos-servidor",
+          "className": "sidebar-avisos-dicas"
+        }
+      ]
+    },
+    {
+      "type": "category",
+      "label": "oREST",
+      "collapsed": true,
+      "items": [
+        "objeto-orest/visao-geral",
+        "objeto-orest/leitura-requisicao",
+        "objeto-orest/leitura-resposta",
+        "objeto-orest/escrita-resposta",
+        "objeto-orest/cabecalhos-resposta",
+        "objeto-orest/pool-servidor",
+        "objeto-orest/utilitarios",
+        {
+          "type": "doc",
+          "id": "objeto-orest/avisos-dicas",
+          "label": "Avisos e dicas",
+          "key": "avisos-orest",
+          "className": "sidebar-avisos-dicas"
+        }
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Autenticação",
+      "collapsed": true,
+      "items": ["authorization"]
+    },
+    {
+      "type": "category",
+      "label": "Callbacks",
+      "collapsed": true,
+      "items": [
+        {"type": "doc", "id": "funcoes-usuario/callbacks", "label": "Visão geral", "key": "callbacks-overview"},
+        "funcoes-usuario/on-block",
+        "funcoes-usuario/on-allow",
+        "funcoes-usuario/on-select",
+        "funcoes-usuario/on-start",
+        "funcoes-usuario/on-stop",
+        "funcoes-usuario/on-send",
+        "funcoes-usuario/on-error",
+        {
+          "type": "doc",
+          "id": "funcoes-usuario/avisos-dicas",
+          "label": "Avisos e dicas",
+          "key": "avisos-callbacks",
+          "className": "sidebar-avisos-dicas"
+        }
+      ]
+    },
+    {
+      "type": "category",
+      "label": "Referência",
+      "collapsed": true,
+      "items": [
+        {"type": "doc", "id": "apis/referencia", "label": "Operação do servidor"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+---
+title: Referência INI
+description: Chaves principais do appserver.ini para REST.
+sidebar_position: 3
+displayed_sidebar: restSidebar
+---
+
+import SourceFile from '@site/src/components/SourceFile';
+import {INI_COMPLETO_SSL_SLAVES, INI_BASIC_AUTH} from '@site/src/snippets/tdn';
+
+Tabela condensada das chaves mais usadas. Para o caminho via `VdrCtrl():Start(jConfig)`, veja [Referência JSON](/docs/tlpp/rest/configuracoes/referencia-json).
+
+## Servidor e rede
+
+| Chave | Seção | Tipo | Descrição |
+|-------|-------|------|-----------|
+| Enable | HTTPSERVER | int | 1 = ativo |
+| Servers | HTTPSERVER | string | Nomes dos servidores |
+| Port | Server | int | Porta HTTP(S) |
+| Hostname | Server | string | Host virtual |
+| Locations | Server | string | Seções de rota |
+| Path | Location | string | Prefixo URL |
+| RootPath | Location | string | Arquivos estáticos |
+| ThreadPool | Location | string | Pool de threads |
+| Environment | ThreadPool | string | Ambiente RPO |
+| MinThreads | ThreadPool | int | Mínimo de threads (>0) |
+
+## Logs
+
+| Chave | Default | Descrição |
+|-------|---------|-----------|
+| rest_log_level | 3–6 | Verbosidade |
+| rest_error_full | 0/1 | Stack no log de erro |
+| rest_log_stringsize | 200 MB | Tamanho máximo do log |
+| rest_reload_time | 60s | Releitura de config |
+| rest_trace_time | 1/2 | Timer de trace |
+
+## Dados injetados
+
+| Chave | Uso |
+|-------|-----|
+| TlppData | Config nativa (auth, callbacks) |
+| UserData | JSON customizado do desenvolvedor |
+| UserExits | Seção de callbacks On* |
+| ContentTypes | Mapeamento de MIME types |
+| Charset | UTF-8, CP1252, etc. |
+
+## SSL
+
+| Chave | Descrição |
+|-------|-----------|
+| SslCertificate | Certificado |
+| SslCertificateKey | Chave privada |
+
+## Exemplos do TDN (`appserver.ini`)
+
+### Modelo completo — HTTPS, slaves e user exits
+
+Cenário com SSL, `TlppData`, `UserData`, thread pool principal, dois slaves e callbacks `OnBlock` … `OnSend`:
+
+<SourceFile
+  title="INI completo (SSL + slaves + UserExits)"
+  path="appserver.ini"
+  code={INI_COMPLETO_SSL_SLAVES}
+  language="ini"
+/>
+
+### Basic Auth via `TlppData`
+
+Trecho mínimo (configure depois de ler [Autenticação](/docs/tlpp/rest/authorization)):
+
+<SourceFile
+  title="INI — Basic Auth (TlppData)"
+  path="appserver.ini"
+  code={INI_BASIC_AUTH}
+  language="ini"
+  defaultOpen
+/>
+
+**Próximo passo:** [Referência JSON](/docs/tlpp/rest/configuracoes/referencia-json)

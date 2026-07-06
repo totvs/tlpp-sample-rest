@@ -1,25 +1,22 @@
 # tlpp-sample-rest
 
-Exemplos TLPP de **REST** no AppServer — primeiros passos, verbos HTTP, objeto `oRest`, configurações, callbacks e autorização.
+Exemplos TLPP de **REST** no AppServer — conceito, verbos HTTP, `oRest`, configurações e callbacks.
 
-Cada arquivo `.tlpp` em `src/` é um exemplo autocontido, organizado por pasta.
-
-## Estrutura `src/`
+## Estrutura
 
 | Pasta | Conteúdo |
 |-------|----------|
-| `primeiros-passos/` | Inicialização do serviço REST, função/classe, `load_urns` |
-| `configuracoes/` | Annotations, `fInitService`, URNs sem annotation |
-| `verbs/{get,post,put,patch,delete}/` | Exemplos por verbo HTTP |
-| `orest/` | Leitura/escrita com `oRest`, pool, cabeçalhos |
-| `callbacks/` | User exits do ciclo de vida REST |
-| `authorization/` | Autenticação (`onAuth`) |
-| `apis/admin/` | APIs administrativas |
+| `src/` | Código `.tlpp` por tema |
+| `docs/conceito/` | Documentação narrativa (sync → totvstec-doc) |
+| `docs/exemplos/` | Catálogo GitHub gerado (`npm run docs:exemplos`) |
+| `docs/sidebar.json` | Menu deste módulo |
 
-Metadados, **Doc Generate** e OpenAPI ficam em [tlpp-sample-rest-documentation](https://github.com/totvs/tlpp-sample-rest-documentation).
+## Scripts
 
-## Documentação
+```bash
+npm run docs:exemplos   # gera docs/exemplos/ a partir de src/
+```
 
-Conceitos, trilha de leitura e mapa dos exemplos:
+## Documentação publicada
 
 **https://totvs.github.io/totvstec-doc/docs/tlpp/rest/**
